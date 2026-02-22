@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SurgiCheck | Klinisyen Paneli</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chip { padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid; }
+    @media print {
+      body * { visibility: hidden; }
+      #printArea, #printArea * { visibility: visible; }
+      #printArea { position: absolute; inset: 0; padding: 32px; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50">
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- Header -->
+  <div class="flex items-start justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold">SurgiCheck — Klinisyen Paneli</h1>
+      <p class="text-sm text-slate-500">Leo Klinik · Vaka listeleme, doğrulama, karar, rapor</p>
+    </div>
+    <div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+      Demo · Prod'da kimlik doğrulama zorunlu
+    </div>
+  </div>
+
+  <div id="alert" class="hidden mb-4 rounded-lg p-3 text-sm"></div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- LEFT: Case List -->
+    <div class="bg-white rounded-xl shadow p-4 lg:col-span-1">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-medium">Vakalar</h2>
+        <button id="refreshBtn" class="text-xs text-slate-500 underline">Yenile</button>
+      </div>
+      <input id="searchBox" class="w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Ad / Prosedür ara..." />
+      <div id="caseList" class="mt-3 space-y-2">
+        <div class="text-sm text-slate-400 py-4 text-center">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Detail -->
+    <div class="lg:col-span-2 space-y-4">
+
+      <!-- Empty state -->
+      <div id="emptyState" class="bg-white rounded-xl shadow p-10 text-center text-slate-400">
+        Soldan bir vaka seçin.
+      </div>
+
+      <div id="detail" class="hidden space-y-4">
+
+        <!-- Patient Header -->
+        <div class="bg-white rounded-xl shadow p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs text-slate-400 font-mono" id="caseId"></div>
+              <div class="text-xl font-semibold mt-1" id="patientName"></div>
+              <div class="text-sm text-slate-500 mt-0.5" id="patientMeta"></div>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+              <button onclick="window.print()" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50">⎙ Yazdır</button>
+              <button id="saveBtn" class="rounded-lg bg-black text-white px-3 py-1.5 text-xs font-medium hover:bg-slate-800">Kaydet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Patient Declaration -->
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-medium mb-3">Hasta Beyanı (PR)</h3>
+          <div id="patientDeclaration" class="text-sm text-slate-700"></div>
+        </div>
+
+        <!-- Flags -->
+        <div class="bg-white rounded-xl shadow p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-medium">Kural Motoru Çıktıları</h3>
+            <span id="flagCount" class="text-xs text-slate-400 font-mono"></span>
+          </div>
+          <div id="flags" class="flex flex-wrap gap-2"></div>
+          <p class="text-xs text-slate-400 mt-3">HARD = bağlayıcı · SOFT = dikkat · VERIFY = doğrulama gerekli</p>
+        </div>
+
+        <!-- Clinician Verification -->
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-medium mb-4">Klinisyen Doğrulama (CV)</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Klinisyen Adı *</label>
+              <input id="clinicianName" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Dr. ..." />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">ASA Sınıfı (CV) *</label>
+              <select id="cv-asa" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
+                <option value="">Seçiniz...</option>
+                <option value="1">ASA I — Sağlıklı</option>
+                <option value="2">ASA II — Hafif sistemik hastalık</option>
+                <option value="3">ASA III — Ciddi sistemik hastalık</option>
+                <option value="4">ASA IV — Hayatı tehdit eden hastalık</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Sigara Durumu (CV)</label>
+              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-smoking" class="font-medium text-slate-600"></span></div>
+              <select id="cv-smoking" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
+                <option value="">Doğrulama bekliyor</option>
+                <option value="never">Hiç içmemiş</option>
+                <option value="quit_6m_plus">Bırakmış — >6 ay</option>
+                <option value="quit_recent">Bırakmış — <6 ay</option>
+                <option value="active">Aktif içici</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Antikoagülan Durumu (CV)</label>
+              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-anticoag" class="font-medium text-slate-600"></span></div>
+              <select id="cv-anticoag" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
+                <option value="">Doğrulama bekliyor</option>
+                <option value="none">Kullanmıyor</option>
+                <option value="paused">Kesildi (preop protokol)</option>
+                <option value="active">Aktif kullanım</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">BMI (Ölçülen)</label>
+              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-bmi" class="font-medium text-slate-600"></span></div>
+              <input type="number" id="cv-bmi" step="0.1" min="10" max="80" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Ölçülen BMI" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Muayene Notu</label>
+              <input id="examNote" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Kısa muayene bulgusu..." />
+            </div>
+          </div>
+
+          <!-- Verification checkboxes -->
+          <div class="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3">
+            <div class="text-xs text-slate-500 uppercase tracking-wide mb-2">Doğrulama Onayları</div>
+            <div class="grid grid-cols-2 gap-y-2 text-sm">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_smoking" class="accent-black h-4 w-4" /> Sigara doğrulandı</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_meds" class="accent-black h-4 w-4" /> İlaç/antikoagülan doğrulandı</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_comorb" class="accent-black h-4 w-4" /> Komorbiditeler doğrulandı</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_bmi" class="accent-black h-4 w-4" /> Boy/kilo/BMI doğrulandı</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decision -->
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-medium mb-4">Klinik Karar</h3>
+
+          <!-- Gate suggestion -->
+          <div id="gateSuggestion" class="hidden mb-4 rounded-lg p-3 text-sm border"></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Karar *</label>
+              <select id="decision" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
+                <option value="" disabled selected>Seçiniz...</option>
+                <option value="suitable">✓ Uygun</option>
+                <option value="conditional">◐ Şartlı Uygun</option>
+                <option value="not_suitable">✗ Uygun Değil</option>
+              </select>
+            </div>
+            <div class="md:col-span-1">
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Gerekçe *</label>
+              <textarea id="rationale" rows="3" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Karar gerekçesi, ek tetkik, şartlar..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Preview + Print Area -->
+        <div id="printArea">
+          <div class="bg-white rounded-xl shadow p-5">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="text-base font-semibold">SurgiCheck — Uygunluk Raporu</div>
+                <div class="text-xs text-slate-500">Leo Klinik</div>
+              </div>
+              <div class="text-xs text-slate-400 text-right">
+                <div id="reportTimestamp"></div>
+                <div id="reportCaseId" class="font-mono"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+              <div><span class="text-slate-500">Hasta:</span> <span id="r_patient"></span></div>
+              <div><span class="text-slate-500">Prosedür:</span> <span id="r_procedure"></span></div>
+              <div><span class="text-slate-500">BMI (CV):</span> <span id="r_bmi"></span></div>
+              <div><span class="text-slate-500">ASA:</span> <span id="r_asa"></span></div>
+            </div>
+
+            <div class="mb-3">
+              <div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Risk Bayrakları</div>
+              <div id="r_flags" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div id="r_decision_box" class="rounded-lg p-3 mb-3 border text-sm font-medium" style="display:none"></div>
+
+            <div class="text-sm">
+              <div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Gerekçe</div>
+              <div id="r_rationale" class="whitespace-pre-wrap text-slate-700"></div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-400">
+              Bu rapor tanı koymaz. Nihai karar klinisyene aittir. Kayıtlar klinik arşivinde saklanır.
+              <span id="r_clinician_sig"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, doc, getDoc,
+    updateDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1j6BthE6pSHzqW82dVaphyD2IiI03LN8",
+    authDomain: "surgicheck-v3.firebaseapp.com",
+    projectId: "surgicheck-v3",
+    storageBucket: "surgicheck-v3.firebasestorage.app",
+    messagingSenderId: "907975258387",
+    appId: "1:907975258387:web:6e26d8deddbd8f52e22ae6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ─── RULES ENGINE (inline — rules.js ES module import browser-compatible) ──
+  function computeFlags(caseData, cvOverrides = {}) {
+    const flags = [];
+    const r = caseData?.risks ?? {};
+    const bmi = cvOverrides.bmi ?? caseData?.anthropometrics?.bmi ?? null;
+    const proc = caseData?.procedure?.name ?? "";
+    const asa = cvOverrides.asa ?? caseData?.clinician?.asa ?? null;
+    const smokingCV = cvOverrides.smokingVerified ?? caseData?.clinician?.smokingVerified ?? null;
+    const anticoagCV = cvOverrides.anticoagVerified ?? caseData?.clinician?.anticoagVerified ?? null;
+
+    // HARD
+    if (asa === "4") flags.push({ type: "HARD", key: "asa4", title: "ASA IV — Elektif ameliyat kontrendike", desc: "ASA IV hastalar elektif estetik cerrahiye uygun değildir." });
+    if (r.activeMalignancy) flags.push({ type: "HARD", key: "malignancy", title: "Aktif Malignite", desc: "Hasta aktif malignite bildirdi. Onkoloji konsültasyonu zorunlu." });
+    if (r.dvt) flags.push({ type: "HARD", key: "dvt", title: "DVT / PE Geçmişi", desc: "Hematoloji konsültasyonu ve tromboprofilaksi planı zorunlu." });
+
+    if (anticoagCV === "active") {
+      flags.push({ type: "HARD", key: "anticoag_active", title: "Aktif Antikoagülan", desc: "Bridging protokolü uygulanmadan ameliyat yapılamaz." });
+    } else if (!anticoagCV && r.anticoagulant) {
+      flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Antikoagülan — CV Gerekli", desc: "Hasta kullandığını beyan etti. Klinisyen doğrulaması olmadan karar verilemez." });
+    }
+
+    // SMOKING
+    if (smokingCV === "active") {
+      flags.push({ type: "SOFT", key: "smoking_active", title: "Aktif Sigara — Yüksek Doku Riski", desc: "Yara iyileşmesi ve doku perfüzyonu ciddi etkilenir." });
+    } else if (smokingCV === "quit_recent") {
+      flags.push({ type: "SOFT", key: "smoking_recent", title: "Sigara — Son 6 Ayda Bıraktı", desc: "Rezidüel mikrodamar disfonksiyonu devam edebilir." });
+    } else if (!smokingCV && r.smoking === "active") {
+      flags.push({ type: "VERIFY", key: "smoking_verify", title: "Sigara — CV Gerekli", desc: "Hasta aktif içici. Klinisyen doğrulaması gerekli." });
+    }
+
+    // BMI
+    const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction"];
+    const isHBP = highBmiProcs.some(p => proc.includes(p));
+    if (bmi !== null) {
+      if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40 — ${proc} kontrendike`, desc: "ISAPS kılavuzları erteleme öneriyor." });
+      else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: `BMI 35–39 — Yüksek Risk`, desc: "Seroma, hematom, yara açılması riski artmış." });
+      else if (bmi >= 30 && isHBP) flags.push({ type: "SOFT", key: "bmi30", title: "BMI 30–34 — Artmış Risk", desc: "Komplikasyon riski normal popülasyona göre yüksek." });
+    } else {
+      flags.push({ type: "VERIFY", key: "bmi_missing", title: "BMI — CV Ölçümü Girilmedi", desc: "Prosedüre özel BMI kuralları için klinisyen ölçümü gerekli." });
+    }
+
+    // SOFT
+    if (r.cardiac && asa !== "4") flags.push({ type: "SOFT", key: "cardiac", title: "Kardiyak Hastalık Beyanı", desc: "Kardiyoloji onayı önerilir." });
+    if (r.diabetes) flags.push({ type: "SOFT", key: "diabetes", title: "Diyabet", desc: "Preoperatif HbA1c kontrolü önerilir." });
+    if (r.ht) flags.push({ type: "SOFT", key: "ht", title: "Hipertansiyon", desc: "Kan basıncı perioperatif dönemde kontrol edilmeli." });
+    if (r.majorWeightLoss) flags.push({ type: "SOFT", key: "weight_loss", title: "Büyük Kilo Kaybı", desc: "Beslenme durumu ve cilt elastikiyeti değerlendirilmeli." });
+    if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahi", desc: "Skar dokusu ve anatomi değişkenliği göz önünde bulundurulmalı." });
+
+    return flags;
+  }
+
+  function gateFromFlags(flags) {
+    if (flags.some(f => f.type === "HARD")) return "ineligible";
+    if (flags.some(f => f.type === "VERIFY")) return "verify";
+    if (flags.some(f => f.type === "SOFT")) return "conditional";
+    return "eligible";
+  }
+
+  // ─── STATE ───────────────────────────────────────────────────────────────
+  let casesCache = [];
+  let selectedCaseId = null;
+  let selectedCase = null;
+
+  // ─── ALERT ───────────────────────────────────────────────────────────────
+  function showAlert(type, msg) {
+    const el = document.getElementById("alert");
+    el.classList.remove("hidden");
+    el.className = "mb-4 rounded-lg p-3 text-sm " + (type === "ok"
+      ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+      : "bg-rose-50 text-rose-800 border border-rose-200");
+    el.textContent = msg;
+    setTimeout(() => el.classList.add("hidden"), 3500);
+  }
+
+  // ─── CASE LIST ───────────────────────────────────────────────────────────
+  async function fetchCases() {
+    try {
+      const snap = await getDocs(collection(db, "cases"));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      rows.sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+      casesCache = rows;
+      applySearch();
+    } catch (err) {
+      console.error(err);
+      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-500 py-2">Bağlantı hatası. Firebase yapılandırmasını kontrol edin.</div>`;
+    }
+  }
+
+  function applySearch() {
+    const q = (document.getElementById("searchBox").value || "").toLowerCase().trim();
+    const filtered = q
+      ? casesCache.filter(c => [c.patient?.fullName, c.patient?.phone, c.procedure?.name].join(" ").toLowerCase().includes(q))
+      : casesCache;
+    renderCaseList(filtered);
+  }
+
+  function fmtDecision(v) {
+    return { suitable: "✓ Uygun", conditional: "◐ Şartlı", not_suitable: "✗ Uygun Değil" }[v] ?? "—";
+  }
+
+  function renderCaseList(items) {
+    const el = document.getElementById("caseList");
+    if (!items.length) { el.innerHTML = `<div class="text-sm text-slate-400 py-4 text-center">Vaka yok.</div>`; return; }
+    el.innerHTML = "";
+    items.forEach(c => {
+      const flags = computeFlags(c);
+      const hardCount = flags.filter(f => f.type === "HARD").length;
+      const btn = document.createElement("button");
+      btn.className = "w-full text-left rounded-lg border border-slate-200 p-3 hover:bg-slate-50 transition-colors" + (c.id === selectedCaseId ? " bg-slate-50 border-slate-400" : "");
+      btn.innerHTML = `
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="text-sm font-medium">${c.patient?.fullName ?? "—"}</div>
+            <div class="text-xs text-slate-500">${c.procedure?.name ?? "—"}</div>
+            <div class="text-xs text-slate-400 mt-0.5">Karar: ${fmtDecision(c.clinician?.decision)}</div>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            ${hardCount > 0 ? `<span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 rounded px-1.5 py-0.5">${hardCount} HARD</span>` : ""}
+            ${flags.length > 0 ? `<span class="text-xs text-slate-400">${flags.length} flag</span>` : ""}
+          </div>
+        </div>`;
+      btn.addEventListener("click", () => loadCase(c.id));
+      el.appendChild(btn);
+    });
+  }
+
+  // ─── LOAD CASE ───────────────────────────────────────────────────────────
+  async function loadCase(id) {
+    selectedCaseId = id;
+    const snap = await getDoc(doc(db, "cases", id));
+    if (!snap.exists()) { showAlert("err", "Vaka bulunamadı."); return; }
+    selectedCase = { id: snap.id, ...snap.data() };
+
+    document.getElementById("emptyState").classList.add("hidden");
+    document.getElementById("detail").classList.remove("hidden");
+
+    // Header
+    document.getElementById("caseId").textContent = selectedCase.id;
+    document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
+    document.getElementById("patientMeta").textContent =
+      `${selectedCase.patient?.age ?? "?"} yaş · ${selectedCase.patient?.phone ?? ""} · ${selectedCase.patient?.email ?? ""}`;
+
+    // Patient Declaration
+    const a = selectedCase.anthropometrics ?? {};
+    const r = selectedCase.risks ?? {};
+    const smokingLabel = { never: "Hiç içmemiş", quit_6m_plus: "Bırakmış >6ay", quit_recent: "Bırakmış <6ay", active: "Aktif içici" }[r.smoking] ?? "—";
+    document.getElementById("patientDeclaration").innerHTML = `
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div><span class="text-slate-400">Prosedür:</span> <span class="font-medium">${selectedCase.procedure?.name ?? "—"}${selectedCase.procedure?.revision ? " (Revizyon)" : ""}</span></div>
+        <div><span class="text-slate-400">Boy/Kilo:</span> ${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg</div>
+        <div><span class="text-slate-400">BMI (beyan):</span> ${a.bmi ?? "—"}</div>
+        <div><span class="text-slate-400">Sigara:</span> <span class="${r.smoking === "active" ? "text-amber-600 font-medium" : ""}">${smokingLabel}</span></div>
+        <div><span class="text-slate-400">DVT/PE:</span> <span class="${r.dvt ? "text-rose-600 font-medium" : ""}">${r.dvt ? "Evet ⚠" : "Hayır"}</span></div>
+        <div><span class="text-slate-400">Kardiyak:</span> <span class="${r.cardiac ? "text-amber-600 font-medium" : ""}">${r.cardiac ? "Evet" : "Hayır"}</span></div>
+        <div><span class="text-slate-400">Diyabet:</span> ${r.diabetes ? "Evet" : "Hayır"}</div>
+        <div><span class="text-slate-400">HT:</span> ${r.ht ? "Evet" : "Hayır"}</div>
+        <div><span class="text-slate-400">Antikoagülan:</span> <span class="${r.anticoagulant ? "text-amber-600 font-medium" : ""}">${r.anticoagulant ? "Evet ⚠" : "Hayır"}</span></div>
+        <div><span class="text-slate-400">Malignite:</span> <span class="${r.activeMalignancy ? "text-rose-600 font-medium" : ""}">${r.activeMalignancy ? "Evet ⚠" : "Hayır"}</span></div>
+        <div><span class="text-slate-400">Büyük kilo kaybı:</span> ${r.majorWeightLoss ? "Evet" : "Hayır"}</div>
+      </div>
+      ${selectedCase.expectations ? `<div class="mt-3 p-3 bg-slate-50 rounded-lg text-sm"><span class="text-slate-400">Beklenti: </span>${selectedCase.expectations}</div>` : ""}
+      ${r.smokeDetail ? `<div class="mt-2 text-xs text-slate-500">Sigara detayı: ${r.smokeDetail}</div>` : ""}
+    `;
+
+    // PR hints for CV fields
+    document.getElementById("pr-smoking").textContent = smokingLabel;
+    document.getElementById("pr-anticoag").textContent = r.anticoagulant ? "Evet" : "Hayır";
+    document.getElementById("pr-bmi").textContent = a.bmi ?? "—";
+
+    // Pre-fill CV fields
+    const cl = selectedCase.clinician ?? {};
+    document.getElementById("clinicianName").value = cl.name ?? "";
+    document.getElementById("cv-asa").value = cl.asa ?? "";
+    document.getElementById("cv-smoking").value = cl.smokingVerified ?? "";
+    document.getElementById("cv-anticoag").value = cl.anticoagVerified ?? "";
+    document.getElementById("cv-bmi").value = cl.bmiMeasured ?? "";
+    document.getElementById("examNote").value = cl.examNote ?? "";
+    const v = cl.validations ?? {};
+    document.getElementById("v_smoking").checked = !!v.smoking;
+    document.getElementById("v_meds").checked = !!v.meds;
+    document.getElementById("v_comorb").checked = !!v.comorb;
+    document.getElementById("v_bmi").checked = !!v.bmi;
+    document.getElementById("decision").value = cl.decision ?? "";
+    document.getElementById("rationale").value = cl.rationale ?? "";
+
+    renderCurrentFlags();
+    updateReportPreview();
+    applySearch(); // re-render list to highlight selected
+  }
+
+  // ─── FLAGS ───────────────────────────────────────────────────────────────
+  function getCVOverrides() {
+    return {
+      asa: document.getElementById("cv-asa").value || null,
+      smokingVerified: document.getElementById("cv-smoking").value || null,
+      anticoagVerified: document.getElementById("cv-anticoag").value || null,
+      bmi: parseFloat(document.getElementById("cv-bmi").value) || null,
+    };
+  }
+
+  function renderCurrentFlags() {
+    if (!selectedCase) return;
+    const flags = computeFlags(selectedCase, getCVOverrides());
+    const el = document.getElementById("flags");
+    document.getElementById("flagCount").textContent = flags.length + " flag";
+    el.innerHTML = "";
+
+    if (!flags.length) {
+      el.innerHTML = `<span class="chip border-emerald-300 text-emerald-700 bg-emerald-50">Kritik flag yok</span>`;
+    } else {
+      flags.forEach(f => {
+        const span = document.createElement("span");
+        const cls = f.type === "HARD" ? "border-rose-300 text-rose-700 bg-rose-50"
+          : f.type === "SOFT" ? "border-amber-300 text-amber-700 bg-amber-50"
+          : "border-blue-300 text-blue-700 bg-blue-50";
+        span.className = "chip " + cls;
+        span.title = f.desc;
+        span.textContent = `[${f.type}] ${f.title}`;
+        el.appendChild(span);
+      });
+    }
+
+    // Gate suggestion
+    const gate = gateFromFlags(flags);
+    const sug = document.getElementById("gateSuggestion");
+    const gateMap = {
+      eligible:    { text: "Sistem önerisi: Uygun görünüyor", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+      conditional: { text: "Sistem önerisi: Dikkat gerektiren kriterler var — Şartlı Uygun veya ek değerlendirme", cls: "bg-amber-50 border-amber-200 text-amber-800" },
+      verify:      { text: "Sistem önerisi: Doğrulama tamamlanmadan karar verilemez", cls: "bg-blue-50 border-blue-200 text-blue-800" },
+      ineligible:  { text: "Sistem önerisi: HARD kural tetiklendi — Uygun Değil", cls: "bg-rose-50 border-rose-200 text-rose-800" },
+    };
+    sug.classList.remove("hidden");
+    sug.className = `mb-4 rounded-lg p-3 text-sm border ${gateMap[gate].cls}`;
+    sug.textContent = gateMap[gate].text;
+  }
+
+  window.rerunFlags = function() {
+    renderCurrentFlags();
+    updateReportPreview();
+  };
+
+  // ─── REPORT PREVIEW ──────────────────────────────────────────────────────
+  window.updateReportPreview = function() {
+    if (!selectedCase) return;
+    const flags = computeFlags(selectedCase, getCVOverrides());
+    const cvBmi = document.getElementById("cv-bmi").value;
+    const asa = document.getElementById("cv-asa").value;
+    const dec = document.getElementById("decision").value;
+    const rat = document.getElementById("rationale").value;
+    const clinName = document.getElementById("clinicianName").value;
+
+    document.getElementById("reportTimestamp").textContent = new Date().toLocaleString("tr-TR");
+    document.getElementById("reportCaseId").textContent = selectedCase.id;
+    document.getElementById("r_patient").textContent = `${selectedCase.patient?.fullName ?? "—"} (${selectedCase.patient?.age ?? "?"} yaş)`;
+    document.getElementById("r_procedure").textContent = `${selectedCase.procedure?.name ?? "—"}${selectedCase.procedure?.revision ? " — Revizyon" : ""}`;
+    document.getElementById("r_bmi").textContent = cvBmi ? cvBmi + " kg/m²" : (selectedCase.anthropometrics?.bmi ?? "—") + " kg/m² (beyan)";
+    document.getElementById("r_asa").textContent = asa ? "ASA " + asa : "—";
+    document.getElementById("r_rationale").textContent = rat || "—";
+    document.getElementById("r_clinician_sig").textContent = clinName ? ` · Dr. ${clinName}` : "";
+
+    // Flags
+    const rfl = document.getElementById("r_flags");
+    rfl.innerHTML = flags.length
+      ? flags.map(f => `<span class="chip ${f.type === "HARD" ? "border-rose-300 text-rose-700 bg-rose-50" : f.type === "SOFT" ? "border-amber-300 text-amber-700 bg-amber-50" : "border-blue-300 text-blue-700 bg-blue-50"}">[${f.type}] ${f.title}</span>`).join("")
+      : "<span class='text-slate-400 text-xs'>—</span>";
+
+    // Decision box
+    const db2 = document.getElementById("r_decision_box");
+    if (dec) {
+      db2.style.display = "block";
+      const decMap = {
+        suitable: { text: "✓ Uygun", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+        conditional: { text: "◐ Şartlı Uygun", cls: "bg-amber-50 border-amber-200 text-amber-800" },
+        not_suitable: { text: "✗ Uygun Değil", cls: "bg-rose-50 border-rose-200 text-rose-800" }
+      };
+      db2.className = `rounded-lg p-3 mb-3 border text-sm font-medium ${decMap[dec].cls}`;
+      db2.textContent = decMap[dec].text;
+    } else {
+      db2.style.display = "none";
+    }
+  };
+
+  // ─── SAVE ────────────────────────────────────────────────────────────────
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    if (!selectedCaseId) return;
+    if (!document.getElementById("decision").value) { showAlert("err", "Karar seçilmeden kaydedilemez."); return; }
+    if (!document.getElementById("clinicianName").value.trim()) { showAlert("err", "Klinisyen adı gerekli."); return; }
+
+    try {
+      await updateDoc(doc(db, "cases", selectedCaseId), {
+        clinician: {
+          name: document.getElementById("clinicianName").value.trim(),
+          asa: document.getElementById("cv-asa").value || null,
+          smokingVerified: document.getElementById("cv-smoking").value || null,
+          anticoagVerified: document.getElementById("cv-anticoag").value || null,
+          bmiMeasured: parseFloat(document.getElementById("cv-bmi").value) || null,
+          examNote: document.getElementById("examNote").value.trim() || null,
+          decision: document.getElementById("decision").value,
+          rationale: document.getElementById("rationale").value.trim() || null,
+          validations: {
+            smoking: document.getElementById("v_smoking").checked,
+            meds: document.getElementById("v_meds").checked,
+            comorb: document.getElementById("v_comorb").checked,
+            bmi: document.getElementById("v_bmi").checked,
+          }
+        },
+        status: "clinician_reviewed",
+        updatedAt: serverTimestamp()
+      });
+      showAlert("ok", "Kaydedildi.");
+      await fetchCases();
+      await loadCase(selectedCaseId);
+    } catch (err) {
+      console.error(err);
+      showAlert("err", "Kaydetme hatası.");
+    }
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────────────────
+  document.getElementById("refreshBtn").addEventListener("click", fetchCases);
+  document.getElementById("searchBox").addEventListener("input", applySearch);
+  await fetchCases();
+</script>
+</body>
+</html>
