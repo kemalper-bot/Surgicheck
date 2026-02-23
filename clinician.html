@@ -186,7 +186,7 @@
         </div>
         <div class="md:col-span-1">
           <label class="text-xs text-slate-500 uppercase tracking-wide">Gerekçe *</label>
-          <textarea id="rationale" rows="3" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Karar gerekçesi, ek tetkik, şartlar..."></textarea>
+          <textarea id="rationale" rows="3" oninput="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Karar gerekçesi, ek tetkik, şartlar..."></textarea>
         </div>
       </div>
     </div>
@@ -288,7 +288,7 @@
     }
 
     // BMI
-    const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction"];
+    const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
     const isHBP = highBmiProcs.some(p => proc.includes(p));
     if (bmi !== null) {
       if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40 — ${proc} kontrendike`, desc: "ISAPS kılavuzları erteleme öneriyor." });
@@ -304,6 +304,9 @@
     if (r.ht) flags.push({ type: "SOFT", key: "ht", title: "Hipertansiyon", desc: "Kan basıncı perioperatif dönemde kontrol edilmeli." });
     if (r.majorWeightLoss) flags.push({ type: "SOFT", key: "weight_loss", title: "Büyük Kilo Kaybı", desc: "Beslenme durumu ve cilt elastikiyeti değerlendirilmeli." });
     if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahi", desc: "Skar dokusu ve anatomi değişkenliği göz önünde bulundurulmalı." });
+    if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Kötü Yara İyileşmesi (Skar) Öyküsü", desc: "Keloid/Hipertrofik skar riski hastaya onamda detaylı anlatılmalı." });
+    if (r.psych) flags.push({ type: "SOFT", key: "psych", title: "Psikiyatrik Öykü / İlaç", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali ve anestezi etkileşimi incelenmeli." });
+    if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Geçirilmiş Batın Cerrahisi", desc: "Tummy Tuck için mevcut fasyal anatomi ve skar dokusu dikkate alınmalı." });
 
     return flags;
   }
@@ -417,7 +420,11 @@
         <div><span class="text-slate-400">Antikoagülan:</span> <span class="${r.anticoagulant ? "text-amber-600 font-medium" : ""}">${r.anticoagulant ? "Evet ⚠" : "Hayır"}</span></div>
         <div><span class="text-slate-400">Malignite:</span> <span class="${r.activeMalignancy ? "text-rose-600 font-medium" : ""}">${r.activeMalignancy ? "Evet ⚠" : "Hayır"}</span></div>
         <div><span class="text-slate-400">Büyük kilo kaybı:</span> ${r.majorWeightLoss ? "Evet" : "Hayır"}</div>
+        <div><span class="text-slate-400">Skar/Keloid:</span> <span class="${r.keloid ? "text-amber-600 font-medium" : ""}">${r.keloid ? "Evet ⚠" : "Hayır"}</span></div>
+        <div><span class="text-slate-400">Psikiyatrik:</span> <span class="${r.psych ? "text-amber-600 font-medium" : ""}">${r.psych ? "Evet ⚠" : "Hayır"}</span></div>
+        ${selectedCase.procedure?.name === "Tummy Tuck" ? `<div><span class="text-slate-400">Batın cerrahisi:</span> ${r.csection ? "Evet" : "Hayır"}</div>` : ""}
       </div>
+      ${selectedCase.medHistory ? `<div class="mt-2 p-2 bg-amber-50 rounded text-xs text-amber-900 col-span-2"><span class="font-medium">Tıbbi Geçmiş:</span> ${selectedCase.medHistory}</div>` : ""}
       ${selectedCase.expectations ? `<div class="mt-3 p-3 bg-slate-50 rounded-lg text-sm"><span class="text-slate-400">Beklenti: </span>${selectedCase.expectations}</div>` : ""}
       ${r.smokeDetail ? `<div class="mt-2 text-xs text-slate-500">Sigara detayı: ${r.smokeDetail}</div>` : ""}
     `;
