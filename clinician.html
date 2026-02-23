@@ -8,20 +8,12 @@
   <style>
     .chip { padding: 2px 10px; border-radius: 999px; font-size: 12px; border: 1px solid; }
     
-    /* ─── YAZDIRMA (PRINT) OPTİMİZASYONU ─── */
     @media print {
       body * { visibility: hidden; }
       #printArea, #printArea * { visibility: visible; }
       #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; color: #000 !important; }
-      
-      /* Renksiz lazer yazıcılarda bayrakların okunaklı olması için */
       .chip { border: 1pt solid #000 !important; color: #000 !important; background-color: transparent !important; }
-      
-      /* Tarayıcıların arkaplan renklerini zorunlu basması için */
-      * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-      }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
 </head>
@@ -31,10 +23,10 @@
   <div class="flex items-start justify-between gap-4 mb-6">
     <div>
       <h1 class="text-2xl font-semibold">SurgiCheck — Klinisyen Paneli</h1>
-      <p class="text-sm text-slate-500">Leo Klinik · Vaka listeleme, doğrulama, karar, rapor</p>
+      <p class="text-sm text-slate-500">Leo Klinik · Risk Yönetimi ve Preoperatif Değerlendirme</p>
     </div>
     <div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-      Demo · Prod'da kimlik doğrulama zorunlu
+      Demo Sürümü
     </div>
   </div>
 
@@ -75,22 +67,22 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow p-5">
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-400">
           <h3 class="font-medium mb-3">Hasta Beyanı (PR)</h3>
           <div id="patientDeclaration" class="text-sm text-slate-700"></div>
         </div>
 
-        <div class="bg-white rounded-xl shadow p-5">
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-rose-400">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="font-medium">Risk ve Kural Motoru</h3>
+            <h3 class="font-medium">Klinik Kural Motoru Çıktıları</h3>
             <span id="flagCount" class="text-xs text-slate-400 font-mono"></span>
           </div>
-          <div id="flags" class="flex flex-wrap gap-2"></div>
-          <p class="text-xs text-slate-400 mt-3">HARD = bağlayıcı · SOFT = dikkat · VERIFY = doğrulama gerekli</p>
+          <div id="flags" class="flex flex-wrap gap-2 mb-3"></div>
+          <p class="text-xs text-slate-400 border-t pt-2">HARD = Majör risk · SOFT = Dikkat · VERIFY = Klinisyen doğrulaması bekleniyor</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow p-5">
-          <h3 class="font-medium mb-4">Klinisyen Doğrulama (CV)</h3>
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-emerald-400">
+          <h3 class="font-medium mb-4">Klinisyen Doğrulama ve Bulgular (CV)</h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -98,7 +90,7 @@
               <input id="clinicianName" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Dr. ..." />
             </div>
             <div>
-              <label class="text-xs text-slate-500 uppercase tracking-wide">ASA Sınıfı (CV) *</label>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Preoperatif ASA Sınıfı *</label>
               <select id="cv-asa" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
                 <option value="">Seçiniz...</option>
                 <option value="1">ASA I — Sağlıklı</option>
@@ -108,8 +100,8 @@
               </select>
             </div>
             <div>
-              <label class="text-xs text-slate-500 uppercase tracking-wide">Sigara Durumu (CV)</label>
-              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-smoking" class="font-medium text-slate-600"></span></div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Sigara Durumu (Doğrulanan)</label>
+              <div class="text-xs text-slate-400 mb-1">Beyan: <span id="pr-smoking" class="font-medium text-slate-600"></span></div>
               <select id="cv-smoking" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
                 <option value="">Doğrulama bekliyor</option>
                 <option value="never">Hiç içmemiş</option>
@@ -119,39 +111,37 @@
               </select>
             </div>
             <div>
-              <label class="text-xs text-slate-500 uppercase tracking-wide">Antikoagülan Durumu (CV)</label>
-              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-anticoag" class="font-medium text-slate-600"></span></div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Antikoagülan / Aspirin Durumu</label>
+              <div class="text-xs text-slate-400 mb-1">Beyan: <span id="pr-anticoag" class="font-medium text-slate-600"></span></div>
               <select id="cv-anticoag" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
                 <option value="">Doğrulama bekliyor</option>
                 <option value="none">Kullanmıyor</option>
-                <option value="paused">Kesildi (preop protokol)</option>
+                <option value="paused">Kesildi (Preop protokol uygulandı)</option>
                 <option value="active">Aktif kullanım</option>
               </select>
             </div>
             <div>
-              <label class="text-xs text-slate-500 uppercase tracking-wide">BMI (Ölçülen)</label>
-              <div class="text-xs text-slate-400 mb-1">Hasta beyanı: <span id="pr-bmi" class="font-medium text-slate-600"></span></div>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Ölçülen BMI (Beyan: <span id="pr-bmi"></span>)</label>
               <input type="number" id="cv-bmi" step="0.1" min="10" max="80" onchange="rerunFlags()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Ölçülen BMI" />
             </div>
             <div>
-              <label class="text-xs text-slate-500 uppercase tracking-wide">Muayene Notu</label>
-              <input id="examNote" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Kısa muayene bulgusu..." />
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Ek Muayene Notu (Opsiyonel)</label>
+              <input id="examNote" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Fizik muayene veya konsültasyon notu..." />
             </div>
           </div>
 
-          <div class="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3">
-            <div class="text-xs text-slate-500 uppercase tracking-wide mb-2">Doğrulama Onayları</div>
-            <div class="grid grid-cols-2 gap-y-2 text-sm">
-              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_smoking" class="accent-black h-4 w-4" /> Sigara doğrulandı</label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_meds" class="accent-black h-4 w-4" /> İlaç/antikoagülan doğrulandı</label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_comorb" class="accent-black h-4 w-4" /> Komorbiditeler doğrulandı</label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_bmi" class="accent-black h-4 w-4" /> Boy/kilo/BMI doğrulandı</label>
+          <div class="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-4">
+            <div class="text-xs text-slate-500 uppercase tracking-wide mb-3">Medikolegal Kapatma Onayları</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-sm">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_smoking" class="accent-black h-4 w-4" /> Sigara/alışkanlık riski teyit edildi</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="v_meds" class="accent-black h-4 w-4" /> Tüm ilaç etkileşimleri değerlendirildi</label>
+              <label class="flex items-center gap-2 cursor-pointer sm:col-span-2 font-medium text-slate-800 bg-white border border-slate-200 p-2 rounded"><input type="checkbox" id="v_labs" class="accent-emerald-600 h-5 w-5" /> <strong>Preoperatif laboratuvar ve anestezi tetkikleri incelendi, beyanla uyumlu bulundu.</strong></label>
             </div>
           </div>
         </div>
 
         <div class="bg-white rounded-xl shadow p-5">
-          <h3 class="font-medium mb-4">Klinik Karar</h3>
+          <h3 class="font-medium mb-4">Nihai Klinik Karar</h3>
 
           <div id="gateSuggestion" class="hidden mb-4 rounded-lg p-3 text-sm border"></div>
 
@@ -160,53 +150,57 @@
               <label class="text-xs text-slate-500 uppercase tracking-wide">Karar *</label>
               <select id="decision" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400">
                 <option value="" disabled selected>Seçiniz...</option>
-                <option value="suitable">✓ Uygun</option>
-                <option value="conditional">◐ Şartlı Uygun (Ek değerlendirme)</option>
-                <option value="not_suitable">✗ Uygun Değil</option>
+                <option value="suitable">✓ Operasyona Uygun</option>
+                <option value="conditional">◐ Şartlı Uygun (Konsültasyon/Ek Tedavi Gerektirir)</option>
+                <option value="not_suitable">✗ Uygun Değil / İptal</option>
               </select>
             </div>
             <div class="md:col-span-1">
-              <label class="text-xs text-slate-500 uppercase tracking-wide">Gerekçe *</label>
-              <textarea id="rationale" rows="3" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Karar gerekçesi, ek tetkik, şartlar..."></textarea>
+              <label class="text-xs text-slate-500 uppercase tracking-wide">Tıbbi Gerekçe (Rationale) *</label>
+              <textarea id="rationale" rows="3" onchange="updateReportPreview()" class="mt-1 w-full rounded-lg border border-slate-200 p-2 text-sm focus:outline-none focus:border-slate-400" placeholder="Karar gerekçesi, şartlar veya laboratuvar uyumsuzluğu varsa belirtiniz..."></textarea>
             </div>
           </div>
         </div>
 
         <div id="printArea">
-          <div class="bg-white rounded-xl shadow p-5">
-            <div class="flex items-start justify-between mb-4">
+          <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+            <div class="flex items-start justify-between mb-6 pb-4 border-b">
               <div>
-                <div class="text-base font-semibold">SurgiCheck — Preoperatif Uygunluk Raporu</div>
-                <div class="text-xs text-slate-500">Leo Klinik</div>
+                <div class="text-lg font-bold uppercase tracking-wide">SurgiCheck — Uygunluk Raporu</div>
+                <div class="text-sm text-slate-500">Leo Klinik</div>
               </div>
-              <div class="text-xs text-slate-400 text-right">
+              <div class="text-xs text-slate-500 text-right">
                 <div id="reportTimestamp"></div>
-                <div id="reportCaseId" class="font-mono"></div>
+                <div id="reportCaseId" class="font-mono mt-1"></div>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
-              <div><span class="text-slate-500">Hasta:</span> <span id="r_patient"></span></div>
-              <div><span class="text-slate-500">Prosedür:</span> <span id="r_procedure"></span></div>
-              <div><span class="text-slate-500">BMI (CV):</span> <span id="r_bmi"></span></div>
-              <div><span class="text-slate-500">ASA:</span> <span id="r_asa"></span></div>
+            <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-sm mb-6">
+              <div><span class="text-slate-500 w-24 inline-block">Hasta:</span> <span id="r_patient" class="font-medium"></span></div>
+              <div><span class="text-slate-500 w-24 inline-block">Prosedür:</span> <span id="r_procedure" class="font-medium"></span></div>
+              <div><span class="text-slate-500 w-24 inline-block">BMI (Ölçülen):</span> <span id="r_bmi"></span></div>
+              <div><span class="text-slate-500 w-24 inline-block">ASA Skoru:</span> <span id="r_asa" class="font-medium"></span></div>
             </div>
 
-            <div class="mb-3">
-              <div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Risk Bayrakları</div>
-              <div id="r_flags" class="flex flex-wrap gap-1.5"></div>
+            <div class="mb-4">
+              <div class="text-xs text-slate-500 uppercase tracking-wide mb-2 font-semibold">Tespit Edilen Riskler ve Etkileşimler</div>
+              <div id="r_flags" class="flex flex-col gap-1.5"></div>
             </div>
 
-            <div id="r_decision_box" class="rounded-lg p-3 mb-3 border text-sm font-medium" style="display:none"></div>
-
-            <div class="text-sm">
-              <div class="text-xs text-slate-500 uppercase tracking-wide mb-1">Klinik Karar Gerekçesi</div>
-              <div id="r_rationale" class="whitespace-pre-wrap text-slate-700"></div>
+            <div id="r_lab_status" class="text-sm mb-4 text-emerald-700 hidden">
+              ✓ Laboratuvar ve preoperatif anestezi tetkikleri klinisyen tarafından kontrol edilmiştir.
             </div>
 
-            <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-400">
-              Bu rapor bir klinik karar destek aracı (SurgiCheck) kullanılarak oluşturulmuştur. Nihai tanı ve operasyon kararı tamamen klinisyene aittir.
-              <span id="r_clinician_sig"></span>
+            <div id="r_decision_box" class="rounded-lg p-3 mb-4 border text-base font-bold text-center uppercase tracking-wide" style="display:none"></div>
+
+            <div class="text-sm bg-slate-50 p-4 rounded border">
+              <div class="text-xs text-slate-500 uppercase tracking-wide mb-1 font-semibold">Klinisyen Gerekçesi ve Notlar</div>
+              <div id="r_rationale" class="whitespace-pre-wrap text-slate-800"></div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-500 text-justify">
+              Bu belge bir klinik karar destek aracı yardımıyla oluşturulmuştur. Risk tespiti, operasyon onayı ve laboratuvar sonuçlarının nihai değerlendirmesi süreci yöneten klinisyene aittir.
+              <div id="r_clinician_sig" class="mt-4 font-semibold text-right text-sm text-black"></div>
             </div>
           </div>
         </div>
@@ -236,7 +230,7 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // ─── RULES ENGINE ────────────────────────────────────────────────────────
+  // ─── FARMAKOLOJİK KURAL MOTORU ───────────────────────────────────────────
   function computeFlags(caseData, cvOverrides = {}) {
     const flags = [];
     const r = caseData?.risks ?? {};
@@ -246,47 +240,69 @@
     const smokingCV = cvOverrides.smokingVerified ?? caseData?.clinician?.smokingVerified ?? null;
     const anticoagCV = cvOverrides.anticoagVerified ?? caseData?.clinician?.anticoagVerified ?? null;
 
-    // HARD RULES
-    if (asa === "4") flags.push({ type: "HARD", key: "asa4", title: "ASA IV — Elektif cerrahi kontrendike", desc: "ASA IV hastalar elektif estetik cerrahiye uygun değildir." });
-    if (r.activeMalignancy) flags.push({ type: "HARD", key: "malignancy", title: "Aktif Malignite", desc: "Hasta aktif malignite bildirdi. Onkoloji konsültasyonu zorunlu." });
-    if (r.dvt) flags.push({ type: "HARD", key: "dvt", title: "DVT / PE Geçmişi", desc: "Hematoloji konsültasyonu ve tromboprofilaksi planı zorunlu." });
+    // 1. Genel Tıbbi Kontrendikasyonlar
+    if (asa === "4") flags.push({ type: "HARD", key: "asa4", title: "ASA IV — Elektif cerrahi kontrendike", desc: "Hayatı tehdit eden sistemik hastalık." });
+    if (r.activeMalignancy) flags.push({ type: "HARD", key: "malignancy", title: "Aktif Malignite", desc: "Onkoloji konsültasyonu zorunlu." });
+    if (r.dvt) flags.push({ type: "HARD", key: "dvt", title: "DVT / PE Geçmişi", desc: "Tromboprofilaksi planı zorunlu." });
 
+    // 2. İlaç Etkileşimleri (Yeni Farmakolojik Kurallar)
+    // Kan Sulandırıcılar
     if (anticoagCV === "active") {
-      flags.push({ type: "HARD", key: "anticoag_active", title: "Aktif Antikoagülan", desc: "Bridging protokolü uygulanmadan ameliyat yapılamaz." });
-    } else if (!anticoagCV && r.anticoagulant) {
-      flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Antikoagülan — CV Gerekli", desc: "Hasta kullandığını beyan etti. Klinisyen doğrulaması olmadan karar verilemez." });
+      flags.push({ type: "HARD", key: "anticoag_active", title: "Aktif Antikoagülan / Antiplatelet", desc: "Kanama riski. Preop bridging protokolü uygulanmalıdır." });
+    } else if (!anticoagCV && (r.medBloodThinners || r.anticoagulant)) {
+      flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Kan Sulandırıcı — CV Gerekli", desc: "Hasta kan sulandırıcı beyan etti. Doğrulama gerekli." });
     }
 
-    // SMOKING
+    // GLP-1 (Zayıflama İğneleri)
+    if (r.medGlp1) {
+      flags.push({ type: "HARD", key: "med_glp1", title: "İlaç Etkileşimi: GLP-1 Agonisti", desc: "Gecikmiş mide boşalması ve anestezi altında aspirasyon riski. Kılavuzlara göre ameliyat öncesi kesilmeli." });
+    }
+
+    // OKS / Hormon (Doğum Kontrol)
+    if (r.medOcp) {
+      const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
+      if (highDvtProcs.some(p => proc.includes(p))) {
+        flags.push({ type: "SOFT", key: "med_ocp_dvt", title: "İlaç Etkileşimi: OKS + Majör Cerrahi", desc: "Tromboemboli (DVT) riskini artırır. Profilaksi gerektirir." });
+      } else {
+        flags.push({ type: "SOFT", key: "med_ocp", title: "İlaç: Doğum Kontrol / Hormon", desc: "Tromboemboli risk profiline eklenmelidir." });
+      }
+    }
+
+    // İzotretinoin (Akne)
+    if (r.medAcne) {
+      flags.push({ type: "SOFT", key: "med_acne", title: "İlaç Etkileşimi: İzotretinoin", desc: "Atipik skarlaşma ve gecikmiş yara iyileşmesi riski taşır." });
+    }
+
+    // Psikiyatrik
+    if (r.medPsych || r.psych) {
+      flags.push({ type: "SOFT", key: "med_psych", title: "Psikiyatrik Öykü / İlaç", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali değerlendirilmeli." });
+    }
+
+    // Steroid
+    if (r.medSteroid) {
+      flags.push({ type: "VERIFY", key: "med_steroid", title: "İlaç: Sistemik Steroid", desc: "Adrenal süpresyon veya yara yeri enfeksiyon riski artışı. Perioperatif doz düzenlemesi gerekebilir." });
+    }
+
+    // 3. Yaşam Tarzı ve BMI
     if (smokingCV === "active") {
-      flags.push({ type: "SOFT", key: "smoking_active", title: "Aktif Sigara — Yüksek Doku Riski", desc: "Yara iyileşmesi ve doku perfüzyonu ciddi etkilenir." });
-    } else if (smokingCV === "quit_recent") {
-      flags.push({ type: "SOFT", key: "smoking_recent", title: "Sigara — Son 6 Ayda Bıraktı", desc: "Rezidüel mikrodamar disfonksiyonu devam edebilir." });
+      flags.push({ type: "SOFT", key: "smoking_active", title: "Aktif Sigara", desc: "Flep nekrozu ve yara yeri enfeksiyonu riski çok yüksek." });
     } else if (!smokingCV && r.smoking === "active") {
-      flags.push({ type: "VERIFY", key: "smoking_verify", title: "Sigara — CV Gerekli", desc: "Hasta aktif içici. Klinisyen doğrulaması gerekli." });
+      flags.push({ type: "VERIFY", key: "smoking_verify", title: "Sigara — CV Gerekli", desc: "Aktif içici beyanı. Doğrulama gerekli." });
     }
 
-    // BMI
     const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
     const isHBP = highBmiProcs.some(p => proc.includes(p));
     if (bmi !== null) {
-      if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40 — ${proc} kontrendike`, desc: "Kılavuzlar elektif cerrahinin ertelenmesini öneriyor." });
-      else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: `BMI 35–39 — Yüksek Risk`, desc: "Seroma, hematom, yara açılması riski artmış." });
-      else if (bmi >= 30 && isHBP) flags.push({ type: "SOFT", key: "bmi30", title: "BMI 30–34 — Artmış Risk", desc: "Komplikasyon riski normal popülasyona göre yüksek." });
+      if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40 — Vücut Şekillendirme Kontrendike`, desc: "Kılavuzlar elektif cerrahinin ertelenmesini öneriyor." });
+      else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: `BMI 35–39 — Yüksek Risk`, desc: "Seroma, hematom riski artmış." });
     } else {
-      flags.push({ type: "VERIFY", key: "bmi_missing", title: "BMI — CV Ölçümü Girilmedi", desc: "Prosedüre özel BMI kuralları için klinisyen ölçümü gerekli." });
+      flags.push({ type: "VERIFY", key: "bmi_missing", title: "BMI — CV Ölçümü Girilmedi", desc: "Klinik risk skoru için BMI girilmeli." });
     }
 
-    // SOFT & NEW RISKS (Keloid, Psych, C-Section)
-    if (r.cardiac && asa !== "4") flags.push({ type: "SOFT", key: "cardiac", title: "Kardiyak Hastalık Beyanı", desc: "Kardiyoloji onayı önerilir." });
-    if (r.diabetes) flags.push({ type: "SOFT", key: "diabetes", title: "Diyabet", desc: "Preoperatif HbA1c kontrolü önerilir." });
-    if (r.ht) flags.push({ type: "SOFT", key: "ht", title: "Hipertansiyon", desc: "Kan basıncı perioperatif dönemde kontrol edilmeli." });
-    if (r.majorWeightLoss) flags.push({ type: "SOFT", key: "weight_loss", title: "Büyük Kilo Kaybı", desc: "Beslenme durumu ve cilt elastikiyeti değerlendirilmeli." });
-    if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahi", desc: "Skar dokusu ve anatomi değişkenliği göz önünde bulundurulmalı." });
-    
-    if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Kötü Yara İyileşmesi (Skar) Öyküsü", desc: "Keloid/Hipertrofik skar riski hastaya onamda detaylı anlatılmalı." });
-    if (r.psych) flags.push({ type: "SOFT", key: "psych", title: "Psikiyatrik Öykü / İlaç", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali ve anestezi etkileşimi incelenmeli." });
-    if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Geçirilmiş Batın Cerrahisi", desc: "Tummy Tuck için mevcut fasyal anatomi ve skar dokusu dikkate alınmalı." });
+    // 4. Komorbiditeler
+    if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Kötü Skar / Keloid Öyküsü", desc: "Revizyon ve iz onamı mutlaka alınmalı." });
+    if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Geçirilmiş Batın Cerrahisi", desc: "Karın germe için fasyal anatomi defekti dikkate alınmalı." });
+    if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahisi", desc: "Skar dokusu nedeniyle anatomik plan zorluğu." });
 
     return flags;
   }
@@ -298,23 +314,20 @@
     return "eligible";
   }
 
-  // ─── STATE ───────────────────────────────────────────────────────────────
   let casesCache = [];
   let selectedCaseId = null;
   let selectedCase = null;
 
-  // ─── ALERT ───────────────────────────────────────────────────────────────
   function showAlert(type, msg) {
     const el = document.getElementById("alert");
     el.classList.remove("hidden");
-    el.className = "mb-4 rounded-lg p-3 text-sm " + (type === "ok"
+    el.className = "mb-4 rounded-lg p-3 text-sm font-medium " + (type === "ok"
       ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
       : "bg-rose-50 text-rose-800 border border-rose-200");
     el.textContent = msg;
     setTimeout(() => el.classList.add("hidden"), 3500);
   }
 
-  // ─── CASE LIST ───────────────────────────────────────────────────────────
   async function fetchCases() {
     try {
       const snap = await getDocs(collection(db, "cases"));
@@ -324,21 +337,16 @@
       casesCache = rows;
       applySearch();
     } catch (err) {
-      console.error(err);
-      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-500 py-2">Bağlantı hatası. Firebase yapılandırmasını kontrol edin.</div>`;
+      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-500 py-2">Bağlantı hatası.</div>`;
     }
   }
 
   function applySearch() {
     const q = (document.getElementById("searchBox").value || "").toLowerCase().trim();
     const filtered = q
-      ? casesCache.filter(c => [c.patient?.fullName, c.patient?.phone, c.procedure?.name].join(" ").toLowerCase().includes(q))
+      ? casesCache.filter(c => [c.patient?.fullName, c.procedure?.name].join(" ").toLowerCase().includes(q))
       : casesCache;
     renderCaseList(filtered);
-  }
-
-  function fmtDecision(v) {
-    return { suitable: "✓ Uygun", conditional: "◐ Şartlı", not_suitable: "✗ Uygun Değil" }[v] ?? "—";
   }
 
   function renderCaseList(items) {
@@ -348,17 +356,18 @@
     items.forEach(c => {
       const flags = computeFlags(c);
       const hardCount = flags.filter(f => f.type === "HARD").length;
+      const decMap = { suitable: "Uygun", conditional: "Şartlı", not_suitable: "İptal/Red" };
       const btn = document.createElement("button");
       btn.className = "w-full text-left rounded-lg border border-slate-200 p-3 hover:bg-slate-50 transition-colors" + (c.id === selectedCaseId ? " bg-slate-50 border-slate-400" : "");
       btn.innerHTML = `
         <div class="flex items-start justify-between gap-2">
           <div>
-            <div class="text-sm font-medium">${c.patient?.fullName ?? "—"}</div>
+            <div class="text-sm font-bold text-slate-800">${c.patient?.fullName ?? "—"}</div>
             <div class="text-xs text-slate-500">${c.procedure?.name ?? "—"}</div>
-            <div class="text-xs text-slate-400 mt-0.5">Karar: ${fmtDecision(c.clinician?.decision)}</div>
+            <div class="text-xs text-slate-400 mt-0.5">Karar: ${decMap[c.clinician?.decision] ?? "—"}</div>
           </div>
           <div class="flex flex-col items-end gap-1">
-            ${hardCount > 0 ? `<span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 rounded px-1.5 py-0.5">${hardCount} HARD</span>` : ""}
+            ${hardCount > 0 ? `<span class="text-xs bg-rose-100 text-rose-700 font-bold border border-rose-200 rounded px-1.5 py-0.5">${hardCount} HARD</span>` : ""}
             ${flags.length > 0 ? `<span class="text-xs text-slate-400">${flags.length} flag</span>` : ""}
           </div>
         </div>`;
@@ -367,7 +376,6 @@
     });
   }
 
-  // ─── LOAD CASE ───────────────────────────────────────────────────────────
   async function loadCase(id) {
     selectedCaseId = id;
     const snap = await getDoc(doc(db, "cases", id));
@@ -377,42 +385,47 @@
     document.getElementById("emptyState").classList.add("hidden");
     document.getElementById("detail").classList.remove("hidden");
 
-    // Header
     document.getElementById("caseId").textContent = selectedCase.id;
     document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
-    document.getElementById("patientMeta").textContent =
-      `${selectedCase.patient?.age ?? "?"} yaş · ${selectedCase.patient?.phone ?? ""} · ${selectedCase.patient?.email ?? ""}`;
+    document.getElementById("patientMeta").textContent = `${selectedCase.patient?.age ?? "?"} yaş · ${selectedCase.patient?.phone ?? ""} · ${selectedCase.patient?.email ?? ""}`;
 
-    // Patient Declaration
     const a = selectedCase.anthropometrics ?? {};
     const r = selectedCase.risks ?? {};
-    const smokingLabel = { never: "Hiç içmemiş", quit_6m_plus: "Bırakmış >6ay", quit_recent: "Bırakmış <6ay", active: "Aktif içici" }[r.smoking] ?? "—";
     
-    // YENİ RİSKLER BURAYA EKLENDİ
+    // Hasta Beyanı Gösterimi (İlaçlar Dahil)
+    const medsList = [];
+    if(r.medBloodThinners) medsList.push("Kan Sulandırıcı");
+    if(r.medOcp) medsList.push("Doğum Kontrol/Hormon");
+    if(r.medGlp1) medsList.push("GLP-1/Zayıflama");
+    if(r.medAcne) medsList.push("Akne (İzotretinoin)");
+    if(r.medPsych) medsList.push("Psikiyatrik");
+    if(r.medSteroid) medsList.push("Steroid");
+    const medsText = medsList.length > 0 ? medsList.join(", ") : "Yok";
+
     document.getElementById("patientDeclaration").innerHTML = `
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <div><span class="text-slate-400">Prosedür:</span> <span class="font-medium">${selectedCase.procedure?.name ?? "—"}${selectedCase.procedure?.revision ? " (Revizyon)" : ""}</span></div>
-        <div><span class="text-slate-400">Boy/Kilo:</span> ${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg</div>
-        <div><span class="text-slate-400">BMI (beyan):</span> ${a.bmi ?? "—"}</div>
-        <div><span class="text-slate-400">Sigara:</span> <span class="${r.smoking === "active" ? "text-amber-600 font-medium" : ""}">${smokingLabel}</span></div>
-        <div><span class="text-slate-400">Antikoagülan:</span> <span class="${r.anticoagulant ? "text-amber-600 font-medium" : ""}">${r.anticoagulant ? "Evet ⚠" : "Hayır"}</span></div>
-        <div><span class="text-slate-400">Skar/Keloid:</span> <span class="${r.keloid ? "text-amber-600 font-medium" : ""}">${r.keloid ? "Evet ⚠" : "Hayır"}</span></div>
-        <div><span class="text-slate-400">Psikiyatrik:</span> <span class="${r.psych ? "text-amber-600 font-medium" : ""}">${r.psych ? "Evet ⚠" : "Hayır"}</span></div>
-        <div><span class="text-slate-400">DVT/PE:</span> <span class="${r.dvt ? "text-rose-600 font-medium" : ""}">${r.dvt ? "Evet ⚠" : "Hayır"}</span></div>
-        <div><span class="text-slate-400">Malignite:</span> <span class="${r.activeMalignancy ? "text-rose-600 font-medium" : ""}">${r.activeMalignancy ? "Evet ⚠" : "Hayır"}</span></div>
-        <div><span class="text-slate-400">Kardiyak/HT/DM:</span> ${(r.cardiac || r.ht || r.diabetes) ? "Evet" : "Hayır"}</div>
-        ${selectedCase.procedure?.name === "Tummy Tuck" ? `<div><span class="text-slate-400">Batın Cerrahisi (Sezaryen vs):</span> ${r.csection ? "Evet" : "Hayır"}</div>` : ""}
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-4 text-slate-700">
+        <div><span class="text-slate-400">Prosedür:</span> <span class="font-bold">${selectedCase.procedure?.name ?? "—"}</span></div>
+        <div><span class="text-slate-400">Boy/Kilo/BMI:</span> ${a.heightCm}cm / ${a.weightKg}kg / ${a.bmi}</div>
+        <div><span class="text-slate-400">Sigara:</span> <span class="${r.smoking === "active" ? "text-amber-600 font-bold" : "font-medium"}">${r.smoking}</span></div>
+        
+        <div class="col-span-2 md:col-span-3 border-t border-dashed mt-1 pt-2"></div>
+        
+        <div><span class="text-slate-400">Majör İlaç Grupları:</span> <span class="${medsList.length > 0 ? "text-rose-600 font-bold" : "font-medium"}">${medsText}</span></div>
+        <div class="col-span-2"><span class="text-slate-400">Diğer İlaçlar:</span> <span class="italic">${r.medOther || "Belirtilmemiş"}</span></div>
+        
+        <div class="col-span-2 md:col-span-3 border-t border-dashed mt-1 pt-2"></div>
+
+        <div><span class="text-slate-400">Kardiyak/HT/DM:</span> ${(r.cardiac || r.ht || r.diabetes) ? "Var" : "Yok"}</div>
+        <div><span class="text-slate-400">DVT/PE/Malignite:</span> <span class="${(r.dvt || r.activeMalignancy) ? "text-rose-600 font-bold" : ""}">${(r.dvt || r.activeMalignancy) ? "Var ⚠" : "Yok"}</span></div>
+        <div><span class="text-slate-400">Keloid Skar:</span> <span class="${r.keloid ? "text-amber-600 font-bold" : ""}">${r.keloid ? "Var ⚠" : "Yok"}</span></div>
       </div>
-      ${selectedCase.expectations ? `<div class="mt-3 p-3 bg-slate-50 rounded-lg text-sm"><span class="text-slate-400">Beklenti: </span>${selectedCase.expectations}</div>` : ""}
-      ${r.smokeDetail ? `<div class="mt-2 text-xs text-slate-500">Sigara detayı: ${r.smokeDetail}</div>` : ""}
+      <div class="mt-3 text-xs text-slate-500 bg-slate-100 p-2 rounded"><strong>Geçmiş:</strong> ${selectedCase.medHistory || "—"} <br/><strong>Beklenti:</strong> ${selectedCase.expectations || "—"}</div>
     `;
 
-    // PR hints for CV fields
-    document.getElementById("pr-smoking").textContent = smokingLabel;
-    document.getElementById("pr-anticoag").textContent = r.anticoagulant ? "Evet" : "Hayır";
+    document.getElementById("pr-smoking").textContent = r.smoking;
+    document.getElementById("pr-anticoag").textContent = r.medBloodThinners || r.anticoagulant ? "Kullanıyor" : "Yok";
     document.getElementById("pr-bmi").textContent = a.bmi ?? "—";
 
-    // Pre-fill CV fields
     const cl = selectedCase.clinician ?? {};
     document.getElementById("clinicianName").value = cl.name ?? "";
     document.getElementById("cv-asa").value = cl.asa ?? "";
@@ -420,20 +433,20 @@
     document.getElementById("cv-anticoag").value = cl.anticoagVerified ?? "";
     document.getElementById("cv-bmi").value = cl.bmiMeasured ?? "";
     document.getElementById("examNote").value = cl.examNote ?? "";
+    
     const v = cl.validations ?? {};
     document.getElementById("v_smoking").checked = !!v.smoking;
     document.getElementById("v_meds").checked = !!v.meds;
-    document.getElementById("v_comorb").checked = !!v.comorb;
-    document.getElementById("v_bmi").checked = !!v.bmi;
+    document.getElementById("v_labs").checked = !!v.labs; // Yeni eklenen lab onayı
+
     document.getElementById("decision").value = cl.decision ?? "";
     document.getElementById("rationale").value = cl.rationale ?? "";
 
     renderCurrentFlags();
     updateReportPreview();
-    applySearch(); // re-render list to highlight selected
+    applySearch();
   }
 
-  // ─── FLAGS ───────────────────────────────────────────────────────────────
   function getCVOverrides() {
     return {
       asa: document.getElementById("cv-asa").value || null,
@@ -451,31 +464,28 @@
     el.innerHTML = "";
 
     if (!flags.length) {
-      el.innerHTML = `<span class="chip border-emerald-300 text-emerald-700 bg-emerald-50">Kritik flag yok</span>`;
+      el.innerHTML = `<span class="chip border-emerald-300 text-emerald-700 bg-emerald-50 font-medium">Risk tespiti temiz</span>`;
     } else {
       flags.forEach(f => {
-        const span = document.createElement("span");
-        const cls = f.type === "HARD" ? "border-rose-300 text-rose-700 bg-rose-50"
+        const cls = f.type === "HARD" ? "border-rose-300 text-rose-700 bg-rose-50 font-bold"
           : f.type === "SOFT" ? "border-amber-300 text-amber-700 bg-amber-50"
           : "border-blue-300 text-blue-700 bg-blue-50";
-        span.className = "chip " + cls;
-        span.title = f.desc;
-        span.textContent = `[${f.type}] ${f.title}`;
-        el.appendChild(span);
+        el.innerHTML += `<div class="text-sm p-2 rounded border ${cls} w-full flex justify-between">
+          <span><strong>[${f.type}]</strong> ${f.title}</span> <span class="text-xs opacity-80">${f.desc}</span>
+        </div>`;
       });
     }
 
-    // Gate suggestion (MEDİKOLEGAL DİL GÜNCELLEMESİ)
     const gate = gateFromFlags(flags);
     const sug = document.getElementById("gateSuggestion");
     const gateMap = {
-      eligible:    { text: "Risk Değerlendirmesi: Belirgin bir majör risk saptanmadı. Rutin süreç işletilebilir.", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
-      conditional: { text: "Risk Değerlendirmesi: Dikkat gerektiren kriterler (SOFT) mevcut. Şartlı onay veya ek değerlendirme önerilir.", cls: "bg-amber-50 border-amber-200 text-amber-800" },
-      verify:      { text: "Risk Değerlendirmesi: Teyit edilmemiş hasta beyanları var. Karar öncesi klinik doğrulama (CV) gerekli.", cls: "bg-blue-50 border-blue-200 text-blue-800" },
+      eligible:    { text: "Risk Değerlendirmesi: Majör risk saptanmadı. Rutin süreç işletilebilir.", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+      conditional: { text: "Risk Değerlendirmesi: Dikkat gerektiren (SOFT) kriterler mevcut. Şartlı onay önerilir.", cls: "bg-amber-50 border-amber-200 text-amber-800" },
+      verify:      { text: "Risk Değerlendirmesi: Karar öncesi klinisyen doğrulaması (CV) gerekli.", cls: "bg-blue-50 border-blue-200 text-blue-800" },
       ineligible:  { text: "Risk Değerlendirmesi: Majör kontrendikasyon (HARD) tespit edildi. Ek konsültasyon veya red önerilir.", cls: "bg-rose-50 border-rose-200 text-rose-800" },
     };
     sug.classList.remove("hidden");
-    sug.className = `mb-4 rounded-lg p-3 text-sm border ${gateMap[gate].cls}`;
+    sug.className = `mb-4 rounded-lg p-3 text-sm border font-medium ${gateMap[gate].cls}`;
     sug.textContent = gateMap[gate].text;
   }
 
@@ -484,7 +494,8 @@
     updateReportPreview();
   };
 
-  // ─── REPORT PREVIEW ──────────────────────────────────────────────────────
+  document.getElementById("v_labs").addEventListener("change", updateReportPreview);
+
   window.updateReportPreview = function() {
     if (!selectedCase) return;
     const flags = computeFlags(selectedCase, getCVOverrides());
@@ -493,51 +504,65 @@
     const dec = document.getElementById("decision").value;
     const rat = document.getElementById("rationale").value;
     const clinName = document.getElementById("clinicianName").value;
+    const labsVerified = document.getElementById("v_labs").checked;
 
     document.getElementById("reportTimestamp").textContent = new Date().toLocaleString("tr-TR");
     document.getElementById("reportCaseId").textContent = selectedCase.id;
-    document.getElementById("r_patient").textContent = `${selectedCase.patient?.fullName ?? "—"} (${selectedCase.patient?.age ?? "?"} yaş)`;
-    document.getElementById("r_procedure").textContent = `${selectedCase.procedure?.name ?? "—"}${selectedCase.procedure?.revision ? " — Revizyon" : ""}`;
-    document.getElementById("r_bmi").textContent = cvBmi ? cvBmi + " kg/m²" : (selectedCase.anthropometrics?.bmi ?? "—") + " kg/m² (beyan)";
+    document.getElementById("r_patient").textContent = `${selectedCase.patient?.fullName ?? "—"} (${selectedCase.patient?.age ?? "?"}y)`;
+    document.getElementById("r_procedure").textContent = `${selectedCase.procedure?.name ?? "—"}`;
+    document.getElementById("r_bmi").textContent = cvBmi ? cvBmi + " kg/m²" : (selectedCase.anthropometrics?.bmi ?? "—") + " (beyan)";
     document.getElementById("r_asa").textContent = asa ? "ASA " + asa : "—";
     document.getElementById("r_rationale").textContent = rat || "—";
-    document.getElementById("r_clinician_sig").textContent = clinName ? ` · Dr. ${clinName}` : "";
+    document.getElementById("r_clinician_sig").textContent = clinName ? `Dr. ${clinName}` : "";
 
-    // Flags
     const rfl = document.getElementById("r_flags");
     rfl.innerHTML = flags.length
-      ? flags.map(f => `<span class="chip ${f.type === "HARD" ? "border-rose-300 text-rose-700 bg-rose-50" : f.type === "SOFT" ? "border-amber-300 text-amber-700 bg-amber-50" : "border-blue-300 text-blue-700 bg-blue-50"}">[${f.type}] ${f.title}</span>`).join("")
-      : "<span class='text-slate-400 text-xs'>—</span>";
+      ? flags.map(f => `<div class="text-sm border-b pb-1"><strong>[${f.type}] ${f.title}:</strong> ${f.desc}</div>`).join("")
+      : "<div class='text-sm text-slate-500'>Sistemik majör risk bayrağı tespit edilmedi.</div>";
 
-    // Decision box
+    const labStatusBox = document.getElementById("r_lab_status");
+    if (labsVerified) {
+      labStatusBox.classList.remove("hidden");
+    } else {
+      labStatusBox.classList.add("hidden");
+    }
+
     const db2 = document.getElementById("r_decision_box");
     if (dec) {
       db2.style.display = "block";
       const decMap = {
-        suitable: { text: "✓ Uygun", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
-        conditional: { text: "◐ Şartlı Uygun", cls: "bg-amber-50 border-amber-200 text-amber-800" },
-        not_suitable: { text: "✗ Uygun Değil", cls: "bg-rose-50 border-rose-200 text-rose-800" }
+        suitable: { text: "✓ OPERASYONA UYGUN (CLEARANCE GIVEN)", cls: "bg-emerald-50 border-emerald-300 text-emerald-800" },
+        conditional: { text: "◐ ŞARTLI UYGUN (KONSÜLTASYON/EK TEDAVİ)", cls: "bg-amber-50 border-amber-300 text-amber-800" },
+        not_suitable: { text: "✗ UYGUN DEĞİL / İPTAL (NOT CLEARED)", cls: "bg-rose-50 border-rose-300 text-rose-800" }
       };
-      db2.className = `rounded-lg p-3 mb-3 border text-sm font-medium ${decMap[dec].cls}`;
+      db2.className = `rounded-lg p-3 mb-4 border text-base font-bold text-center uppercase tracking-wide ${decMap[dec].cls}`;
       db2.textContent = decMap[dec].text;
     } else {
       db2.style.display = "none";
     }
   };
 
-  // ─── SAVE (VERIFY BLOKER EKLENDİ) ────────────────────────────────────────
+  // ─── SAVE KAYIT BLOKAJLARI ────────────────────────────────────────────────
   document.getElementById("saveBtn").addEventListener("click", async () => {
     if (!selectedCaseId) return;
 
-    // 1. VERIFY Block check
+    // VERIFY Bloker
     const currentFlags = computeFlags(selectedCase, getCVOverrides());
     if (currentFlags.some(f => f.type === "VERIFY")) {
-      showAlert("err", "Kayıt öncesi lütfen tüm 'VERIFY' (Doğrulama Gerekli) uyarılı alanları teyit edin.");
+      showAlert("err", "Kayıt öncesi lütfen 'Doğrulama Gerekli (VERIFY)' uyarılarını CV panelinden teyit edin.");
       return;
     }
 
-    if (!document.getElementById("decision").value) { showAlert("err", "Karar seçilmeden kaydedilemez."); return; }
+    // Karar ve Hekim Adı Zorunluluğu
+    const decision = document.getElementById("decision").value;
+    if (!decision) { showAlert("err", "Lütfen Nihai Karar seçiniz."); return; }
     if (!document.getElementById("clinicianName").value.trim()) { showAlert("err", "Klinisyen adı zorunludur."); return; }
+
+    // Uygun kararı verilmişse Laboratuvar Onay uyarısı
+    if (decision === "suitable" && !document.getElementById("v_labs").checked) {
+      const isSure = confirm("Laboratuvar tetkik onayı kutusu İŞARETLENMEMİŞ. Yine de vaka onayını kaydetmek istiyor musunuz?");
+      if(!isSure) return;
+    }
 
     try {
       await updateDoc(doc(db, "cases", selectedCaseId), {
@@ -548,13 +573,12 @@
           anticoagVerified: document.getElementById("cv-anticoag").value || null,
           bmiMeasured: parseFloat(document.getElementById("cv-bmi").value) || null,
           examNote: document.getElementById("examNote").value.trim() || null,
-          decision: document.getElementById("decision").value,
+          decision: decision,
           rationale: document.getElementById("rationale").value.trim() || null,
           validations: {
             smoking: document.getElementById("v_smoking").checked,
             meds: document.getElementById("v_meds").checked,
-            comorb: document.getElementById("v_comorb").checked,
-            bmi: document.getElementById("v_bmi").checked,
+            labs: document.getElementById("v_labs").checked,
           }
         },
         status: "clinician_reviewed",
@@ -564,12 +588,10 @@
       await fetchCases();
       await loadCase(selectedCaseId);
     } catch (err) {
-      console.error(err);
       showAlert("err", "Kaydetme sırasında bağlantı hatası oluştu.");
     }
   });
 
-  // ─── INIT ────────────────────────────────────────────────────────────────
   document.getElementById("refreshBtn").addEventListener("click", fetchCases);
   document.getElementById("searchBox").addEventListener("input", applySearch);
   await fetchCases();
