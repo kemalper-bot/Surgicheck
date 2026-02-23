@@ -29,7 +29,7 @@
           </div>
           <div class="step-item flex items-center gap-2 flex-1">
             <div id="dot-2" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">2</div>
-            <div class="text-xs text-slate-400 hidden sm:block">Sağlık</div>
+            <div class="text-xs text-slate-400 hidden sm:block">Sağlık & İlaçlar</div>
             <div class="flex-1 h-px bg-slate-200 mx-2"></div>
           </div>
           <div class="step-item flex items-center gap-2 flex-1">
@@ -111,15 +111,32 @@
     </div>
 
     <div id="sec-2" class="hidden bg-white rounded-xl shadow p-6 mb-4">
-      <h2 class="font-semibold text-lg mb-1">Sağlık Geçmişi</h2>
-      <p class="text-sm text-slate-500 mb-5">Aşağıdaki durumların herhangi birini yaşadınız mı veya yaşıyor musunuz?</p>
+      <h2 class="font-semibold text-lg mb-1">Sağlık Geçmişi ve İlaçlar</h2>
+      <p class="text-sm text-slate-500 mb-5">Operasyon risklerini değerlendirmemiz için lütfen eksiksiz doldurun.</p>
 
-      <div class="space-y-4">
+      <div class="space-y-6">
+        
+        <div class="rounded-lg border border-blue-200 bg-blue-50/50 p-4">
+          <label class="text-sm font-medium text-slate-800">Düzenli Kullanılan İlaç Grupları</label>
+          <p class="text-xs text-slate-500 mb-3">Aşağıdaki ilaç gruplarından herhangi birini kullanıyorsanız işaretleyiniz:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_bloodThinners" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Kan Sulandırıcı (Aspirin, Coraspin, Plavix vb.)</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_ocp" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Doğum Kontrol / Hormon (Yazz, Microgynon vb.)</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_glp1" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Zayıflama İğnesi/İlacı (Ozempic, Saxenda vb.)</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_acne" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Ağır Akne İlacı (Roaccutane, Zoretanin vb.)</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_psych" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Psikiyatrik İlaç (Antidepresan, Xanax vb.)</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="med_steroid" class="accent-blue-600 w-4 h-4" /> <span class="text-sm">Kortizon / Steroid Tedavisi</span></label>
+          </div>
+          <div class="mt-4">
+            <label class="text-xs text-slate-600">Diğer Düzenli İlaçlar / Takviyeler</label>
+            <input id="med_other" class="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:outline-none focus:border-slate-400 bg-white" placeholder="Tansiyon, tiroid ilaçları, vitaminler vb. isimlerini yazınız..." />
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
           <div class="rounded-lg border border-slate-200 p-3">
             <label class="text-sm font-medium text-slate-700">Kardiyak Hastalık</label>
-            <p class="text-xs text-slate-400 mb-2">Kalp yetmezliği, kapak hastalığı, miyokard enfarktüsü vb.</p>
+            <p class="text-xs text-slate-400 mb-2">Kalp yetmezliği, kapak hastalığı, kriz vb.</p>
             <div class="flex gap-3">
               <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
               <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
@@ -146,7 +163,7 @@
 
           <div class="rounded-lg border border-slate-200 p-3">
             <label class="text-sm font-medium text-slate-700">Hipertansiyon</label>
-            <p class="text-xs text-slate-400 mb-2">Tanı konulmuş veya ilaç kullanımı</p>
+            <p class="text-xs text-slate-400 mb-2">Tanı konulmuş tansiyon yüksekliği</p>
             <div class="flex gap-3">
               <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
               <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
@@ -163,15 +180,6 @@
           </div>
 
           <div class="rounded-lg border border-slate-200 p-3">
-            <label class="text-sm font-medium text-slate-700">Antikoagülan / Antiplatelet</label>
-            <p class="text-xs text-slate-400 mb-2">Warfarin, rivaroksaban, aspirin vb. kan sulandırıcılar</p>
-            <div class="flex gap-3">
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-            </div>
-          </div>
-
-          <div class="rounded-lg border border-slate-200 p-3">
             <label class="text-sm font-medium text-slate-700">Kötü Yara İyileşmesi (Skar)</label>
             <p class="text-xs text-slate-400 mb-2">Önceki kesilerde keloid, kabarık veya genişlemiş iz</p>
             <div class="flex gap-3">
@@ -179,30 +187,20 @@
               <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="keloid" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
             </div>
           </div>
-
-          <div class="rounded-lg border border-slate-200 p-3">
-            <label class="text-sm font-medium text-slate-700">Psikiyatrik Tedavi / İlaç</label>
-            <p class="text-xs text-slate-400 mb-2">Düzenli antidepresan veya anksiyete ilacı kullanımı</p>
-            <div class="flex gap-3">
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="psych" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="psych" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-            </div>
-          </div>
-
         </div>
 
-        <div id="dynamic-tummy" class="hidden rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <label class="text-sm font-medium text-blue-900">Önceki Gebelik / Sezaryen</label>
-          <p class="text-xs text-blue-700 mb-2">Karın germe (Tummy Tuck) prosedürü için gereklidir.</p>
+        <div id="dynamic-tummy" class="hidden rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <label class="text-sm font-medium text-amber-900">Önceki Gebelik / Sezaryen</label>
+          <p class="text-xs text-amber-700 mb-2">Karın germe (Tummy Tuck) prosedürü için gereklidir.</p>
           <div class="flex gap-3">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="no" checked class="accent-blue-600" /> <span class="text-sm">Hayır</span></label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="yes" class="accent-blue-600" /> <span class="text-sm">Evet</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="no" checked class="accent-amber-600" /> <span class="text-sm">Hayır</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="yes" class="accent-amber-600" /> <span class="text-sm">Evet</span></label>
           </div>
         </div>
 
         <div>
-          <label class="text-sm text-slate-600">Diğer hastalık veya ameliyat geçmişi (opsiyonel)</label>
-          <textarea id="medHistory" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Varsa belirtiniz..."></textarea>
+          <label class="text-sm text-slate-600">Diğer hastalık veya ameliyat geçmişiniz (Serbest Metin)</label>
+          <textarea id="medHistory" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Varsa geçmiş ameliyatlarınızı ve diğer hastalıklarınızı belirtiniz..."></textarea>
         </div>
       </div>
 
@@ -217,7 +215,6 @@
       <p class="text-sm text-slate-500 mb-5">Cerrahi riski doğrudan etkileyen bilgiler.</p>
 
       <div class="space-y-4">
-
         <div class="rounded-lg border border-slate-200 p-4">
           <label class="text-sm font-medium text-slate-700">Sigara Kullanımı *</label>
           <div class="mt-3 space-y-2">
@@ -251,11 +248,6 @@
             </div>
           </div>
         </div>
-
-        <div>
-          <label class="text-sm text-slate-600">Bitkisel takviye / vitamin kullanımı (opsiyonel)</label>
-          <input id="supplements" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Omega-3, sarımsak, E vitamini vb." />
-        </div>
       </div>
 
       <div class="mt-6 flex justify-between">
@@ -266,11 +258,11 @@
 
     <div id="sec-4" class="hidden bg-white rounded-xl shadow p-6 mb-4">
       <h2 class="font-semibold text-lg mb-1">Beklentileriniz</h2>
-      <p class="text-sm text-slate-500 mb-5">Operasyondan beklentileriniz ve özel notlarınız.</p>
+      <p class="text-sm text-slate-500 mb-5">Operasyondan beklentileriniz ve hekiminize özel notlarınız.</p>
 
       <div class="mt-4">
         <label class="text-sm text-slate-600">Beklentilerinizi kısaca yazın *</label>
-        <textarea id="expectations" rows="4" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ne tür bir değişiklik istiyorsunuz? Öncelikleriniz neler?"></textarea>
+        <textarea id="expectations" rows="4" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ne tür bir değişiklik istiyorsunuz? Sizi en çok endişelendiren şey nedir?"></textarea>
       </div>
 
       <div class="mt-6 flex justify-between">
@@ -280,9 +272,9 @@
     </div>
 
     <div id="sec-success" class="hidden bg-white rounded-xl shadow p-10 mb-4 text-center">
-      <div class="text-5xl mb-4">✓</div>
-      <h2 class="text-xl font-semibold">Form gönderildi</h2>
-      <p class="text-slate-500 mt-2 text-sm">Kliniğimiz en kısa sürede sizinle iletişime geçecektir.</p>
+      <div class="text-5xl mb-4 text-emerald-500">✓</div>
+      <h2 class="text-xl font-semibold">Formunuz kliniğe ulaştı</h2>
+      <p class="text-slate-500 mt-2 text-sm">Hekimimiz ön değerlendirmeyi yaptıktan sonra sizinle iletişime geçilecektir.</p>
       <div class="mt-4 inline-block rounded-lg bg-slate-50 border border-slate-200 px-4 py-2">
         <span class="text-xs text-slate-500">Vaka ID: </span>
         <span id="caseIdDisplay" class="font-mono text-sm font-semibold text-slate-800"></span>
@@ -290,7 +282,7 @@
     </div>
 
     <div class="text-xs text-slate-400 text-center pb-6">
-      Kayıtlar klinik tarafından doğrulanacaktır. Yanlış/eksik beyan klinik kararını etkileyebilir.
+      Kayıtlar klinisyen tarafından doğrulanacaktır. Yanlış veya eksik beyan ameliyat kararını etkileyebilir.
     </div>
 
   </div>
@@ -319,7 +311,7 @@
         tummyBlock.classList.remove("hidden");
       } else {
         tummyBlock.classList.add("hidden");
-        document.querySelector('input[name="csection"][value="no"]').checked = true; // reset
+        document.querySelector('input[name="csection"][value="no"]').checked = true;
       }
     });
 
@@ -330,9 +322,7 @@
       const disp = document.getElementById("bmi-display");
       
       if (!h || !w) { disp.classList.add("hidden"); return null; }
-      
-      // Kullanıcı metre girdiyse (örn 1.75) santimetreye çevir (3 metreden kısaysa)
-      if (h < 3) { h = h * 100; }
+      if (h < 3) { h = h * 100; } 
       
       const bmi = w / Math.pow(h / 100, 2);
       const note = bmi < 18.5 ? "(Düşük kilolu)" : bmi < 25 ? "(Normal)" : bmi < 30 ? "(Kilolu)" : bmi < 35 ? "(Obez I)" : "(Obez II+)";
@@ -382,7 +372,7 @@
         const fields = ["procedure", "revision", "fullName", "phone", "email", "age", "heightCm", "weightKg"];
         for (const f of fields) {
           if (!document.getElementById(f).value.trim()) {
-            showAlert("err", "Lütfen tüm zorunlu alanları (Prosedür, E-posta vb.) doldurun.");
+            showAlert("err", "Lütfen tüm zorunlu alanları doldurun.");
             return false;
           }
         }
@@ -395,7 +385,6 @@
       return true;
     }
 
-    // ─── SMOKE DETAIL ────────────────────────────────────────────────────────
     window.toggleSmokeDetail = function() {
       const val = document.querySelector('input[name="smoking"]:checked')?.value;
       const d = document.getElementById("smoke-detail");
@@ -412,9 +401,8 @@
 
       try {
         const bmi = calcBMI();
-        
         let height = parseFloat(document.getElementById("heightCm").value);
-        if (height < 3) { height = height * 100; } // Normalize to cm for DB
+        if (height < 3) { height = height * 100; } 
         
         const procName = document.getElementById("procedure").value;
 
@@ -436,20 +424,29 @@
             bmi: bmi,
           },
           risks: {
+            // Sağlık Geçmişi
             cardiac: document.querySelector('input[name="cardiac"]:checked')?.value === "yes",
             dvt: document.querySelector('input[name="dvt"]:checked')?.value === "yes",
             diabetes: document.querySelector('input[name="diabetes"]:checked')?.value === "yes",
             ht: document.querySelector('input[name="ht"]:checked')?.value === "yes",
             activeMalignancy: document.querySelector('input[name="malignancy"]:checked')?.value === "yes",
-            anticoagulant: document.querySelector('input[name="anticoagulant"]:checked')?.value === "yes",
             keloid: document.querySelector('input[name="keloid"]:checked')?.value === "yes",
-            psych: document.querySelector('input[name="psych"]:checked')?.value === "yes",
             csection: procName === "Tummy Tuck" ? (document.querySelector('input[name="csection"]:checked')?.value === "yes") : false,
+            
+            // İlaçlar
+            medBloodThinners: document.getElementById("med_bloodThinners").checked,
+            medOcp: document.getElementById("med_ocp").checked,
+            medGlp1: document.getElementById("med_glp1").checked,
+            medAcne: document.getElementById("med_acne").checked,
+            medPsych: document.getElementById("med_psych").checked,
+            medSteroid: document.getElementById("med_steroid").checked,
+            medOther: document.getElementById("med_other").value.trim() || null,
+
+            // Alışkanlıklar
             smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
             smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
             alcohol: document.querySelector('input[name="alcohol"]:checked')?.value ?? "none",
             majorWeightLoss: document.querySelector('input[name="majorWeightLoss"]:checked')?.value === "yes",
-            supplements: document.getElementById("supplements").value.trim() || null,
           },
           medHistory: document.getElementById("medHistory").value.trim() || null,
           expectations: document.getElementById("expectations").value.trim(),
@@ -492,7 +489,6 @@
       el.textContent = msg;
       setTimeout(() => el.classList.add("hidden"), 3500);
     }
-
     window.showAlert = showAlert;
   </script>
 </body>
