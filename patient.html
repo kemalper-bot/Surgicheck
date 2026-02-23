@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
@@ -10,268 +9,289 @@
 <body class="bg-slate-50 min-h-screen">
   <div class="max-w-3xl mx-auto p-6">
 
-<!-- Header -->
-<div class="bg-white rounded-xl shadow p-6 mb-6">
-  <div class="flex items-start justify-between">
-    <div>
-      <h1 class="text-2xl font-semibold">SurgiCheck</h1>
-      <p class="text-sm text-slate-500 mt-1">Leo Klinik — Hasta Ön Değerlendirme Formu</p>
-    </div>
-    <div class="text-xs text-slate-400 text-right leading-relaxed">
-      Bu form tanı koymaz.<br/>Nihai karar klinisyene aittir.
-    </div>
-  </div>
-
-  <!-- Progress -->
-  <div class="mt-6">
-    <div class="flex items-center gap-0">
-      <div class="step-item flex items-center gap-2 flex-1">
-        <div id="dot-1" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-black text-white flex-shrink-0">1</div>
-        <div class="text-xs text-slate-600 hidden sm:block">Kişisel</div>
-        <div class="flex-1 h-px bg-slate-200 mx-2"></div>
-      </div>
-      <div class="step-item flex items-center gap-2 flex-1">
-        <div id="dot-2" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">2</div>
-        <div class="text-xs text-slate-400 hidden sm:block">Sağlık</div>
-        <div class="flex-1 h-px bg-slate-200 mx-2"></div>
-      </div>
-      <div class="step-item flex items-center gap-2 flex-1">
-        <div id="dot-3" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">3</div>
-        <div class="text-xs text-slate-400 hidden sm:block">Alışkanlıklar</div>
-        <div class="flex-1 h-px bg-slate-200 mx-2"></div>
-      </div>
-      <div class="step-item flex items-center gap-2">
-        <div id="dot-4" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">4</div>
-        <div class="text-xs text-slate-400 hidden sm:block">Prosedür</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="alert" class="hidden mb-4 rounded-lg p-3 text-sm"></div>
-
-<!-- SECTION 1: Personal -->
-<div id="sec-1" class="bg-white rounded-xl shadow p-6 mb-4">
-  <h2 class="font-semibold text-lg mb-4">Kişisel Bilgiler</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="text-sm text-slate-600">Ad Soyad *</label>
-      <input id="fullName" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ad Soyad" />
-    </div>
-    <div>
-      <label class="text-sm text-slate-600">Telefon *</label>
-      <input id="phone" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="+90 5XX XXX XX XX" />
-    </div>
-    <div>
-      <label class="text-sm text-slate-600">E-posta *</label>
-      <input id="email" type="email" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="email@ornek.com" />
-    </div>
-    <div>
-      <label class="text-sm text-slate-600">Yaş *</label>
-      <input id="age" type="number" min="16" max="100" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="35" />
-    </div>
-    <div>
-      <label class="text-sm text-slate-600">Boy (cm) *</label>
-      <input id="heightCm" type="number" min="120" max="220" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="165" />
-    </div>
-    <div>
-      <label class="text-sm text-slate-600">Kilo (kg) *</label>
-      <input id="weightKg" type="number" min="35" max="250" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="70" />
-    </div>
-  </div>
-  <div id="bmi-display" class="hidden mt-3 rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">
-    Hesaplanan BMI: <strong id="bmi-val" class="text-slate-800"></strong> <span id="bmi-note" class="text-slate-500"></span>
-  </div>
-  <div class="mt-6 flex justify-end">
-    <button onclick="nextStep(1)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
-  </div>
-</div>
-
-<!-- SECTION 2: Medical History -->
-<div id="sec-2" class="hidden bg-white rounded-xl shadow p-6 mb-4">
-  <h2 class="font-semibold text-lg mb-1">Sağlık Geçmişi</h2>
-  <p class="text-sm text-slate-500 mb-5">Aşağıdaki durumların herhangi birini yaşadınız mı veya yaşıyor musunuz?</p>
-
-  <div class="space-y-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Kardiyak Hastalık</label>
-        <p class="text-xs text-slate-400 mb-2">Kalp yetmezliği, kapak hastalığı, miyokard enfarktüsü vb.</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold">SurgiCheck</h1>
+          <p class="text-sm text-slate-500 mt-1">Leo Klinik — Hasta Ön Değerlendirme Formu</p>
+        </div>
+        <div class="text-xs text-slate-400 text-right leading-relaxed">
+          Bu form tanı koymaz.<br/>Nihai karar klinisyene aittir.
         </div>
       </div>
 
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">DVT / Pulmoner Emboli</label>
-        <p class="text-xs text-slate-400 mb-2">Derin ven trombozu veya akciğer pıhtısı geçmişi</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="dvt" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="dvt" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Diyabet</label>
-        <p class="text-xs text-slate-400 mb-2">Tip 1 veya Tip 2</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="diabetes" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="diabetes" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Hipertansiyon</label>
-        <p class="text-xs text-slate-400 mb-2">Tanı konulmuş veya ilaç kullanımı</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Aktif Malignite</label>
-        <p class="text-xs text-slate-400 mb-2">Devam eden kanser tedavisi</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="malignancy" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="malignancy" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Antikoagülan / Antiplatelet İlaç</label>
-        <p class="text-xs text-slate-400 mb-2">Warfarin, rivaroksaban, aspirin vb.</p>
-        <div class="flex gap-3">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
-        </div>
-      </div>
-
-    </div>
-
-    <div>
-      <label class="text-sm text-slate-600">Diğer hastalık veya ameliyat geçmişi (opsiyonel)</label>
-      <textarea id="medHistory" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Varsa belirtiniz..."></textarea>
-    </div>
-  </div>
-
-  <div class="mt-6 flex justify-between">
-    <button onclick="prevStep(2)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
-    <button onclick="nextStep(2)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
-  </div>
-</div>
-
-<!-- SECTION 3: Habits -->
-<div id="sec-3" class="hidden bg-white rounded-xl shadow p-6 mb-4">
-  <h2 class="font-semibold text-lg mb-1">Alışkanlıklar</h2>
-  <p class="text-sm text-slate-500 mb-5">Cerrahi riski doğrudan etkileyen bilgiler.</p>
-
-  <div class="space-y-4">
-
-    <div class="rounded-lg border border-slate-200 p-4">
-      <label class="text-sm font-medium text-slate-700">Sigara Kullanımı *</label>
-      <div class="mt-3 space-y-2">
-        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="never" checked class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Hiç kullanmadım</span></label>
-        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="quit_6m_plus" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Bıraktım — 6 aydan fazla önce</span></label>
-        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="quit_recent" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Bıraktım — son 6 ay içinde</span></label>
-        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="active" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Aktif içiyorum</span></label>
-      </div>
-      <div id="smoke-detail" class="hidden mt-3">
-        <label class="text-sm text-slate-600">Günde kaç adet? / Ne zaman bıraktınız?</label>
-        <input id="smokeDetail" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Örn: 15 adet/gün veya 3 ay önce bıraktım" />
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Alkol Tüketimi</label>
-        <div class="mt-2 space-y-1">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="none" checked class="accent-black" /> <span class="text-sm">Kullanmıyorum</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="occasional" class="accent-black" /> <span class="text-sm">Sosyal (ara sıra)</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="regular" class="accent-black" /> <span class="text-sm">Düzenli</span></label>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-slate-200 p-3">
-        <label class="text-sm font-medium text-slate-700">Büyük Kilo Kaybı (>15 kg)</label>
-        <p class="text-xs text-slate-400 mb-2">Son 2 yıl içinde</p>
-        <div class="flex gap-3 mt-2">
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="majorWeightLoss" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
-          <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="majorWeightLoss" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+      <div class="mt-6">
+        <div class="flex items-center gap-0">
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-1" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-black text-white flex-shrink-0">1</div>
+            <div class="text-xs text-slate-600 hidden sm:block">Kişisel & Prosedür</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-2" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">2</div>
+            <div class="text-xs text-slate-400 hidden sm:block">Sağlık</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-3" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">3</div>
+            <div class="text-xs text-slate-400 hidden sm:block">Alışkanlıklar</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2">
+            <div id="dot-4" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">4</div>
+            <div class="text-xs text-slate-400 hidden sm:block">Beklentiler</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div>
-      <label class="text-sm text-slate-600">Bitkisel takviye / vitamin kullanımı (opsiyonel)</label>
-      <input id="supplements" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Omega-3, sarımsak, E vitamini vb." />
+    <div id="alert" class="hidden mb-4 rounded-lg p-3 text-sm"></div>
+
+    <div id="sec-1" class="bg-white rounded-xl shadow p-6 mb-4">
+      <h2 class="font-semibold text-lg mb-4">Kişisel Bilgiler ve Prosedür</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="text-sm text-slate-600">Planlanan Prosedür *</label>
+          <select id="procedure" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400">
+            <option value="" disabled selected>Seçiniz...</option>
+            <option value="Rinoplasti">Rinoplasti</option>
+            <option value="Blefaroplasti">Blefaroplasti</option>
+            <option value="Breast Lift">Breast Lift</option>
+            <option value="Meme Büyütme">Meme Büyütme</option>
+            <option value="Meme Küçültme">Meme Küçültme</option>
+            <option value="Liposuction">Liposuction</option>
+            <option value="Tummy Tuck">Tummy Tuck (Karın Germe)</option>
+            <option value="BBL">BBL</option>
+            <option value="Facelift">Facelift</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Aynı bölgede önceki ameliyat var mı? *</label>
+          <select id="revision" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400">
+            <option value="no">Hayır</option>
+            <option value="yes">Evet — revizyon</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-slate-600">Ad Soyad *</label>
+          <input id="fullName" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ad Soyad" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Telefon *</label>
+          <input id="phone" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="+90 5XX XXX XX XX" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">E-posta * <span class="text-xs text-slate-400">(Bilgilendirmeler için zorunlu)</span></label>
+          <input id="email" type="email" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="email@ornek.com" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Yaş *</label>
+          <input id="age" type="number" min="16" max="100" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="35" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Boy (cm) *</label>
+          <input id="heightCm" type="number" min="1.20" step="any" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Örn: 165 veya 1.65" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-600">Kilo (kg) *</label>
+          <input id="weightKg" type="number" min="35" max="250" step="any" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="70" />
+        </div>
+      </div>
+      <div id="bmi-display" class="hidden mt-3 rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">
+        Hesaplanan BMI: <strong id="bmi-val" class="text-slate-800"></strong> <span id="bmi-note" class="text-slate-500"></span>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button onclick="nextStep(1)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
+      </div>
     </div>
-  </div>
 
-  <div class="mt-6 flex justify-between">
-    <button onclick="prevStep(3)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
-    <button onclick="nextStep(3)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
-  </div>
-</div>
+    <div id="sec-2" class="hidden bg-white rounded-xl shadow p-6 mb-4">
+      <h2 class="font-semibold text-lg mb-1">Sağlık Geçmişi</h2>
+      <p class="text-sm text-slate-500 mb-5">Aşağıdaki durumların herhangi birini yaşadınız mı veya yaşıyor musunuz?</p>
 
-<!-- SECTION 4: Procedure -->
-<div id="sec-4" class="hidden bg-white rounded-xl shadow p-6 mb-4">
-  <h2 class="font-semibold text-lg mb-1">Prosedür ve Beklentiler</h2>
-  <p class="text-sm text-slate-500 mb-5">Talep ettiğiniz prosedür ve beklentileriniz.</p>
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="text-sm text-slate-600">Planlanan Prosedür *</label>
-      <select id="procedure" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400">
-        <option value="" disabled selected>Seçiniz...</option>
-        <option>Rinoplasti</option>
-        <option>Blefaroplasti</option>
-        <option>Breast Lift</option>
-        <option>Meme Büyütme</option>
-        <option>Meme Küçültme</option>
-        <option>Liposuction</option>
-        <option>Tummy Tuck</option>
-        <option>BBL</option>
-        <option>Facelift</option>
-        <option>Diğer</option>
-      </select>
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Kardiyak Hastalık</label>
+            <p class="text-xs text-slate-400 mb-2">Kalp yetmezliği, kapak hastalığı, miyokard enfarktüsü vb.</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cardiac" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">DVT / Pulmoner Emboli</label>
+            <p class="text-xs text-slate-400 mb-2">Derin ven trombozu veya akciğer pıhtısı geçmişi</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="dvt" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="dvt" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Diyabet</label>
+            <p class="text-xs text-slate-400 mb-2">Tip 1 veya Tip 2</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="diabetes" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="diabetes" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Hipertansiyon</label>
+            <p class="text-xs text-slate-400 mb-2">Tanı konulmuş veya ilaç kullanımı</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="ht" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Aktif Malignite</label>
+            <p class="text-xs text-slate-400 mb-2">Devam eden kanser tedavisi</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="malignancy" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="malignancy" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Antikoagülan / Antiplatelet</label>
+            <p class="text-xs text-slate-400 mb-2">Warfarin, rivaroksaban, aspirin vb. kan sulandırıcılar</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="anticoagulant" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Kötü Yara İyileşmesi (Skar)</label>
+            <p class="text-xs text-slate-400 mb-2">Önceki kesilerde keloid, kabarık veya genişlemiş iz</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="keloid" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="keloid" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Psikiyatrik Tedavi / İlaç</label>
+            <p class="text-xs text-slate-400 mb-2">Düzenli antidepresan veya anksiyete ilacı kullanımı</p>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="psych" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="psych" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="dynamic-tummy" class="hidden rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <label class="text-sm font-medium text-blue-900">Önceki Gebelik / Sezaryen</label>
+          <p class="text-xs text-blue-700 mb-2">Karın germe (Tummy Tuck) prosedürü için gereklidir.</p>
+          <div class="flex gap-3">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="no" checked class="accent-blue-600" /> <span class="text-sm">Hayır</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="csection" value="yes" class="accent-blue-600" /> <span class="text-sm">Evet</span></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm text-slate-600">Diğer hastalık veya ameliyat geçmişi (opsiyonel)</label>
+          <textarea id="medHistory" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Varsa belirtiniz..."></textarea>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between">
+        <button onclick="prevStep(2)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
+        <button onclick="nextStep(2)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
+      </div>
     </div>
-    <div>
-      <label class="text-sm text-slate-600">Aynı bölgede önceki ameliyat var mı? *</label>
-      <select id="revision" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400">
-        <option value="no">Hayır</option>
-        <option value="yes">Evet — revizyon</option>
-      </select>
+
+    <div id="sec-3" class="hidden bg-white rounded-xl shadow p-6 mb-4">
+      <h2 class="font-semibold text-lg mb-1">Alışkanlıklar</h2>
+      <p class="text-sm text-slate-500 mb-5">Cerrahi riski doğrudan etkileyen bilgiler.</p>
+
+      <div class="space-y-4">
+
+        <div class="rounded-lg border border-slate-200 p-4">
+          <label class="text-sm font-medium text-slate-700">Sigara Kullanımı *</label>
+          <div class="mt-3 space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="never" checked class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Hiç kullanmadım</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="quit_6m_plus" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Bıraktım — 6 aydan fazla önce</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="quit_recent" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Bıraktım — son 6 ay içinde</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="smoking" value="active" class="accent-black" onchange="toggleSmokeDetail()" /> <span class="text-sm">Aktif içiyorum</span></label>
+          </div>
+          <div id="smoke-detail" class="hidden mt-3">
+            <label class="text-sm text-slate-600">Günde kaç adet? / Ne zaman bıraktınız?</label>
+            <input id="smokeDetail" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Örn: 15 adet/gün veya 3 ay önce bıraktım" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Alkol Tüketimi</label>
+            <div class="mt-2 space-y-1">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="none" checked class="accent-black" /> <span class="text-sm">Kullanmıyorum</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="occasional" class="accent-black" /> <span class="text-sm">Sosyal (ara sıra)</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="alcohol" value="regular" class="accent-black" /> <span class="text-sm">Düzenli</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 p-3">
+            <label class="text-sm font-medium text-slate-700">Büyük Kilo Kaybı (>15 kg)</label>
+            <p class="text-xs text-slate-400 mb-2">Son 2 yıl içinde</p>
+            <div class="flex gap-3 mt-2">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="majorWeightLoss" value="no" checked class="accent-black" /> <span class="text-sm">Hayır</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="majorWeightLoss" value="yes" class="accent-black" /> <span class="text-sm">Evet</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm text-slate-600">Bitkisel takviye / vitamin kullanımı (opsiyonel)</label>
+          <input id="supplements" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Omega-3, sarımsak, E vitamini vb." />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-between">
+        <button onclick="prevStep(3)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
+        <button onclick="nextStep(3)" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Devam →</button>
+      </div>
     </div>
-  </div>
 
-  <div class="mt-4">
-    <label class="text-sm text-slate-600">Beklentilerinizi kısaca yazın *</label>
-    <textarea id="expectations" rows="4" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ne değişiklik istiyorsunuz? Öncelikleriniz neler?"></textarea>
-  </div>
+    <div id="sec-4" class="hidden bg-white rounded-xl shadow p-6 mb-4">
+      <h2 class="font-semibold text-lg mb-1">Beklentileriniz</h2>
+      <p class="text-sm text-slate-500 mb-5">Operasyondan beklentileriniz ve özel notlarınız.</p>
 
-  <div class="mt-6 flex justify-between">
-    <button onclick="prevStep(4)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
-    <button onclick="submitForm()" id="submitBtn" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Formu Gönder ✓</button>
-  </div>
-</div>
+      <div class="mt-4">
+        <label class="text-sm text-slate-600">Beklentilerinizi kısaca yazın *</label>
+        <textarea id="expectations" rows="4" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ne tür bir değişiklik istiyorsunuz? Öncelikleriniz neler?"></textarea>
+      </div>
 
-<!-- SUCCESS -->
-<div id="sec-success" class="hidden bg-white rounded-xl shadow p-10 mb-4 text-center">
-  <div class="text-5xl mb-4">✓</div>
-  <h2 class="text-xl font-semibold">Form gönderildi</h2>
-  <p class="text-slate-500 mt-2 text-sm">Kliniğimiz en kısa sürede sizinle iletişime geçecektir.</p>
-  <div class="mt-4 inline-block rounded-lg bg-slate-50 border border-slate-200 px-4 py-2">
-    <span class="text-xs text-slate-500">Vaka ID: </span>
-    <span id="caseIdDisplay" class="font-mono text-sm font-semibold text-slate-800"></span>
-  </div>
-</div>
+      <div class="mt-6 flex justify-between">
+        <button onclick="prevStep(4)" class="rounded-lg border border-slate-200 text-slate-600 px-5 py-2 text-sm">← Geri</button>
+        <button onclick="submitForm()" id="submitBtn" class="rounded-lg bg-black text-white px-5 py-2 text-sm font-medium hover:bg-slate-800">Formu Gönder ✓</button>
+      </div>
+    </div>
 
-<div class="text-xs text-slate-400 text-center pb-6">
-  Kayıtlar klinik tarafından doğrulanacaktır. Yanlış/eksik beyan klinik kararını etkileyebilir.
-</div>
+    <div id="sec-success" class="hidden bg-white rounded-xl shadow p-10 mb-4 text-center">
+      <div class="text-5xl mb-4">✓</div>
+      <h2 class="text-xl font-semibold">Form gönderildi</h2>
+      <p class="text-slate-500 mt-2 text-sm">Kliniğimiz en kısa sürede sizinle iletişime geçecektir.</p>
+      <div class="mt-4 inline-block rounded-lg bg-slate-50 border border-slate-200 px-4 py-2">
+        <span class="text-xs text-slate-500">Vaka ID: </span>
+        <span id="caseIdDisplay" class="font-mono text-sm font-semibold text-slate-800"></span>
+      </div>
+    </div>
+
+    <div class="text-xs text-slate-400 text-center pb-6">
+      Kayıtlar klinik tarafından doğrulanacaktır. Yanlış/eksik beyan klinik kararını etkileyebilir.
+    </div>
 
   </div>
 
@@ -291,25 +311,32 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ─── BMI ─────────────────────────────────────────────────────────────────
+    // ─── DYNAMIC FORM LOGIC ──────────────────────────────────────────────────
+    document.getElementById("procedure").addEventListener("change", (e) => {
+      const proc = e.target.value;
+      const tummyBlock = document.getElementById("dynamic-tummy");
+      if (proc === "Tummy Tuck") {
+        tummyBlock.classList.remove("hidden");
+      } else {
+        tummyBlock.classList.add("hidden");
+        document.querySelector('input[name="csection"][value="no"]').checked = true; // reset
+      }
+    });
+
+    // ─── BMI (Sanitized) ─────────────────────────────────────────────────────
     function calcBMI() {
       let h = parseFloat(document.getElementById("heightCm").value);
       const w = parseFloat(document.getElementById("weightKg").value);
       const disp = document.getElementById("bmi-display");
+      
       if (!h || !w) { disp.classList.add("hidden"); return null; }
-
-      // Sanitasyon: hasta boyu metre cinsinden girdiyse (örn. 1.65) santimetreye çevir
-      if (h < 3) {
-        h = h * 100;
-        document.getElementById("heightCm").value = Math.round(h);
-      }
-
+      
+      // Kullanıcı metre girdiyse (örn 1.75) santimetreye çevir (3 metreden kısaysa)
+      if (h < 3) { h = h * 100; }
+      
       const bmi = w / Math.pow(h / 100, 2);
-
-      // Saçma BMI değerlerini filtrele
-      if (bmi < 10 || bmi > 80) { disp.classList.add("hidden"); return null; }
-
       const note = bmi < 18.5 ? "(Düşük kilolu)" : bmi < 25 ? "(Normal)" : bmi < 30 ? "(Kilolu)" : bmi < 35 ? "(Obez I)" : "(Obez II+)";
+      
       document.getElementById("bmi-val").textContent = bmi.toFixed(1);
       document.getElementById("bmi-note").textContent = note;
       disp.classList.remove("hidden");
@@ -352,24 +379,15 @@
 
     function validateStep(step) {
       if (step === 1) {
-        const fields = ["fullName", "phone", "email", "age", "heightCm", "weightKg"];
+        const fields = ["procedure", "revision", "fullName", "phone", "email", "age", "heightCm", "weightKg"];
         for (const f of fields) {
           if (!document.getElementById(f).value.trim()) {
-            showAlert("err", "Lütfen tüm zorunlu alanları doldurun (e-posta dahil).");
+            showAlert("err", "Lütfen tüm zorunlu alanları (Prosedür, E-posta vb.) doldurun.");
             return false;
           }
         }
-        // E-posta format kontrolü
-        const email = document.getElementById("email").value.trim();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          showAlert("err", "Geçerli bir e-posta adresi giriniz.");
-          return false;
-        }
       }
       if (step === 4) {
-        if (!document.getElementById("procedure").value) {
-          showAlert("err", "Lütfen prosedür seçin."); return false;
-        }
         if (!document.getElementById("expectations").value.trim()) {
           showAlert("err", "Lütfen beklentilerinizi yazın."); return false;
         }
@@ -394,20 +412,26 @@
 
       try {
         const bmi = calcBMI();
+        
+        let height = parseFloat(document.getElementById("heightCm").value);
+        if (height < 3) { height = height * 100; } // Normalize to cm for DB
+        
+        const procName = document.getElementById("procedure").value;
+
         const payload = {
           clinic: { name: "Leo Klinik" },
           patient: {
             fullName: document.getElementById("fullName").value.trim(),
             phone: document.getElementById("phone").value.trim(),
-            email: document.getElementById("email").value.trim() || null,
+            email: document.getElementById("email").value.trim(),
             age: Number(document.getElementById("age").value),
           },
           procedure: {
-            name: document.getElementById("procedure").value,
+            name: procName,
             revision: document.getElementById("revision").value === "yes"
           },
           anthropometrics: {
-            heightCm: Number(document.getElementById("heightCm").value),
+            heightCm: height,
             weightKg: Number(document.getElementById("weightKg").value),
             bmi: bmi,
           },
@@ -418,6 +442,9 @@
             ht: document.querySelector('input[name="ht"]:checked')?.value === "yes",
             activeMalignancy: document.querySelector('input[name="malignancy"]:checked')?.value === "yes",
             anticoagulant: document.querySelector('input[name="anticoagulant"]:checked')?.value === "yes",
+            keloid: document.querySelector('input[name="keloid"]:checked')?.value === "yes",
+            psych: document.querySelector('input[name="psych"]:checked')?.value === "yes",
+            csection: procName === "Tummy Tuck" ? (document.querySelector('input[name="csection"]:checked')?.value === "yes") : false,
             smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
             smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
             alcohol: document.querySelector('input[name="alcohol"]:checked')?.value ?? "none",
@@ -468,6 +495,5 @@
 
     window.showAlert = showAlert;
   </script>
-
 </body>
 </html>
