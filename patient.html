@@ -39,7 +39,7 @@
           </div>
           <div class="step-item flex items-center gap-2">
             <div id="dot-4" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-slate-200 text-slate-500 flex-shrink-0">4</div>
-            <div class="text-xs text-slate-400 hidden sm:block">Beklentiler</div>
+            <div class="text-xs text-slate-400 hidden sm:block">Beklentiler & Onay</div>
           </div>
         </div>
       </div>
@@ -257,12 +257,21 @@
     </div>
 
     <div id="sec-4" class="hidden bg-white rounded-xl shadow p-6 mb-4">
-      <h2 class="font-semibold text-lg mb-1">Beklentileriniz</h2>
-      <p class="text-sm text-slate-500 mb-5">Operasyondan beklentileriniz ve hekiminize özel notlarınız.</p>
+      <h2 class="font-semibold text-lg mb-1">Beklentileriniz ve Onay</h2>
+      <p class="text-sm text-slate-500 mb-5">Operasyondan beklentileriniz ve yasal beyanınız.</p>
 
       <div class="mt-4">
         <label class="text-sm text-slate-600">Beklentilerinizi kısaca yazın *</label>
         <textarea id="expectations" rows="4" class="mt-1 w-full rounded-lg border border-slate-200 p-2.5 text-sm focus:outline-none focus:border-slate-400" placeholder="Ne tür bir değişiklik istiyorsunuz? Sizi en çok endişelendiren şey nedir?"></textarea>
+      </div>
+
+      <div class="mt-6 p-4 bg-slate-100/80 rounded-lg border border-slate-200">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" id="legalConsent" class="accent-black w-5 h-5 mt-0.5 flex-shrink-0" />
+          <span class="text-xs text-slate-600 leading-relaxed">
+            <strong>Hukuki Beyan:</strong> Bu formda belirttiğim tüm sağlık geçmişimin, geçirdiğim hastalıkların, ameliyatların ve kullandığım ilaçların eksiksiz ve doğru olduğunu beyan ederim. Hastalığımı/ilaçlarımı gizlemem veya eksik bildirmem durumunda oluşabilecek anestezi ve cerrahi komplikasyonlarda tüm tıbbi ve hukuki sorumluluğun şahsıma ait olduğunu kabul ediyorum.
+          </span>
+        </label>
       </div>
 
       <div class="mt-6 flex justify-between">
@@ -381,6 +390,11 @@
         if (!document.getElementById("expectations").value.trim()) {
           showAlert("err", "Lütfen beklentilerinizi yazın."); return false;
         }
+        // HUKUKİ BEYAN DOĞRULAMASI
+        if (!document.getElementById("legalConsent").checked) {
+          showAlert("err", "Formu göndermek için lütfen Hukuki Beyan metnini okuyup onaylayınız."); 
+          return false;
+        }
       }
       return true;
     }
@@ -424,7 +438,6 @@
             bmi: bmi,
           },
           risks: {
-            // Sağlık Geçmişi
             cardiac: document.querySelector('input[name="cardiac"]:checked')?.value === "yes",
             dvt: document.querySelector('input[name="dvt"]:checked')?.value === "yes",
             diabetes: document.querySelector('input[name="diabetes"]:checked')?.value === "yes",
@@ -433,7 +446,6 @@
             keloid: document.querySelector('input[name="keloid"]:checked')?.value === "yes",
             csection: procName === "Tummy Tuck" ? (document.querySelector('input[name="csection"]:checked')?.value === "yes") : false,
             
-            // İlaçlar
             medBloodThinners: document.getElementById("med_bloodThinners").checked,
             medOcp: document.getElementById("med_ocp").checked,
             medGlp1: document.getElementById("med_glp1").checked,
@@ -442,7 +454,6 @@
             medSteroid: document.getElementById("med_steroid").checked,
             medOther: document.getElementById("med_other").value.trim() || null,
 
-            // Alışkanlıklar
             smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
             smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
             alcohol: document.querySelector('input[name="alcohol"]:checked')?.value ?? "none",
@@ -450,6 +461,7 @@
           },
           medHistory: document.getElementById("medHistory").value.trim() || null,
           expectations: document.getElementById("expectations").value.trim(),
+          legalConsentVerified: document.getElementById("legalConsent").checked,
           clinician: {
             asa: null,
             smokingVerified: null,
