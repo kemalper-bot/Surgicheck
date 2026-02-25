@@ -12,10 +12,43 @@
       #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; color: #000 !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
+    .filter-tab.active { background: white; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
   </style>
 </head>
 <body class="bg-slate-50">
-<div class="max-w-7xl mx-auto p-4 md:p-6">
+
+<!-- Login Screen -->
+<div id="authOverlay" class="fixed inset-0 z-50 bg-slate-100 flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md border border-slate-200">
+    <div class="flex justify-center mb-6">
+      <img src="logo.png" alt="SurgiCheck" class="h-14 object-contain" />
+    </div>
+    <h2 class="text-xl font-black text-slate-800 mb-1 text-center">Clinician Sign In</h2>
+    <p class="text-sm text-slate-500 mb-8 text-center">Leo Clinic · SurgiCheck Dashboard</p>
+    <div id="authError" class="hidden mb-4 text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg p-3 font-medium"></div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Email</label>
+        <input id="authEmail" type="email" autocomplete="username"
+          class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          placeholder="doctor@leoclinic.com" />
+      </div>
+      <div>
+        <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Password</label>
+        <input id="authPassword" type="password" autocomplete="current-password"
+          class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          placeholder="••••••••" />
+      </div>
+      <button id="signInBtn"
+        class="w-full rounded-lg bg-black text-white py-3 text-sm font-bold hover:bg-slate-900 transition-colors">
+        Sign In
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Application -->
+<div id="mainApp" class="hidden max-w-7xl mx-auto p-4 md:p-6">
 
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 pb-5 border-b border-slate-200">
     <div class="flex items-center gap-5">
@@ -25,14 +58,17 @@
         <p class="text-sm text-slate-500 font-medium mt-1">Leo Clinic · Risk Management</p>
       </div>
     </div>
-    
-    <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 flex-shrink-0 self-start md:self-auto">
-      <a href="clinician.html" class="px-4 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">🇹🇷 TR</a>
-      <a href="clinician-en.html" class="px-4 py-1.5 text-xs font-bold bg-white text-slate-900 rounded shadow-sm cursor-default">🇬🇧 EN</a>
+    <div class="flex items-center gap-3 flex-shrink-0 self-start md:self-auto">
+      <span id="userEmail" class="text-xs text-slate-400 font-medium hidden md:inline"></span>
+      <button id="signOutBtn" class="text-xs text-slate-500 hover:text-rose-600 border border-slate-200 rounded-lg px-3 py-2 font-medium transition-colors">Sign Out</button>
+      <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+        <a href="clinician.html" class="px-4 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">🇹🇷 TR</a>
+        <a href="clinician-en.html" class="px-4 py-1.5 text-xs font-bold bg-white text-slate-900 rounded shadow-sm cursor-default">🇬🇧 EN</a>
+      </div>
     </div>
   </div>
 
-  <div id="alert" class="hidden mb-4 rounded-xl p-4 text-sm font-medium shadow-sm items-center gap-2"></div>
+  <div id="alert" class="hidden mb-4 rounded-xl p-4 text-sm font-bold flex items-center gap-3 shadow-sm"></div>
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -41,8 +77,14 @@
         <h2 class="font-bold text-slate-700 text-lg">Cases</h2>
         <button id="refreshBtn" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">↻ Refresh</button>
       </div>
-      <div class="relative mb-4">
+      <div class="relative mb-3">
         <input id="searchBox" class="w-full rounded-lg border border-slate-200 py-3 px-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-colors" placeholder="Search Patient or Procedure..." />
+      </div>
+      <!-- Status Filter -->
+      <div class="flex gap-1 mb-3 bg-slate-100 p-1 rounded-lg">
+        <button data-filter="all" class="filter-tab active flex-1 text-xs font-bold py-1.5 rounded-md transition-all text-slate-500">All</button>
+        <button data-filter="pending" class="filter-tab flex-1 text-xs font-bold py-1.5 rounded-md transition-all text-slate-500">Pending</button>
+        <button data-filter="reviewed" class="filter-tab flex-1 text-xs font-bold py-1.5 rounded-md transition-all text-slate-500">Reviewed</button>
       </div>
       <div id="caseList" class="flex-1 overflow-y-auto pr-1 space-y-2">
         <div class="text-sm text-slate-400 py-10 text-center animate-pulse font-medium">Loading Data...</div>
@@ -111,7 +153,7 @@
                 <option value="">Pending verification</option>
                 <option value="never">Never smoked</option>
                 <option value="quit_6m_plus">Quit — >6 months</option>
-                <option value="quit_recent">Quit — <6 months</option>
+                <option value="quit_recent">Quit — &lt;6 months</option>
                 <option value="active">Active smoker</option>
               </select>
             </div>
@@ -143,7 +185,7 @@
               <label class="flex items-center gap-3 cursor-pointer text-slate-700 font-medium bg-white p-3 rounded-lg border border-slate-200"><input type="checkbox" id="v_smoking" class="accent-black h-5 w-5" /> Lifestyle/smoking risk verified</label>
               <label class="flex items-center gap-3 cursor-pointer text-slate-700 font-medium bg-white p-3 rounded-lg border border-slate-200"><input type="checkbox" id="v_meds" class="accent-black h-5 w-5" /> Medication interactions evaluated</label>
               <label class="flex items-start gap-3 cursor-pointer sm:col-span-2 font-bold text-emerald-900 bg-emerald-50/80 border-2 border-emerald-200/70 p-4 rounded-lg shadow-sm">
-                <input type="checkbox" id="v_labs" class="accent-emerald-600 h-6 w-6 flex-shrink-0 mt-0.5" /> 
+                <input type="checkbox" id="v_labs" class="accent-emerald-600 h-6 w-6 flex-shrink-0 mt-0.5" />
                 <span>Pre-operative laboratory and anesthesia tests reviewed and found consistent with clinical presentation.</span>
               </label>
             </div>
@@ -197,7 +239,7 @@
               <div id="r_flags" class="flex flex-col gap-2 text-slate-800 font-medium leading-relaxed"></div>
             </div>
 
-            <div id="r_lab_status" class="text-base mb-8 text-emerald-900 bg-emerald-50 border-2 border-emerald-200 p-4 rounded-lg font-bold hidden flex items-center gap-3">
+            <div id="r_lab_status" class="text-base mb-8 text-emerald-900 bg-emerald-50 border-2 border-emerald-200 p-4 rounded-lg font-bold hidden">
               Laboratory and pre-operative anesthesia tests have been reviewed by the clinician and deemed appropriate.
             </div>
 
@@ -228,6 +270,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import {
     getFirestore, collection, getDocs, doc, getDoc,
     updateDoc, serverTimestamp
@@ -243,8 +286,79 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getFirestore(app);
 
+  // XSS protection: safely escape user-provided values before DOM insertion
+  function esc(val) {
+    if (val == null) return '';
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // --- Auth ---
+  const authOverlay = document.getElementById('authOverlay');
+  const mainApp = document.getElementById('mainApp');
+  const authError = document.getElementById('authError');
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      authOverlay.classList.add('hidden');
+      mainApp.classList.remove('hidden');
+      const emailEl = document.getElementById('userEmail');
+      emailEl.textContent = user.email;
+      emailEl.classList.remove('hidden');
+      fetchCases();
+    } else {
+      authOverlay.classList.remove('hidden');
+      mainApp.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('signInBtn').addEventListener('click', async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    authError.classList.add('hidden');
+
+    if (!email || !password) {
+      authError.textContent = 'Email and password are required.';
+      authError.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('signInBtn');
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      const msgMap = {
+        'auth/user-not-found': 'No account found with this email address.',
+        'auth/wrong-password': 'Incorrect password. Please try again.',
+        'auth/invalid-email': 'Invalid email format.',
+        'auth/too-many-requests': 'Too many failed attempts. Please wait a few minutes.',
+        'auth/invalid-credential': 'Invalid email or password.',
+      };
+      authError.textContent = msgMap[err.code] ?? 'Sign in failed. Please check your credentials.';
+      authError.classList.remove('hidden');
+    } finally {
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('authPassword').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('signInBtn').click();
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', () => signOut(auth));
+
+  // --- Risk Engine ---
   function computeFlags(caseData, cvOverrides = {}) {
     const flags = [];
     try {
@@ -266,7 +380,7 @@
       }
 
       if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "Drug Interaction: GLP-1", desc: "Aspiration risk under anesthesia. Must be stopped." });
-      
+
       if (r.medOcp) {
         const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
         if (highDvtProcs.some(p => proc.includes(p))) {
@@ -289,8 +403,8 @@
       const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
       const isHBP = highBmiProcs.some(p => proc.includes(p));
       if (bmi !== null) {
-        if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40`, desc: "Body contouring should be delayed." });
-        else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: `BMI 35–39`, desc: "High surgical risk." });
+        if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: "BMI ≥ 40", desc: "Body contouring should be delayed." });
+        else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: "BMI 35–39", desc: "High surgical risk." });
       } else {
         flags.push({ type: "VERIFY", key: "bmi_missing", title: "BMI — Missing Measurement", desc: "Clinical BMI is required." });
       }
@@ -312,13 +426,15 @@
   let casesCache = [];
   let selectedCaseId = null;
   let selectedCase = null;
+  let activeFilter = "all";
 
   function showAlert(type, msg) {
     const el = document.getElementById("alert");
+    el.className = "mb-4 rounded-xl p-4 text-sm font-bold flex items-center gap-3 shadow-sm " +
+      (type === "ok" ? "bg-emerald-50 text-emerald-800 border-2 border-emerald-200" : "bg-rose-50 text-rose-800 border-2 border-rose-200");
+    el.textContent = msg;
     el.classList.remove("hidden");
-    el.className = "mb-4 rounded-xl p-4 text-sm font-bold flex items-center gap-3 shadow-sm " + (type === "ok" ? "bg-emerald-50 text-emerald-800 border-2 border-emerald-200" : "bg-rose-50 text-rose-800 border-2 border-rose-200");
-    el.innerHTML = msg;
-    setTimeout(() => el.classList.add("hidden"), 3500);
+    setTimeout(() => el.classList.add("hidden"), 4000);
   }
 
   async function fetchCases() {
@@ -331,39 +447,76 @@
       casesCache = rows;
       applySearch();
     } catch (err) {
-      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-700 py-4 text-center">Connection Error.</div>`;
+      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-700 py-4 text-center font-medium">Connection error. Please refresh the page.</div>`;
     }
   }
 
   function applySearch() {
     const q = (document.getElementById("searchBox").value || "").toLowerCase().trim();
-    const filtered = q ? casesCache.filter(c => [c.patient?.fullName, c.procedure?.name].join(" ").toLowerCase().includes(q)) : casesCache;
+    let filtered = q
+      ? casesCache.filter(c => [c.patient?.fullName, c.procedure?.name].join(" ").toLowerCase().includes(q))
+      : casesCache;
+
+    if (activeFilter === "pending") {
+      filtered = filtered.filter(c => !c.clinician?.decision);
+    } else if (activeFilter === "reviewed") {
+      filtered = filtered.filter(c => !!c.clinician?.decision);
+    }
+
     renderCaseList(filtered);
   }
 
   function renderCaseList(items) {
     const el = document.getElementById("caseList");
-    if (!items.length) { el.innerHTML = `<div class="text-sm text-slate-400 py-10 text-center font-medium">No cases found.</div>`; return; }
+    if (!items.length) {
+      el.innerHTML = `<div class="text-sm text-slate-400 py-10 text-center font-medium">No cases found.</div>`;
+      return;
+    }
     el.innerHTML = "";
     items.forEach(c => {
       const flags = computeFlags(c);
       const hardCount = flags.filter(f => f.type === "HARD").length;
       const decMap = { suitable: "Cleared", conditional: "Conditional", not_suitable: "Cancelled" };
-      const decColor = c.clinician?.decision === "suitable" ? "text-emerald-600" : c.clinician?.decision === "not_suitable" ? "text-rose-600" : "text-slate-500";
-      
+      const decColor = c.clinician?.decision === "suitable" ? "text-emerald-600"
+        : c.clinician?.decision === "not_suitable" ? "text-rose-600" : "text-slate-500";
+
       const btn = document.createElement("button");
-      btn.className = "w-full text-left rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition-all " + (c.id === selectedCaseId ? " bg-blue-50/80 border-blue-400 ring-1 ring-blue-400" : "bg-white");
-      btn.innerHTML = `
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <div class="text-base font-bold text-slate-800">${c.patient?.fullName ?? "Unnamed"}</div>
-            <div class="text-sm text-slate-500 mt-1">${c.procedure?.name ?? "—"}</div>
-            <div class="text-xs mt-2 font-bold ${decColor}">${decMap[c.clinician?.decision] ?? "Pending"}</div>
-          </div>
-          <div class="flex flex-col items-end gap-2 mt-0.5">
-            ${hardCount > 0 ? `<span class="text-[10px] uppercase bg-rose-100 text-rose-800 font-black px-2 py-1 rounded">${hardCount} HARD</span>` : ""}
-          </div>
-        </div>`;
+      btn.className = "w-full text-left rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition-all " +
+        (c.id === selectedCaseId ? "bg-blue-50/80 border-blue-400 ring-1 ring-blue-400" : "bg-white");
+
+      // Use DOM API (not innerHTML) to safely render user-provided values
+      const nameEl = document.createElement("div");
+      nameEl.className = "text-base font-bold text-slate-800";
+      nameEl.textContent = c.patient?.fullName ?? "Unnamed";
+
+      const procEl = document.createElement("div");
+      procEl.className = "text-sm text-slate-500 mt-1";
+      procEl.textContent = c.procedure?.name ?? "—";
+
+      const decEl = document.createElement("div");
+      decEl.className = `text-xs mt-2 font-bold ${decColor}`;
+      decEl.textContent = decMap[c.clinician?.decision] ?? "Pending";
+
+      const leftDiv = document.createElement("div");
+      leftDiv.appendChild(nameEl);
+      leftDiv.appendChild(procEl);
+      leftDiv.appendChild(decEl);
+
+      const rightDiv = document.createElement("div");
+      rightDiv.className = "flex flex-col items-end gap-2 mt-0.5";
+      if (hardCount > 0) {
+        const badge = document.createElement("span");
+        badge.className = "text-[10px] uppercase bg-rose-100 text-rose-800 font-black px-2 py-1 rounded";
+        badge.textContent = `${hardCount} HARD`;
+        rightDiv.appendChild(badge);
+      }
+
+      const row = document.createElement("div");
+      row.className = "flex items-start justify-between gap-3";
+      row.appendChild(leftDiv);
+      row.appendChild(rightDiv);
+      btn.appendChild(row);
+
       btn.addEventListener("click", () => loadCase(c.id));
       el.appendChild(btn);
     });
@@ -371,47 +524,126 @@
 
   async function loadCase(id) {
     selectedCaseId = id;
-    const snap = await getDoc(doc(db, "cases", id));
-    if (!snap.exists()) return;
-    selectedCase = { id: snap.id, ...snap.data() };
+    try {
+      const snap = await getDoc(doc(db, "cases", id));
+      if (!snap.exists()) return;
+      selectedCase = { id: snap.id, ...snap.data() };
+    } catch (err) {
+      showAlert("err", "Failed to load case data. Please check your connection.");
+      return;
+    }
 
     document.getElementById("emptyState").classList.add("hidden");
     document.getElementById("detail").classList.remove("hidden");
 
     document.getElementById("caseId").textContent = selectedCase.id;
     document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
+
     const genderLabelEN = { female: "Female", male: "Male", other: "Other" };
     const genderTextEN = genderLabelEN[selectedCase.patient?.gender] ?? "—";
-    document.getElementById("patientMeta").textContent = `${selectedCase.patient?.age ?? "?"} yo · ${genderTextEN} · Tel: ${selectedCase.patient?.phone ?? ""}`;
+    document.getElementById("patientMeta").textContent =
+      `${selectedCase.patient?.age ?? "?"} yo · ${genderTextEN} · Tel: ${selectedCase.patient?.phone ?? ""}`;
 
     const a = selectedCase.anthropometrics ?? {};
     const r = selectedCase.risks ?? {};
-    
-    const medsList = [];
-    if(r.medBloodThinners) medsList.push("Blood Thinner");
-    if(r.medOcp) medsList.push("Birth Control");
-    if(r.medGlp1) medsList.push("Weight Loss (GLP1)");
-    if(r.medAcne) medsList.push("Acne Meds");
-    if(r.medPsych) medsList.push("Psychiatric");
-    if(r.medSteroid) medsList.push("Steroids");
 
-    document.getElementById("patientDeclaration").innerHTML = `
-      <div class="grid grid-cols-2 gap-y-4 text-slate-700">
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Procedure</span> <span class="font-bold text-lg">${selectedCase.procedure?.name ?? "—"}</span></div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Gender</span> <span class="font-bold">${genderLabelEN[selectedCase.patient?.gender] ?? "—"}</span></div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Height/Weight/BMI</span> ${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / <b>${a.bmi ?? "?"}</b></div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Smoking</span> <span class="${r.smoking === "active" ? "text-rose-600 font-black" : "font-bold"}">${r.smoking ?? "—"}</span></div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Major Meds</span> <b>${medsList.length > 0 ? medsList.join(", ") : "None"}</b></div>
-        <div class="col-span-2"><span class="text-slate-400 block text-xs uppercase font-bold">Other Meds</span> <i>${r.medOther || "Not specified"}</i></div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">Cardiac/HT/DM</span> ${(r.cardiac || r.ht || r.diabetes) ? "<span class='text-amber-600 font-bold'>Yes</span>" : "No"}</div>
-        <div><span class="text-slate-400 block text-xs uppercase font-bold">DVT/PE/Cancer</span> <span class="${(r.dvt || r.activeMalignancy) ? "text-rose-600 font-bold" : ""}">${(r.dvt || r.activeMalignancy) ? "YES ⚠" : "No"}</span></div>
-      </div>
-      <div class="mt-6 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">
-        <div class="mb-2"><b>History:</b> ${selectedCase.medHistory || "—"}</div>
-        <div><b>Expectation:</b> ${selectedCase.expectations || "—"}</div>
-        <div class="mt-3 text-emerald-700 font-bold text-xs">${selectedCase.legalConsentVerified ? "✓ Legal consent confirmed." : "⚠ Missing legal consent."}</div>
-      </div>
-    `;
+    const medsList = [];
+    if (r.medBloodThinners) medsList.push("Blood Thinner");
+    if (r.medOcp) medsList.push("Birth Control");
+    if (r.medGlp1) medsList.push("Weight Loss (GLP-1)");
+    if (r.medAcne) medsList.push("Acne Meds");
+    if (r.medPsych) medsList.push("Psychiatric");
+    if (r.medSteroid) medsList.push("Steroids");
+
+    // Patient Declaration — safe DOM rendering
+    const decl = document.getElementById("patientDeclaration");
+    decl.innerHTML = "";
+
+    const grid = document.createElement("div");
+    grid.className = "grid grid-cols-2 gap-y-4 text-slate-700";
+
+    function field(label, value, extraClass = "") {
+      const d = document.createElement("div");
+      const lbl = document.createElement("span");
+      lbl.className = "text-slate-400 block text-xs uppercase font-bold";
+      lbl.textContent = label;
+      const val = document.createElement("span");
+      val.className = "font-bold" + (extraClass ? " " + extraClass : "");
+      val.textContent = value;
+      d.appendChild(lbl);
+      d.appendChild(val);
+      return d;
+    }
+
+    grid.appendChild(field("Procedure", selectedCase.procedure?.name ?? "—", "text-lg"));
+    grid.appendChild(field("Gender", genderLabelEN[selectedCase.patient?.gender] ?? "—"));
+    grid.appendChild(field("Height/Weight/BMI", `${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / ${a.bmi ?? "?"}`));
+    grid.appendChild(field("Smoking", r.smoking ?? "—", r.smoking === "active" ? "text-rose-600 font-black" : ""));
+    grid.appendChild(field("Major Meds", medsList.length > 0 ? medsList.join(", ") : "None"));
+
+    const medsOtherDiv = document.createElement("div");
+    medsOtherDiv.className = "col-span-2";
+    const medsOtherLbl = document.createElement("span");
+    medsOtherLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    medsOtherLbl.textContent = "Other Meds";
+    const medsOtherVal = document.createElement("i");
+    medsOtherVal.textContent = r.medOther || "Not specified";
+    medsOtherDiv.appendChild(medsOtherLbl);
+    medsOtherDiv.appendChild(medsOtherVal);
+    grid.appendChild(medsOtherDiv);
+
+    const hasCardiac = r.cardiac || r.ht || r.diabetes;
+    const cardiacDiv = document.createElement("div");
+    const cardiacLbl = document.createElement("span");
+    cardiacLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    cardiacLbl.textContent = "Cardiac/HT/DM";
+    const cardiacVal = document.createElement("span");
+    cardiacVal.className = hasCardiac ? "text-amber-600 font-bold" : "";
+    cardiacVal.textContent = hasCardiac ? "Yes" : "No";
+    cardiacDiv.appendChild(cardiacLbl);
+    cardiacDiv.appendChild(cardiacVal);
+    grid.appendChild(cardiacDiv);
+
+    const hasDvt = r.dvt || r.activeMalignancy;
+    const dvtDiv = document.createElement("div");
+    const dvtLbl = document.createElement("span");
+    dvtLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    dvtLbl.textContent = "DVT/PE/Cancer";
+    const dvtVal = document.createElement("span");
+    dvtVal.className = hasDvt ? "text-rose-600 font-bold" : "";
+    dvtVal.textContent = hasDvt ? "YES ⚠" : "No";
+    dvtDiv.appendChild(dvtLbl);
+    dvtDiv.appendChild(dvtVal);
+    grid.appendChild(dvtDiv);
+
+    decl.appendChild(grid);
+
+    const notes = document.createElement("div");
+    notes.className = "mt-6 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200";
+
+    const historyP = document.createElement("div");
+    historyP.className = "mb-2";
+    const historyB = document.createElement("b");
+    historyB.textContent = "History: ";
+    const historyText = document.createTextNode(selectedCase.medHistory || "—");
+    historyP.appendChild(historyB);
+    historyP.appendChild(historyText);
+
+    const expectP = document.createElement("div");
+    const expectB = document.createElement("b");
+    expectB.textContent = "Expectation: ";
+    const expectText = document.createTextNode(selectedCase.expectations || "—");
+    expectP.appendChild(expectB);
+    expectP.appendChild(expectText);
+
+    const consentP = document.createElement("div");
+    consentP.className = "mt-3 font-bold text-xs " + (selectedCase.legalConsentVerified ? "text-emerald-700" : "text-amber-600");
+    consentP.textContent = selectedCase.legalConsentVerified ? "✓ Legal consent confirmed." : "⚠ Missing legal consent.";
+
+    notes.appendChild(historyP);
+    notes.appendChild(expectP);
+    notes.appendChild(consentP);
+    decl.appendChild(notes);
 
     document.getElementById("pr-smoking").textContent = r.smoking ?? "—";
     document.getElementById("pr-anticoag").textContent = r.medBloodThinners ? "In use" : "None";
@@ -424,7 +656,7 @@
     document.getElementById("cv-anticoag").value = cl.anticoagVerified ?? "";
     document.getElementById("cv-bmi").value = cl.bmiMeasured ?? "";
     document.getElementById("examNote").value = cl.examNote ?? "";
-    
+
     const v = cl.validations ?? {};
     document.getElementById("v_smoking").checked = !!v.smoking;
     document.getElementById("v_meds").checked = !!v.meds;
@@ -457,86 +689,147 @@
       el.innerHTML = `<div class="p-4 rounded-xl border-2 border-emerald-200 text-emerald-800 bg-emerald-50 font-bold">✓ No systemic major risks detected.</div>`;
     } else {
       flags.forEach(f => {
-        const cls = f.type === "HARD" ? "border-rose-300 text-rose-900 bg-rose-50" : f.type === "SOFT" ? "border-amber-300 text-amber-900 bg-amber-50" : "border-blue-300 text-blue-900 bg-blue-50";
-        el.innerHTML += `<div class="text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1"><b>[${f.type}] ${f.title}</b> <span>${f.desc}</span></div>`;
+        const cls = f.type === "HARD"
+          ? "border-rose-300 text-rose-900 bg-rose-50"
+          : f.type === "SOFT"
+            ? "border-amber-300 text-amber-900 bg-amber-50"
+            : "border-blue-300 text-blue-900 bg-blue-50";
+        const item = document.createElement("div");
+        item.className = `text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1`;
+        const title = document.createElement("b");
+        title.textContent = `[${f.type}] ${f.title}`;
+        const desc = document.createElement("span");
+        desc.textContent = f.desc;
+        item.appendChild(title);
+        item.appendChild(desc);
+        el.appendChild(item);
       });
     }
 
     const gate = gateFromFlags(flags);
     const sug = document.getElementById("gateSuggestion");
     const gateMap = {
-      eligible: { text: "Routine process.", cls: "bg-emerald-50 text-emerald-800" },
-      conditional: { text: "Conditional approval suggested.", cls: "bg-amber-50 text-amber-800" },
-      verify: { text: "Clinician verification required.", cls: "bg-blue-50 text-blue-800" },
-      ineligible: { text: "MAJOR RISK DETECTED!", cls: "bg-rose-50 text-rose-800" },
+      eligible: { text: "Routine process.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
+      conditional: { text: "Conditional approval suggested.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
+      verify: { text: "Clinician verification required.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      ineligible: { text: "MAJOR RISK DETECTED! Surgery not recommended.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
     };
     sug.classList.remove("hidden");
     sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${gateMap[gate].cls}`;
-    sug.innerHTML = `System Suggestion: ${gateMap[gate].text}`;
+    sug.textContent = `System Suggestion: ${gateMap[gate].text}`;
   }
 
-  window.updateReportPreview = function() {
+  window.updateReportPreview = function () {
     if (!selectedCase) return;
     const flags = computeFlags(selectedCase, getCVOverrides());
     const dec = document.getElementById("decision").value;
 
     document.getElementById("reportTimestamp").textContent = new Date().toLocaleString("en-GB");
     document.getElementById("reportCaseId").textContent = selectedCase.id;
-    document.getElementById("r_patient").textContent = `${selectedCase.patient?.fullName ?? "—"}`;
-    document.getElementById("r_procedure").textContent = `${selectedCase.procedure?.name ?? "—"}`;
-    document.getElementById("r_bmi").textContent = document.getElementById("cv-bmi").value || selectedCase.anthropometrics?.bmi;
+    document.getElementById("r_patient").textContent = selectedCase.patient?.fullName ?? "—";
+    document.getElementById("r_procedure").textContent = selectedCase.procedure?.name ?? "—";
+    document.getElementById("r_bmi").textContent = document.getElementById("cv-bmi").value || selectedCase.anthropometrics?.bmi || "—";
     document.getElementById("r_asa").textContent = document.getElementById("cv-asa").value || "Not Stated";
     document.getElementById("r_rationale").textContent = document.getElementById("rationale").value || "No rationale provided.";
-    document.getElementById("r_clinician_sig").textContent = document.getElementById("clinicianName").value ? `Dr. ${document.getElementById("clinicianName").value}` : "Signature";
+    const clinName = document.getElementById("clinicianName").value;
+    document.getElementById("r_clinician_sig").textContent = clinName ? `Dr. ${clinName}` : "Signature";
 
-    document.getElementById("r_flags").innerHTML = flags.length ? flags.map(f => `<div class="border-b-2 border-slate-100 py-2"><b>[${f.type}] ${f.title}:</b> ${f.desc}</div>`).join("") : "No risks identified.";
-    document.getElementById("v_labs").checked ? document.getElementById("r_lab_status").classList.remove("hidden") : document.getElementById("r_lab_status").classList.add("hidden");
+    const rFlagsEl = document.getElementById("r_flags");
+    rFlagsEl.innerHTML = "";
+    if (flags.length) {
+      flags.forEach(f => {
+        const row = document.createElement("div");
+        row.className = "border-b-2 border-slate-100 py-2";
+        const b = document.createElement("b");
+        b.textContent = `[${f.type}] ${f.title}: `;
+        const txt = document.createTextNode(f.desc);
+        row.appendChild(b);
+        row.appendChild(txt);
+        rFlagsEl.appendChild(row);
+      });
+    } else {
+      rFlagsEl.textContent = "No risks identified.";
+    }
+
+    document.getElementById("v_labs").checked
+      ? document.getElementById("r_lab_status").classList.remove("hidden")
+      : document.getElementById("r_lab_status").classList.add("hidden");
 
     const db2 = document.getElementById("r_decision_box");
     if (dec) {
       db2.style.display = "block";
       const decMap = { suitable: "✓ CLEARED", conditional: "◐ CONDITIONAL", not_suitable: "✗ CANCELLED" };
-      db2.className = `rounded-xl p-5 mb-8 border-4 text-2xl font-black text-center ` + (dec==="suitable"?"text-emerald-800 border-emerald-400":dec==="not_suitable"?"text-rose-800 border-rose-400":"text-amber-800 border-amber-400");
+      db2.className = "rounded-xl p-5 mb-8 border-4 text-2xl font-black text-center " +
+        (dec === "suitable" ? "text-emerald-800 border-emerald-400" : dec === "not_suitable" ? "text-rose-800 border-rose-400" : "text-amber-800 border-amber-400");
       db2.textContent = decMap[dec];
-    } else db2.style.display = "none";
+    } else {
+      db2.style.display = "none";
+    }
   };
 
-  window.rerunFlags = function() { renderCurrentFlags(); window.updateReportPreview(); };
+  window.rerunFlags = function () { renderCurrentFlags(); window.updateReportPreview(); };
   document.getElementById("v_labs").addEventListener("change", window.updateReportPreview);
 
   document.getElementById("saveBtn").addEventListener("click", async () => {
     if (!selectedCaseId) return;
     const flags = computeFlags(selectedCase, getCVOverrides());
-    if (flags.some(f => f.type === "VERIFY")) return showAlert("err", "Please confirm VERIFY warnings.");
+    if (flags.some(f => f.type === "VERIFY")) {
+      return showAlert("err", "Please confirm all VERIFY warnings before saving.");
+    }
     const decision = document.getElementById("decision").value;
     if (!decision) return showAlert("err", "Please select a decision.");
-    if (!document.getElementById("clinicianName").value.trim()) return showAlert("err", "Clinician name is required.");
+    const clinName = document.getElementById("clinicianName").value.trim();
+    if (!clinName) return showAlert("err", "Clinician name is required.");
+    const rationale = document.getElementById("rationale").value.trim();
+    if (!rationale) return showAlert("err", "Medical rationale cannot be left blank.");
+
+    const btn = document.getElementById("saveBtn");
+    btn.textContent = "Saving...";
+    btn.disabled = true;
 
     try {
-      document.getElementById("saveBtn").textContent = "Saving...";
       await updateDoc(doc(db, "cases", selectedCaseId), {
         clinician: {
-          name: document.getElementById("clinicianName").value.trim(),
+          name: clinName,
           asa: document.getElementById("cv-asa").value || null,
           smokingVerified: document.getElementById("cv-smoking").value || null,
           anticoagVerified: document.getElementById("cv-anticoag").value || null,
           bmiMeasured: parseFloat(document.getElementById("cv-bmi").value) || null,
           examNote: document.getElementById("examNote").value.trim() || null,
-          decision: decision,
-          rationale: document.getElementById("rationale").value.trim() || null,
-          validations: { smoking: document.getElementById("v_smoking").checked, meds: document.getElementById("v_meds").checked, labs: document.getElementById("v_labs").checked }
+          decision,
+          rationale,
+          validations: {
+            smoking: document.getElementById("v_smoking").checked,
+            meds: document.getElementById("v_meds").checked,
+            labs: document.getElementById("v_labs").checked
+          }
         },
-        status: "clinician_reviewed", updatedAt: serverTimestamp()
+        status: "clinician_reviewed",
+        updatedAt: serverTimestamp()
       });
-      showAlert("ok", "Saved.");
-      document.getElementById("saveBtn").textContent = "Save Decision";
-      await fetchCases(); await loadCase(selectedCaseId);
-    } catch (err) { showAlert("err", "Connection error."); }
+      showAlert("ok", "Decision saved successfully.");
+      await fetchCases();
+      await loadCase(selectedCaseId);
+    } catch (err) {
+      showAlert("err", "Save failed. Please check your connection and try again.");
+    } finally {
+      btn.textContent = "Save Decision";
+      btn.disabled = false;
+    }
+  });
+
+  // Filter Tabs
+  document.querySelectorAll(".filter-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeFilter = tab.dataset.filter;
+      applySearch();
+    });
   });
 
   document.getElementById("refreshBtn").addEventListener("click", fetchCases);
   document.getElementById("searchBox").addEventListener("input", applySearch);
-  fetchCases();
 </script>
 </body>
 </html>

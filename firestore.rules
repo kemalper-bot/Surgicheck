@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Hasta formları — kimlik doğrulama olmadan yazılabilir (form gönderimi)
+    // Ama okuma sadece giriş yapmış kullanıcılara (klinisyenler)
+    match /cases/{caseId} {
+
+      // Yeni vaka oluşturma: kimlik doğrulama gerekmez (hasta formu)
+      // Sadece gerekli alanlar var ve status "patient_submitted" olmalı
+      allow create: if
+        request.resource.data.status == "patient_submitted" &&
+        request.resource.data.keys().hasAll(["patient", "procedure", "risks", "createdAt"]) &&
+        request.resource.data.patient.keys().hasAll(["fullName", "phone", "age"]);
+
+      // Okuma ve güncelleme: sadece giriş yapmış kullanıcılar (klinisyenler)
+      allow read, update: if request.auth != null;
+
+      // Silme: hiçbir zaman izin verilmez
+      allow delete: if false;
+    }
+  }
+}
