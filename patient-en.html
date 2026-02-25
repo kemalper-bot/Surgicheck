@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SurgiCheck | Pre-Operative Assessment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <div class="max-w-3xl mx-auto p-6">
+
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-5">
+        <div class="flex items-center gap-5">
+          <img src="logo.png" alt="SurgiCheck Logo" class="h-16 md:h-24 object-contain" />
+          <div class="hidden sm:block border-l border-slate-200 pl-5">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">Pre-Operative Risk Assessment</h1>
+            <p class="text-sm text-slate-500 font-medium mt-1">Leo Clinic</p>
+          </div>
+        </div>
+        <div class="text-xs text-slate-400 text-right leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 hidden md:block">
+          This form is not a diagnosis.<br/><span class="font-medium text-slate-600">Final clearance is decided by the surgeon.</span>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <div class="flex items-center gap-0">
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-1" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-black text-white flex-shrink-0">1</div>
+            <div class="text-xs text-slate-600 hidden sm:block font-medium">Personal & Procedure</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-2" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-slate-200 text-slate-500 flex-shrink-0">2</div>
+            <div class="text-xs text-slate-400 hidden sm:block font-medium">Medical History</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2 flex-1">
+            <div id="dot-3" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-slate-200 text-slate-500 flex-shrink-0">3</div>
+            <div class="text-xs text-slate-400 hidden sm:block font-medium">Lifestyle</div>
+            <div class="flex-1 h-px bg-slate-200 mx-2"></div>
+          </div>
+          <div class="step-item flex items-center gap-2">
+            <div id="dot-4" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-slate-200 text-slate-500 flex-shrink-0">4</div>
+            <div class="text-xs text-slate-400 hidden sm:block font-medium">Expectations & Consent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="alert" class="hidden mb-4 rounded-lg p-4 text-sm font-medium shadow-sm"></div>
+
+    <div id="sec-1" class="bg-white rounded-xl shadow p-8 mb-4">
+      <h2 class="font-bold text-xl mb-6 text-slate-800">Personal Information & Procedure</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Planned Procedure *</label>
+          <select id="procedure" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-white">
+            <option value="" disabled selected>Select...</option>
+            <option value="Rinoplasti">Rhinoplasty</option>
+            <option value="Blefaroplasti">Blepharoplasty (Eyelid)</option>
+            <option value="Breast Lift">Breast Lift (Mastopexy)</option>
+            <option value="Meme Büyütme">Breast Augmentation</option>
+            <option value="Meme Küçültme">Breast Reduction</option>
+            <option value="Liposuction">Liposuction</option>
+            <option value="Tummy Tuck">Tummy Tuck (Abdominoplasty)</option>
+            <option value="BBL">BBL (Brazilian Butt Lift)</option>
+            <option value="Facelift">Facelift</option>
+            <option value="Diğer">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Previous surgery in this area? *</label>
+          <select id="revision" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-white">
+            <option value="no">No</option>
+            <option value="yes">Yes — Revision Surgery</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Full Name *</label>
+          <input id="fullName" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Jane Doe" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Phone Number *</label>
+          <input id="phone" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="+44 7XXX XXXXXX" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Email Address *</label>
+          <input id="email" type="email" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="email@example.com" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Age *</label>
+          <input id="age" type="number" min="16" max="100" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="35" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Height (in cm) *</label>
+          <input id="heightCm" type="number" min="120" step="any" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="e.g. 165" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Weight (in kg) *</label>
+          <input id="weightKg" type="number" min="35" max="250" step="any" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="70" />
+        </div>
+      </div>
+      <div id="bmi-display" class="hidden mt-4 rounded-lg bg-slate-100 border border-slate-200 p-4 text-sm text-slate-700 flex items-center gap-2">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span>Calculated BMI: <strong id="bmi-val" class="text-slate-900 text-base"></strong> <span id="bmi-note" class="text-slate-600 ml-1"></span></span>
+      </div>
+      <div class="mt-8 flex justify-end">
+        <button onclick="nextStep(1)" class="rounded-lg bg-black text-white px-6 py-3 text-sm font-bold hover:bg-slate-800 transition-colors shadow-md">Next Step →</button>
+      </div>
+    </div>
+
+    <div id="sec-2" class="hidden bg-white rounded-xl shadow p-8 mb-4">
+      <h2 class="font-bold text-xl mb-1 text-slate-800">Medical History & Medications</h2>
+      <p class="text-sm text-slate-500 mb-6">Please complete this section accurately to ensure your surgical safety.</p>
+
+      <div class="space-y-8">
+        
+        <div class="rounded-xl border border-blue-200 bg-blue-50/60 p-5 shadow-sm">
+          <div class="flex items-center gap-2 mb-3">
+             <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+             <label class="text-base font-bold text-blue-900">Important Medication Groups</label>
+          </div>
+          <p class="text-sm text-blue-700/80 mb-4 leading-relaxed">Check any of the following if you are currently using them or have used them recently:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_bloodThinners" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Blood Thinners (Aspirin, Plavix, Eliquis, etc.)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_ocp" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Birth Control Pills / HRT (Hormones)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_glp1" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Weight Loss Injections (Ozempic, Wegovy, etc.)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_acne" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Severe Acne Meds (Accutane, Isotretinoin)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_psych" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Psychiatric Meds (Antidepressants, Xanax)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_steroid" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Corticosteroids / Chronic Steroids</span></label>
+          </div>
+          <div class="mt-5">
+            <label class="text-sm font-medium text-slate-700 mb-1 block">Other Regular Medications / Supplements</label>
+            <input id="med_other" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="Blood pressure meds, thyroid meds, vitamins, etc..." />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Cardiac Disease</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Heart failure, valve disease, arrhythmia, or past heart attack.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="cardiac" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="cardiac" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">DVT / Pulmonary Embolism</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">History of blood clots in legs or lungs.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="dvt" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="dvt" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Diabetes</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Type 1 or Type 2 Diabetes diagnosis.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="diabetes" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="diabetes" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Hypertension</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Diagnosed high blood pressure (even if controlled).</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="ht" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="ht" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Active Malignancy (Cancer)</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Ongoing treatment or recent diagnosis.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="malignancy" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="malignancy" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Poor Wound Healing (Keloid)</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">History of thick, raised, or dark scars.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="keloid" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="keloid" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div id="dynamic-tummy" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <label class="text-sm font-bold text-amber-900">Previous Pregnancies / C-Section</label>
+          </div>
+          <p class="text-sm text-amber-800 mb-3 leading-relaxed">Necessary to evaluate abdominal muscle integrity for Tummy Tuck procedures.</p>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-amber-200 hover:border-amber-400"><input type="radio" name="csection" value="no" checked class="accent-amber-600 w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+            <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-amber-200 hover:border-amber-400"><input type="radio" name="csection" value="yes" class="accent-amber-600 w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-2 block">Other Medical History or Surgeries (Free Text)</label>
+          <textarea id="medHistory" rows="3" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Please list any other past surgeries, chronic conditions, or important medical details..."></textarea>
+        </div>
+      </div>
+
+      <div class="mt-8 flex justify-between">
+        <button onclick="prevStep(2)" class="rounded-lg border border-slate-300 text-slate-700 px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors">← Back</button>
+        <button onclick="nextStep(2)" class="rounded-lg bg-black text-white px-6 py-3 text-sm font-bold hover:bg-slate-800 transition-colors shadow-md">Next Step →</button>
+      </div>
+    </div>
+
+    <div id="sec-3" class="hidden bg-white rounded-xl shadow p-8 mb-4">
+      <h2 class="font-bold text-xl mb-1 text-slate-800">Lifestyle & Habits</h2>
+      <p class="text-sm text-slate-500 mb-6">Lifestyle factors that directly impact surgical risks and wound healing.</p>
+
+      <div class="space-y-6">
+        <div class="rounded-xl border border-slate-200 p-5 bg-slate-50/50">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            <label class="text-base font-bold text-slate-800">Smoking / Tobacco Use *</label>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">Nicotine severely impairs wound healing and blood circulation.</p>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="smoking" value="never" checked class="accent-black w-5 h-5" onchange="toggleSmokeDetail()" /> <span class="text-sm font-medium">Never smoked</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="smoking" value="quit_6m_plus" class="accent-black w-5 h-5" onchange="toggleSmokeDetail()" /> <span class="text-sm font-medium">Quit — More than 6 months ago</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="smoking" value="quit_recent" class="accent-black w-5 h-5" onchange="toggleSmokeDetail()" /> <span class="text-sm font-medium">Quit — Less than 6 months ago <span class="text-amber-600 text-xs">(Risk may persist)</span></span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="smoking" value="active" class="accent-black w-5 h-5" onchange="toggleSmokeDetail()" /> <span class="text-sm font-bold text-slate-900">Active Smoker / Vaping</span></label>
+          </div>
+          <div id="smoke-detail" class="hidden mt-4 pl-4 border-l-2 border-slate-200">
+            <label class="text-sm font-medium text-slate-700 mb-1 block">Details (How many per day? / When exactly did you quit?)</label>
+            <input id="smokeDetail" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-white" placeholder="e.g. 15 cigarettes/day or quit 3 months ago" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="text-sm font-bold text-slate-800">Alcohol Consumption</label>
+            <div class="mt-4 space-y-2">
+              <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="alcohol" value="none" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">None</span></label>
+              <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="alcohol" value="occasional" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Social / Occasional</span></label>
+              <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="alcohol" value="regular" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Regular (Multiple times a week)</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="text-sm font-bold text-slate-800">Major Weight Loss (>15 kg / 33 lbs)</label>
+            <p class="text-xs text-slate-500 mb-4 leading-snug">Within the last 2 years (via diet or gastric surgery).</p>
+            <div class="flex gap-4 mt-2">
+              <label class="flex items-center gap-3 cursor-pointer bg-white px-4 py-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="majorWeightLoss" value="no" checked class="accent-black w-5 h-5" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-3 cursor-pointer bg-white px-4 py-3 rounded-lg border border-slate-200 hover:border-slate-400"><input type="radio" name="majorWeightLoss" value="yes" class="accent-black w-5 h-5" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex justify-between">
+        <button onclick="prevStep(3)" class="rounded-lg border border-slate-300 text-slate-700 px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors">← Back</button>
+        <button onclick="nextStep(3)" class="rounded-lg bg-black text-white px-6 py-3 text-sm font-bold hover:bg-slate-800 transition-colors shadow-md">Next Step →</button>
+      </div>
+    </div>
+
+    <div id="sec-4" class="hidden bg-white rounded-xl shadow p-8 mb-4">
+      <h2 class="font-bold text-xl mb-1 text-slate-800">Expectations & Consent</h2>
+      <p class="text-sm text-slate-500 mb-6">Your goals for the procedure and legal declaration.</p>
+
+      <div class="mt-4">
+        <label class="text-sm font-medium text-slate-700 mb-2 block">Briefly describe your expectations *</label>
+        <textarea id="expectations" rows="5" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="What changes are you hoping for? What are your biggest concerns?"></textarea>
+      </div>
+
+      <div class="mt-8 p-5 bg-slate-100 rounded-xl border border-slate-200">
+        <div class="flex items-center gap-2 mb-3">
+           <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+           <h3 class="font-bold text-slate-800">Legal Declaration & Consent</h3>
+        </div>
+        <label class="flex items-start gap-4 cursor-pointer">
+          <input type="checkbox" id="legalConsent" class="accent-black w-6 h-6 mt-0.5 flex-shrink-0" />
+          <span class="text-sm text-slate-600 leading-relaxed">
+            I hereby declare that all medical history, past surgeries, habits, and medications provided in this digital form are <strong>complete and accurate</strong>. I acknowledge that hiding or failing to disclose any medical condition or medication may lead to severe anesthetic and surgical complications, and I accept full medical and legal responsibility for any such omissions. I agree that this declaration is digitally timestamped and recorded.
+          </span>
+        </label>
+      </div>
+
+      <div class="mt-8 flex justify-between items-center">
+        <button onclick="prevStep(4)" class="rounded-lg border border-slate-300 text-slate-700 px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors">← Back</button>
+        <button onclick="submitForm()" id="submitBtn" class="rounded-lg bg-black text-white px-8 py-4 text-base font-bold hover:bg-slate-900 transition-colors shadow-lg flex items-center gap-2">Submit Form <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></button>
+      </div>
+    </div>
+
+    <div id="sec-success" class="hidden bg-white rounded-xl shadow-lg p-12 mb-6 text-center">
+      <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Form Submitted Successfully</h2>
+      <p class="text-slate-500 mt-2 text-base max-w-md mx-auto">Your pre-operative assessment form has been securely sent to our clinic. Our medical team will review your file and contact you shortly.</p>
+      <div class="mt-8 inline-flex flex-col items-center rounded-lg bg-slate-50 border border-slate-200 px-6 py-4">
+        <span class="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">Case Tracking ID</span>
+        <span id="caseIdDisplay" class="font-mono text-lg font-bold text-slate-800 tracking-wider"></span>
+      </div>
+    </div>
+
+    <div class="text-xs text-slate-400 text-center pb-8 leading-relaxed max-w-lg mx-auto">
+      © 2024 SurgiCheck. All records are stored on HIPAA/GDPR compliant servers and are only reviewed by the relevant clinician. False declarations may affect surgical decisions.
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1j6BthE6pSHzqW82dVaphyD2IiI03LN8",
+      authDomain: "surgicheck-v3.firebaseapp.com",
+      projectId: "surgicheck-v3",
+      storageBucket: "surgicheck-v3.firebasestorage.app",
+      messagingSenderId: "907975258387",
+      appId: "1:907975258387:web:6e26d8deddbd8f52e22ae6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ─── DYNAMIC FORM LOGIC ──────────────────────────────────────────────────
+    document.getElementById("procedure").addEventListener("change", (e) => {
+      const proc = e.target.value;
+      const tummyBlock = document.getElementById("dynamic-tummy");
+      if (proc === "Tummy Tuck") {
+        tummyBlock.classList.remove("hidden");
+      } else {
+        tummyBlock.classList.add("hidden");
+        document.querySelector('input[name="csection"][value="no"]').checked = true;
+      }
+    });
+
+    // ─── BMI (Sanitized) ─────────────────────────────────────────────────────
+    function calcBMI() {
+      let h = parseFloat(document.getElementById("heightCm").value);
+      const w = parseFloat(document.getElementById("weightKg").value);
+      const disp = document.getElementById("bmi-display");
+      
+      if (!h || !w) { disp.classList.add("hidden"); return null; }
+      if (h < 3) { h = h * 100; } 
+      
+      const bmi = w / Math.pow(h / 100, 2);
+      const note = bmi < 18.5 ? "(Underweight)" : bmi < 25 ? "(Normal)" : bmi < 30 ? "(Overweight)" : bmi < 35 ? "(Obese I)" : "(Obese II+)";
+      
+      document.getElementById("bmi-val").textContent = bmi.toFixed(1);
+      document.getElementById("bmi-note").textContent = note;
+      disp.classList.remove("hidden");
+      return parseFloat(bmi.toFixed(1));
+    }
+    document.getElementById("heightCm").addEventListener("input", calcBMI);
+    document.getElementById("weightKg").addEventListener("input", calcBMI);
+
+    // ─── STEPS ───────────────────────────────────────────────────────────────
+    window.nextStep = function(from) {
+      if (!validateStep(from)) return;
+      document.getElementById("sec-" + from).classList.add("hidden");
+      document.getElementById("sec-" + (from + 1)).classList.remove("hidden");
+      updateDots(from + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.prevStep = function(from) {
+      document.getElementById("sec-" + from).classList.add("hidden");
+      document.getElementById("sec-" + (from - 1)).classList.remove("hidden");
+      updateDots(from - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    function updateDots(active) {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById("dot-" + i);
+        if (i < active) {
+          dot.className = "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-emerald-600 text-white flex-shrink-0 transition-colors";
+          dot.textContent = "✓";
+        } else if (i === active) {
+          dot.className = "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-black text-white flex-shrink-0 transition-colors shadow-sm";
+          dot.textContent = i;
+        } else {
+          dot.className = "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-slate-200 text-slate-500 flex-shrink-0 transition-colors";
+          dot.textContent = i;
+        }
+      }
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        const fields = ["procedure", "revision", "fullName", "phone", "email", "age", "heightCm", "weightKg"];
+        for (const f of fields) {
+          if (!document.getElementById(f).value.trim()) {
+            showAlert("err", "Please fill in all required fields.");
+            return false;
+          }
+        }
+      }
+      if (step === 4) {
+        if (!document.getElementById("expectations").value.trim()) {
+          showAlert("err", "Please write your expectations briefly."); return false;
+        }
+        if (!document.getElementById("legalConsent").checked) {
+          showAlert("err", "You must agree to the Legal Declaration to submit the form."); 
+          return false;
+        }
+      }
+      return true;
+    }
+
+    window.toggleSmokeDetail = function() {
+      const val = document.querySelector('input[name="smoking"]:checked')?.value;
+      const d = document.getElementById("smoke-detail");
+      d.classList.toggle("hidden", val === "never" || val === "quit_6m_plus");
+    };
+
+    // ─── SUBMIT ──────────────────────────────────────────────────────────────
+    window.submitForm = async function() {
+      if (!validateStep(4)) return;
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Submitting...`;
+
+      try {
+        const bmi = calcBMI();
+        let height = parseFloat(document.getElementById("heightCm").value);
+        if (height < 3) { height = height * 100; } 
+        
+        const procName = document.getElementById("procedure").value;
+
+        const payload = {
+          clinic: { name: "Leo Klinik" },
+          patient: {
+            fullName: document.getElementById("fullName").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            age: Number(document.getElementById("age").value),
+          },
+          procedure: {
+            name: procName,
+            revision: document.getElementById("revision").value === "yes"
+          },
+          anthropometrics: {
+            heightCm: height,
+            weightKg: Number(document.getElementById("weightKg").value),
+            bmi: bmi,
+          },
+          risks: {
+            cardiac: document.querySelector('input[name="cardiac"]:checked')?.value === "yes",
+            dvt: document.querySelector('input[name="dvt"]:checked')?.value === "yes",
+            diabetes: document.querySelector('input[name="diabetes"]:checked')?.value === "yes",
+            ht: document.querySelector('input[name="ht"]:checked')?.value === "yes",
+            activeMalignancy: document.querySelector('input[name="malignancy"]:checked')?.value === "yes",
+            keloid: document.querySelector('input[name="keloid"]:checked')?.value === "yes",
+            csection: procName === "Tummy Tuck" ? (document.querySelector('input[name="csection"]:checked')?.value === "yes") : false,
+            
+            medBloodThinners: document.getElementById("med_bloodThinners").checked,
+            medOcp: document.getElementById("med_ocp").checked,
+            medGlp1: document.getElementById("med_glp1").checked,
+            medAcne: document.getElementById("med_acne").checked,
+            medPsych: document.getElementById("med_psych").checked,
+            medSteroid: document.getElementById("med_steroid").checked,
+            medOther: document.getElementById("med_other").value.trim() || null,
+
+            smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
+            smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
+            alcohol: document.querySelector('input[name="alcohol"]:checked')?.value ?? "none",
+            majorWeightLoss: document.querySelector('input[name="majorWeightLoss"]:checked')?.value === "yes",
+          },
+          medHistory: document.getElementById("medHistory").value.trim() || null,
+          expectations: document.getElementById("expectations").value.trim(),
+          legalConsentVerified: document.getElementById("legalConsent").checked,
+          clinician: {
+            asa: null,
+            smokingVerified: null,
+            anticoagVerified: null,
+            decision: null,
+            rationale: null,
+            name: null,
+            examNote: null,
+            validations: {}
+          },
+          status: "patient_submitted",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+
+        const ref = await addDoc(collection(db, "cases"), payload);
+
+        document.getElementById("sec-4").classList.add("hidden");
+        document.getElementById("sec-success").classList.remove("hidden");
+        document.getElementById("caseIdDisplay").textContent = ref.id;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+      } catch (err) {
+        console.error(err);
+        showAlert("err", "An error occurred during submission. Please check your internet connection and try again.");
+        btn.disabled = false;
+        btn.innerHTML = `Submit Form ✓`;
+      }
+    };
+
+    function showAlert(type, msg) {
+      const el = document.getElementById("alert");
+      el.classList.remove("hidden");
+      el.className = "mb-4 rounded-xl p-4 text-sm font-medium shadow-sm flex items-center gap-2 " + (type === "ok"
+        ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+        : "bg-rose-50 text-rose-900 border border-rose-200");
+      el.innerHTML = (type === "ok" ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>') + msg;
+      setTimeout(() => el.classList.add("hidden"), 4000);
+    }
+    window.showAlert = showAlert;
+  </script>
+</body>
+</html>
