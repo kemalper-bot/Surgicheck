@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SurgiCheck | Clinician Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printArea, #printArea * { visibility: visible; }
+      #printArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; color: #000 !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50">
+<div class="max-w-7xl mx-auto p-4 md:p-6">
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 pb-5 border-b border-slate-200">
+    <div class="flex items-center gap-5">
+      <img src="logo.png" alt="SurgiCheck" class="h-14 md:h-16 object-contain flex-shrink-0" />
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-tight">Clinician Dashboard</h1>
+        <p class="text-sm text-slate-500 font-medium mt-1">Leo Clinic · Risk Management</p>
+      </div>
+    </div>
+    
+    <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 flex-shrink-0 self-start md:self-auto">
+      <a href="clinician.html" class="px-4 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">🇹🇷 TR</a>
+      <a href="clinician-en.html" class="px-4 py-1.5 text-xs font-bold bg-white text-slate-900 rounded shadow-sm cursor-default">🇬🇧 EN</a>
+    </div>
+  </div>
+
+  <div id="alert" class="hidden mb-4 rounded-xl p-4 text-sm font-medium shadow-sm items-center gap-2"></div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <div class="bg-white rounded-xl shadow-sm p-5 lg:col-span-4 border border-slate-100 h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-slate-700 text-lg">Cases</h2>
+        <button id="refreshBtn" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">↻ Refresh</button>
+      </div>
+      <div class="relative mb-4">
+        <input id="searchBox" class="w-full rounded-lg border border-slate-200 py-3 px-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-colors" placeholder="Search Patient or Procedure..." />
+      </div>
+      <div id="caseList" class="flex-1 overflow-y-auto pr-1 space-y-2">
+        <div class="text-sm text-slate-400 py-10 text-center animate-pulse font-medium">Loading Data...</div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-8 space-y-6">
+
+      <div id="emptyState" class="bg-white rounded-xl shadow-sm p-20 text-center text-slate-400 border border-slate-100 flex flex-col items-center justify-center h-[85vh]">
+        <p class="text-lg font-medium text-slate-500">Select a case from the left menu to view details.</p>
+      </div>
+
+      <div id="detail" class="hidden space-y-6">
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 flex flex-col sm:flex-row items-start justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                 <h2 class="text-2xl font-bold text-slate-800 leading-tight" id="patientName"></h2>
+                 <span class="text-xs text-slate-400 font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200" id="caseId"></span>
+              </div>
+              <div class="text-sm text-slate-500 mt-1 font-medium flex items-center gap-3" id="patientMeta"></div>
+            </div>
+            <div class="flex gap-3 flex-shrink-0 mt-2 sm:mt-0">
+              <button onclick="window.print()" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors">⎙ Print Report</button>
+              <button id="saveBtn" class="rounded-lg bg-black text-white px-6 py-2.5 text-sm font-bold hover:bg-slate-900 transition-colors shadow-sm">Save Decision</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+            <h3 class="font-bold text-slate-800 mb-5">Patient Declaration (PR)</h3>
+            <div id="patientDeclaration" class="text-sm text-slate-700 leading-relaxed"></div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-rose-500 bg-rose-50/30">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-bold text-slate-800">Risk Engine Outputs</h3>
+                <span id="flagCount" class="text-xs bg-white border border-rose-200 text-rose-700 px-2.5 py-1 rounded-full font-bold"></span>
+            </div>
+            <div id="flags" class="flex flex-col gap-2.5 mb-4"></div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-emerald-500">
+          <h3 class="font-bold text-slate-800 mb-6">Clinician Verification (CV)</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Clinician Name *</label>
+              <input id="clinicianName" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" placeholder="Dr. John Doe" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Pre-op ASA Class *</label>
+              <select id="cv-asa" onchange="rerunFlags()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium">
+                <option value="">Select...</option>
+                <option value="1">ASA I — Normal healthy patient</option>
+                <option value="2">ASA II — Mild systemic disease</option>
+                <option value="3">ASA III — Severe systemic disease</option>
+                <option value="4">ASA IV — Life-threatening disease</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Smoking Status (Verified)</label>
+              <div class="text-xs text-slate-400 mb-1.5 bg-slate-50 p-1.5 rounded border border-slate-100">Declared: <span id="pr-smoking" class="font-bold text-slate-700"></span></div>
+              <select id="cv-smoking" onchange="rerunFlags()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium">
+                <option value="">Pending verification</option>
+                <option value="never">Never smoked</option>
+                <option value="quit_6m_plus">Quit — >6 months</option>
+                <option value="quit_recent">Quit — <6 months</option>
+                <option value="active">Active smoker</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Blood Thinner Status</label>
+              <div class="text-xs text-slate-400 mb-1.5 bg-slate-50 p-1.5 rounded border border-slate-100">Declared: <span id="pr-anticoag" class="font-bold text-slate-700"></span></div>
+              <select id="cv-anticoag" onchange="rerunFlags()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium">
+                <option value="">Pending verification</option>
+                <option value="none">Not using</option>
+                <option value="paused">Paused (Bridging protocol)</option>
+                <option value="active">Active use</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Measured BMI</label>
+              <div class="text-xs text-slate-400 mb-1.5 bg-slate-50 p-1.5 rounded border border-slate-100">Stated BMI: <span id="pr-bmi" class="font-bold text-slate-700"></span></div>
+              <input type="number" id="cv-bmi" step="0.1" min="10" max="80" onchange="rerunFlags()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" placeholder="e.g. 24.5" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Additional Exam Notes</label>
+              <div class="text-xs text-transparent mb-1.5 select-none p-1.5 border border-transparent">Blank</div>
+              <textarea id="examNote" rows="1" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" placeholder="Consultation notes..."></textarea>
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-xl bg-slate-50 border-2 border-slate-200 p-5">
+            <div class="text-sm text-slate-800 uppercase tracking-wider font-bold mb-4">Medicolegal Validation Checks</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
+              <label class="flex items-center gap-3 cursor-pointer text-slate-700 font-medium bg-white p-3 rounded-lg border border-slate-200"><input type="checkbox" id="v_smoking" class="accent-black h-5 w-5" /> Lifestyle/smoking risk verified</label>
+              <label class="flex items-center gap-3 cursor-pointer text-slate-700 font-medium bg-white p-3 rounded-lg border border-slate-200"><input type="checkbox" id="v_meds" class="accent-black h-5 w-5" /> Medication interactions evaluated</label>
+              <label class="flex items-start gap-3 cursor-pointer sm:col-span-2 font-bold text-emerald-900 bg-emerald-50/80 border-2 border-emerald-200/70 p-4 rounded-lg shadow-sm">
+                <input type="checkbox" id="v_labs" class="accent-emerald-600 h-6 w-6 flex-shrink-0 mt-0.5" /> 
+                <span>Pre-operative laboratory and anesthesia tests reviewed and found consistent with clinical presentation.</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+          <h3 class="font-bold text-slate-800 mb-5">Final Clinical Decision</h3>
+          <div id="gateSuggestion" class="hidden mb-6 rounded-lg p-4 text-sm border-2 font-bold shadow-sm"></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Decision *</label>
+              <select id="decision" onchange="updateReportPreview()" class="w-full rounded-lg border-2 border-slate-300 p-3 text-base focus:outline-none focus:border-blue-500 font-bold text-slate-800">
+                <option value="" disabled selected>Select...</option>
+                <option value="suitable" class="text-emerald-700">✓ Suitable for Surgery (Clearance)</option>
+                <option value="conditional" class="text-amber-700">◐ Conditional (Requires Consult/Prep)</option>
+                <option value="not_suitable" class="text-rose-700">✗ Not Suitable / Cancelled</option>
+              </select>
+            </div>
+            <div class="md:col-span-1">
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Medical Rationale *</label>
+              <textarea id="rationale" rows="3" onchange="updateReportPreview()" class="w-full rounded-lg border-2 border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-500 font-medium" placeholder="State reasons, conditions, or lab discrepancies..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div id="printArea">
+          <div class="bg-white rounded-xl shadow-sm p-10 border-2 border-slate-200">
+            <div class="flex items-start justify-between mb-8 pb-6 border-b-2 border-slate-200">
+              <div>
+                <img src="logo.png" alt="SurgiCheck" class="h-12 mb-4 object-contain" />
+                <div class="text-2xl font-black uppercase tracking-widest text-slate-900 leading-none">Pre-operative Clearance Report</div>
+                <div class="text-base font-bold text-slate-500 mt-1">Leo Clinic</div>
+              </div>
+              <div class="text-sm text-slate-500 text-right mt-16 font-medium">
+                <div id="reportTimestamp"></div>
+                <div id="reportCaseId" class="font-mono mt-1 text-slate-400 text-xs"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-base mb-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+              <div><span class="text-slate-500 w-32 inline-block font-semibold uppercase text-xs tracking-wide">Patient:</span> <span id="r_patient" class="font-bold text-slate-900 text-lg"></span></div>
+              <div><span class="text-slate-500 w-32 inline-block font-semibold uppercase text-xs tracking-wide">Procedure:</span> <span id="r_procedure" class="font-bold text-slate-900 text-lg"></span></div>
+              <div><span class="text-slate-500 w-32 inline-block font-semibold uppercase text-xs tracking-wide">Measured BMI:</span> <span id="r_bmi" class="font-bold text-slate-900"></span></div>
+              <div><span class="text-slate-500 w-32 inline-block font-semibold uppercase text-xs tracking-wide">ASA Class:</span> <span id="r_asa" class="font-bold text-slate-900"></span></div>
+            </div>
+
+            <div class="mb-8">
+              <div class="text-sm text-slate-700 uppercase tracking-widest mb-3 font-black border-b-2 border-slate-200 pb-2">Identified Risks & Interactions</div>
+              <div id="r_flags" class="flex flex-col gap-2 text-slate-800 font-medium leading-relaxed"></div>
+            </div>
+
+            <div id="r_lab_status" class="text-base mb-8 text-emerald-900 bg-emerald-50 border-2 border-emerald-200 p-4 rounded-lg font-bold hidden flex items-center gap-3">
+              Laboratory and pre-operative anesthesia tests have been reviewed by the clinician and deemed appropriate.
+            </div>
+
+            <div id="r_decision_box" class="rounded-xl p-5 mb-8 border-4 text-2xl font-black text-center uppercase tracking-widest shadow-sm" style="display:none"></div>
+
+            <div class="text-base bg-slate-50 p-6 rounded-xl border-2 border-slate-200 mb-12">
+              <div class="text-sm text-slate-700 uppercase tracking-widest mb-3 font-black">Clinician Rationale & Notes</div>
+              <div id="r_rationale" class="whitespace-pre-wrap text-slate-900 font-medium italic leading-relaxed"></div>
+            </div>
+
+            <div class="pt-6 border-t-2 border-slate-200 text-sm text-slate-500 text-justify leading-relaxed flex justify-between items-end font-medium">
+              <div class="w-2/3 pr-8">
+                This document was generated via a clinical decision support tool. Final evaluation of risk, operative clearance, and lab results remains the sole responsibility of the managing clinician. Patient digital consent is recorded in the system.
+              </div>
+              <div class="w-1/3 text-right">
+                <div class="mb-8 text-slate-300 font-bold uppercase tracking-widest">Surgeon Signature</div>
+                <div id="r_clinician_sig" class="font-black text-lg text-slate-900 uppercase tracking-wide border-t-2 border-slate-900 pt-2 inline-block"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, doc, getDoc,
+    updateDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1j6BthE6pSHzqW82dVaphyD2IiI03LN8",
+    authDomain: "surgicheck-v3.firebaseapp.com",
+    projectId: "surgicheck-v3",
+    storageBucket: "surgicheck-v3.firebasestorage.app",
+    messagingSenderId: "907975258387",
+    appId: "1:907975258387:web:6e26d8deddbd8f52e22ae6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  function computeFlags(caseData, cvOverrides = {}) {
+    const flags = [];
+    try {
+      const r = caseData?.risks ?? {};
+      const bmi = cvOverrides.bmi ?? caseData?.anthropometrics?.bmi ?? null;
+      const proc = caseData?.procedure?.name ?? "";
+      const asa = cvOverrides.asa ?? caseData?.clinician?.asa ?? null;
+      const smokingCV = cvOverrides.smokingVerified ?? caseData?.clinician?.smokingVerified ?? null;
+      const anticoagCV = cvOverrides.anticoagVerified ?? caseData?.clinician?.anticoagVerified ?? null;
+
+      if (asa === "4") flags.push({ type: "HARD", key: "asa4", title: "ASA IV", desc: "Elective surgery is contraindicated." });
+      if (r.activeMalignancy) flags.push({ type: "HARD", key: "malignancy", title: "Active Malignancy", desc: "Oncology consult is mandatory." });
+      if (r.dvt) flags.push({ type: "HARD", key: "dvt", title: "DVT / PE History", desc: "Thromboprophylaxis plan is mandatory." });
+
+      if (anticoagCV === "active") {
+        flags.push({ type: "HARD", key: "anticoag_active", title: "Active Blood Thinner", desc: "Bridging protocol must be implemented." });
+      } else if (!anticoagCV && (r.medBloodThinners || r.anticoagulant)) {
+        flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Blood Thinner — CV Required", desc: "Patient stated usage. Verification pending." });
+      }
+
+      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "Drug Interaction: GLP-1", desc: "Aspiration risk under anesthesia. Must be stopped." });
+      
+      if (r.medOcp) {
+        const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
+        if (highDvtProcs.some(p => proc.includes(p))) {
+          flags.push({ type: "SOFT", key: "med_ocp_dvt", title: "Interaction: HRT/OCP + Major Surgery", desc: "Elevated VTE (DVT) risk." });
+        } else {
+          flags.push({ type: "SOFT", key: "med_ocp", title: "Drug: Birth Control / Hormones", desc: "Include in DVT risk profiling." });
+        }
+      }
+
+      if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne", title: "Drug Interaction: Isotretinoin", desc: "Delayed wound healing and poor scar risk." });
+      if (r.medPsych || r.psych) flags.push({ type: "SOFT", key: "med_psych", title: "Psychiatric History", desc: "Evaluate for Body Dysmorphic Disorder (BDD)." });
+      if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid", title: "Drug: Steroids", desc: "Adrenal suppression and infection risk." });
+
+      if (smokingCV === "active") {
+        flags.push({ type: "SOFT", key: "smoking_active", title: "Active Smoker", desc: "High risk of flap necrosis." });
+      } else if (!smokingCV && r.smoking === "active") {
+        flags.push({ type: "VERIFY", key: "smoking_verify", title: "Smoking — CV Required", desc: "Active smoker declared." });
+      }
+
+      const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
+      const isHBP = highBmiProcs.some(p => proc.includes(p));
+      if (bmi !== null) {
+        if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40", title: `BMI ≥ 40`, desc: "Body contouring should be delayed." });
+        else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35", title: `BMI 35–39`, desc: "High surgical risk." });
+      } else {
+        flags.push({ type: "VERIFY", key: "bmi_missing", title: "BMI — Missing Measurement", desc: "Clinical BMI is required." });
+      }
+
+      if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Poor Scarring", desc: "Scar consent must be obtained." });
+      if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Past Abdominal Surgery", desc: "Fascial defect consideration." });
+      if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revision Surgery", desc: "Anatomical plane difficulty." });
+    } catch (e) {}
+    return flags;
+  }
+
+  function gateFromFlags(flags) {
+    if (flags.some(f => f.type === "HARD")) return "ineligible";
+    if (flags.some(f => f.type === "VERIFY")) return "verify";
+    if (flags.some(f => f.type === "SOFT")) return "conditional";
+    return "eligible";
+  }
+
+  let casesCache = [];
+  let selectedCaseId = null;
+  let selectedCase = null;
+
+  function showAlert(type, msg) {
+    const el = document.getElementById("alert");
+    el.classList.remove("hidden");
+    el.className = "mb-4 rounded-xl p-4 text-sm font-bold flex items-center gap-3 shadow-sm " + (type === "ok" ? "bg-emerald-50 text-emerald-800 border-2 border-emerald-200" : "bg-rose-50 text-rose-800 border-2 border-rose-200");
+    el.innerHTML = msg;
+    setTimeout(() => el.classList.add("hidden"), 3500);
+  }
+
+  async function fetchCases() {
+    try {
+      document.getElementById("caseList").innerHTML = `<div class="text-sm text-slate-400 py-10 text-center animate-pulse">Loading Data...</div>`;
+      const snap = await getDocs(collection(db, "cases"));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      rows.sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+      casesCache = rows;
+      applySearch();
+    } catch (err) {
+      document.getElementById("caseList").innerHTML = `<div class="text-sm text-rose-700 py-4 text-center">Connection Error.</div>`;
+    }
+  }
+
+  function applySearch() {
+    const q = (document.getElementById("searchBox").value || "").toLowerCase().trim();
+    const filtered = q ? casesCache.filter(c => [c.patient?.fullName, c.procedure?.name].join(" ").toLowerCase().includes(q)) : casesCache;
+    renderCaseList(filtered);
+  }
+
+  function renderCaseList(items) {
+    const el = document.getElementById("caseList");
+    if (!items.length) { el.innerHTML = `<div class="text-sm text-slate-400 py-10 text-center font-medium">No cases found.</div>`; return; }
+    el.innerHTML = "";
+    items.forEach(c => {
+      const flags = computeFlags(c);
+      const hardCount = flags.filter(f => f.type === "HARD").length;
+      const decMap = { suitable: "Cleared", conditional: "Conditional", not_suitable: "Cancelled" };
+      const decColor = c.clinician?.decision === "suitable" ? "text-emerald-600" : c.clinician?.decision === "not_suitable" ? "text-rose-600" : "text-slate-500";
+      
+      const btn = document.createElement("button");
+      btn.className = "w-full text-left rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition-all " + (c.id === selectedCaseId ? " bg-blue-50/80 border-blue-400 ring-1 ring-blue-400" : "bg-white");
+      btn.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="text-base font-bold text-slate-800">${c.patient?.fullName ?? "Unnamed"}</div>
+            <div class="text-sm text-slate-500 mt-1">${c.procedure?.name ?? "—"}</div>
+            <div class="text-xs mt-2 font-bold ${decColor}">${decMap[c.clinician?.decision] ?? "Pending"}</div>
+          </div>
+          <div class="flex flex-col items-end gap-2 mt-0.5">
+            ${hardCount > 0 ? `<span class="text-[10px] uppercase bg-rose-100 text-rose-800 font-black px-2 py-1 rounded">${hardCount} HARD</span>` : ""}
+          </div>
+        </div>`;
+      btn.addEventListener("click", () => loadCase(c.id));
+      el.appendChild(btn);
+    });
+  }
+
+  async function loadCase(id) {
+    selectedCaseId = id;
+    const snap = await getDoc(doc(db, "cases", id));
+    if (!snap.exists()) return;
+    selectedCase = { id: snap.id, ...snap.data() };
+
+    document.getElementById("emptyState").classList.add("hidden");
+    document.getElementById("detail").classList.remove("hidden");
+
+    document.getElementById("caseId").textContent = selectedCase.id;
+    document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
+    document.getElementById("patientMeta").textContent = `${selectedCase.patient?.age ?? "?"} yo · Tel: ${selectedCase.patient?.phone ?? ""}`;
+
+    const a = selectedCase.anthropometrics ?? {};
+    const r = selectedCase.risks ?? {};
+    
+    const medsList = [];
+    if(r.medBloodThinners) medsList.push("Blood Thinner");
+    if(r.medOcp) medsList.push("Birth Control");
+    if(r.medGlp1) medsList.push("Weight Loss (GLP1)");
+    if(r.medAcne) medsList.push("Acne Meds");
+    if(r.medPsych) medsList.push("Psychiatric");
+    if(r.medSteroid) medsList.push("Steroids");
+
+    document.getElementById("patientDeclaration").innerHTML = `
+      <div class="grid grid-cols-2 gap-y-4 text-slate-700">
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Procedure</span> <span class="font-bold text-lg">${selectedCase.procedure?.name ?? "—"}</span></div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Height/Weight/BMI</span> ${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / <b>${a.bmi ?? "?"}</b></div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Smoking</span> <span class="${r.smoking === "active" ? "text-rose-600 font-black" : "font-bold"}">${r.smoking ?? "—"}</span></div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Major Meds</span> <b>${medsList.length > 0 ? medsList.join(", ") : "None"}</b></div>
+        <div class="col-span-2"><span class="text-slate-400 block text-xs uppercase font-bold">Other Meds</span> <i>${r.medOther || "Not specified"}</i></div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Cardiac/HT/DM</span> ${(r.cardiac || r.ht || r.diabetes) ? "<span class='text-amber-600 font-bold'>Yes</span>" : "No"}</div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">DVT/PE/Cancer</span> <span class="${(r.dvt || r.activeMalignancy) ? "text-rose-600 font-bold" : ""}">${(r.dvt || r.activeMalignancy) ? "YES ⚠" : "No"}</span></div>
+      </div>
+      <div class="mt-6 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div class="mb-2"><b>History:</b> ${selectedCase.medHistory || "—"}</div>
+        <div><b>Expectation:</b> ${selectedCase.expectations || "—"}</div>
+        <div class="mt-3 text-emerald-700 font-bold text-xs">${selectedCase.legalConsentVerified ? "✓ Legal consent confirmed." : "⚠ Missing legal consent."}</div>
+      </div>
+    `;
+
+    document.getElementById("pr-smoking").textContent = r.smoking ?? "—";
+    document.getElementById("pr-anticoag").textContent = r.medBloodThinners ? "In use" : "None";
+    document.getElementById("pr-bmi").textContent = a.bmi ?? "—";
+
+    const cl = selectedCase.clinician ?? {};
+    document.getElementById("clinicianName").value = cl.name ?? "";
+    document.getElementById("cv-asa").value = cl.asa ?? "";
+    document.getElementById("cv-smoking").value = cl.smokingVerified ?? "";
+    document.getElementById("cv-anticoag").value = cl.anticoagVerified ?? "";
+    document.getElementById("cv-bmi").value = cl.bmiMeasured ?? "";
+    document.getElementById("examNote").value = cl.examNote ?? "";
+    
+    const v = cl.validations ?? {};
+    document.getElementById("v_smoking").checked = !!v.smoking;
+    document.getElementById("v_meds").checked = !!v.meds;
+    document.getElementById("v_labs").checked = !!v.labs;
+    document.getElementById("decision").value = cl.decision ?? "";
+    document.getElementById("rationale").value = cl.rationale ?? "";
+
+    renderCurrentFlags();
+    window.updateReportPreview();
+    applySearch();
+  }
+
+  function getCVOverrides() {
+    return {
+      asa: document.getElementById("cv-asa").value || null,
+      smokingVerified: document.getElementById("cv-smoking").value || null,
+      anticoagVerified: document.getElementById("cv-anticoag").value || null,
+      bmi: parseFloat(document.getElementById("cv-bmi").value) || null,
+    };
+  }
+
+  function renderCurrentFlags() {
+    if (!selectedCase) return;
+    const flags = computeFlags(selectedCase, getCVOverrides());
+    const el = document.getElementById("flags");
+    document.getElementById("flagCount").textContent = flags.length + " Flags";
+    el.innerHTML = "";
+
+    if (!flags.length) {
+      el.innerHTML = `<div class="p-4 rounded-xl border-2 border-emerald-200 text-emerald-800 bg-emerald-50 font-bold">✓ No systemic major risks detected.</div>`;
+    } else {
+      flags.forEach(f => {
+        const cls = f.type === "HARD" ? "border-rose-300 text-rose-900 bg-rose-50" : f.type === "SOFT" ? "border-amber-300 text-amber-900 bg-amber-50" : "border-blue-300 text-blue-900 bg-blue-50";
+        el.innerHTML += `<div class="text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1"><b>[${f.type}] ${f.title}</b> <span>${f.desc}</span></div>`;
+      });
+    }
+
+    const gate = gateFromFlags(flags);
+    const sug = document.getElementById("gateSuggestion");
+    const gateMap = {
+      eligible: { text: "Routine process.", cls: "bg-emerald-50 text-emerald-800" },
+      conditional: { text: "Conditional approval suggested.", cls: "bg-amber-50 text-amber-800" },
+      verify: { text: "Clinician verification required.", cls: "bg-blue-50 text-blue-800" },
+      ineligible: { text: "MAJOR RISK DETECTED!", cls: "bg-rose-50 text-rose-800" },
+    };
+    sug.classList.remove("hidden");
+    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${gateMap[gate].cls}`;
+    sug.innerHTML = `System Suggestion: ${gateMap[gate].text}`;
+  }
+
+  window.updateReportPreview = function() {
+    if (!selectedCase) return;
+    const flags = computeFlags(selectedCase, getCVOverrides());
+    const dec = document.getElementById("decision").value;
+
+    document.getElementById("reportTimestamp").textContent = new Date().toLocaleString("en-GB");
+    document.getElementById("reportCaseId").textContent = selectedCase.id;
+    document.getElementById("r_patient").textContent = `${selectedCase.patient?.fullName ?? "—"}`;
+    document.getElementById("r_procedure").textContent = `${selectedCase.procedure?.name ?? "—"}`;
+    document.getElementById("r_bmi").textContent = document.getElementById("cv-bmi").value || selectedCase.anthropometrics?.bmi;
+    document.getElementById("r_asa").textContent = document.getElementById("cv-asa").value || "Not Stated";
+    document.getElementById("r_rationale").textContent = document.getElementById("rationale").value || "No rationale provided.";
+    document.getElementById("r_clinician_sig").textContent = document.getElementById("clinicianName").value ? `Dr. ${document.getElementById("clinicianName").value}` : "Signature";
+
+    document.getElementById("r_flags").innerHTML = flags.length ? flags.map(f => `<div class="border-b-2 border-slate-100 py-2"><b>[${f.type}] ${f.title}:</b> ${f.desc}</div>`).join("") : "No risks identified.";
+    document.getElementById("v_labs").checked ? document.getElementById("r_lab_status").classList.remove("hidden") : document.getElementById("r_lab_status").classList.add("hidden");
+
+    const db2 = document.getElementById("r_decision_box");
+    if (dec) {
+      db2.style.display = "block";
+      const decMap = { suitable: "✓ CLEARED", conditional: "◐ CONDITIONAL", not_suitable: "✗ CANCELLED" };
+      db2.className = `rounded-xl p-5 mb-8 border-4 text-2xl font-black text-center ` + (dec==="suitable"?"text-emerald-800 border-emerald-400":dec==="not_suitable"?"text-rose-800 border-rose-400":"text-amber-800 border-amber-400");
+      db2.textContent = decMap[dec];
+    } else db2.style.display = "none";
+  };
+
+  window.rerunFlags = function() { renderCurrentFlags(); window.updateReportPreview(); };
+  document.getElementById("v_labs").addEventListener("change", window.updateReportPreview);
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    if (!selectedCaseId) return;
+    const flags = computeFlags(selectedCase, getCVOverrides());
+    if (flags.some(f => f.type === "VERIFY")) return showAlert("err", "Please confirm VERIFY warnings.");
+    const decision = document.getElementById("decision").value;
+    if (!decision) return showAlert("err", "Please select a decision.");
+    if (!document.getElementById("clinicianName").value.trim()) return showAlert("err", "Clinician name is required.");
+
+    try {
+      document.getElementById("saveBtn").textContent = "Saving...";
+      await updateDoc(doc(db, "cases", selectedCaseId), {
+        clinician: {
+          name: document.getElementById("clinicianName").value.trim(),
+          asa: document.getElementById("cv-asa").value || null,
+          smokingVerified: document.getElementById("cv-smoking").value || null,
+          anticoagVerified: document.getElementById("cv-anticoag").value || null,
+          bmiMeasured: parseFloat(document.getElementById("cv-bmi").value) || null,
+          examNote: document.getElementById("examNote").value.trim() || null,
+          decision: decision,
+          rationale: document.getElementById("rationale").value.trim() || null,
+          validations: { smoking: document.getElementById("v_smoking").checked, meds: document.getElementById("v_meds").checked, labs: document.getElementById("v_labs").checked }
+        },
+        status: "clinician_reviewed", updatedAt: serverTimestamp()
+      });
+      showAlert("ok", "Saved.");
+      document.getElementById("saveBtn").textContent = "Save Decision";
+      await fetchCases(); await loadCase(selectedCaseId);
+    } catch (err) { showAlert("err", "Connection error."); }
+  });
+
+  document.getElementById("refreshBtn").addEventListener("click", fetchCases);
+  document.getElementById("searchBox").addEventListener("input", applySearch);
+  fetchCases();
+</script>
+</body>
+</html>
