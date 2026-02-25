@@ -380,7 +380,9 @@
 
     document.getElementById("caseId").textContent = selectedCase.id;
     document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
-    document.getElementById("patientMeta").textContent = `${selectedCase.patient?.age ?? "?"} yo · Tel: ${selectedCase.patient?.phone ?? ""}`;
+    const genderLabelEN = { female: "Female", male: "Male", other: "Other" };
+    const genderTextEN = genderLabelEN[selectedCase.patient?.gender] ?? "—";
+    document.getElementById("patientMeta").textContent = `${selectedCase.patient?.age ?? "?"} yo · ${genderTextEN} · Tel: ${selectedCase.patient?.phone ?? ""}`;
 
     const a = selectedCase.anthropometrics ?? {};
     const r = selectedCase.risks ?? {};
@@ -396,6 +398,7 @@
     document.getElementById("patientDeclaration").innerHTML = `
       <div class="grid grid-cols-2 gap-y-4 text-slate-700">
         <div><span class="text-slate-400 block text-xs uppercase font-bold">Procedure</span> <span class="font-bold text-lg">${selectedCase.procedure?.name ?? "—"}</span></div>
+        <div><span class="text-slate-400 block text-xs uppercase font-bold">Gender</span> <span class="font-bold">${genderLabelEN[selectedCase.patient?.gender] ?? "—"}</span></div>
         <div><span class="text-slate-400 block text-xs uppercase font-bold">Height/Weight/BMI</span> ${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / <b>${a.bmi ?? "?"}</b></div>
         <div><span class="text-slate-400 block text-xs uppercase font-bold">Smoking</span> <span class="${r.smoking === "active" ? "text-rose-600 font-black" : "font-bold"}">${r.smoking ?? "—"}</span></div>
         <div><span class="text-slate-400 block text-xs uppercase font-bold">Major Meds</span> <b>${medsList.length > 0 ? medsList.join(", ") : "None"}</b></div>
