@@ -10,17 +10,26 @@
   <div class="max-w-3xl mx-auto p-6">
 
     <div class="bg-white rounded-xl shadow p-6 mb-6">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-5">
-        <div class="flex items-center gap-5">
-          <img src="logo.png" alt="SurgiCheck Logo" class="h-16 md:h-24 object-contain" />
-          <div class="hidden sm:block border-l border-slate-200 pl-5">
-            <h1 class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">Pre-Operative Risk Assessment</h1>
+      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-5 gap-4">
+        
+        <div class="flex items-center gap-4 md:gap-5 flex-1">
+          <img src="logo.png" alt="SurgiCheck Logo" class="h-16 md:h-24 object-contain flex-shrink-0" />
+          <div class="border-l border-slate-200 pl-4 md:pl-5">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-tight">Pre-Operative Risk Assessment</h1>
             <p class="text-sm text-slate-500 font-medium mt-1">Leo Clinic</p>
           </div>
         </div>
-        <div class="text-xs text-slate-400 text-right leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 hidden md:block">
-          This form is not a diagnosis.<br/><span class="font-medium text-slate-600">Final clearance is decided by the surgeon.</span>
+
+        <div class="flex flex-col items-end gap-3 flex-shrink-0">
+          <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <a href="patient.html" class="px-4 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">🇹🇷 TR</a>
+            <a href="patient-en.html" class="px-4 py-1.5 text-xs font-bold bg-white text-slate-900 rounded shadow-sm cursor-default">🇬🇧 EN</a>
+          </div>
+          <div class="text-xs text-slate-500 text-right leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200 hidden md:block">
+            This form is not a diagnosis.<br/><span class="font-bold text-slate-700">Final clearance is decided by the surgeon.</span>
+          </div>
         </div>
+
       </div>
 
       <div class="mt-8">
@@ -332,7 +341,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ─── DYNAMIC FORM LOGIC ──────────────────────────────────────────────────
     document.getElementById("procedure").addEventListener("change", (e) => {
       const proc = e.target.value;
       const tummyBlock = document.getElementById("dynamic-tummy");
@@ -344,7 +352,6 @@
       }
     });
 
-    // ─── BMI (Sanitized) ─────────────────────────────────────────────────────
     function calcBMI() {
       let h = parseFloat(document.getElementById("heightCm").value);
       const w = parseFloat(document.getElementById("weightKg").value);
@@ -364,7 +371,6 @@
     document.getElementById("heightCm").addEventListener("input", calcBMI);
     document.getElementById("weightKg").addEventListener("input", calcBMI);
 
-    // ─── STEPS ───────────────────────────────────────────────────────────────
     window.nextStep = function(from) {
       if (!validateStep(from)) return;
       document.getElementById("sec-" + from).classList.add("hidden");
@@ -424,7 +430,6 @@
       d.classList.toggle("hidden", val === "never" || val === "quit_6m_plus");
     };
 
-    // ─── SUBMIT ──────────────────────────────────────────────────────────────
     window.submitForm = async function() {
       if (!validateStep(4)) return;
 
@@ -439,6 +444,7 @@
         
         const procName = document.getElementById("procedure").value;
 
+        // DB PAYLOAD - DO NOT TRANSLATE VALUES TO KEEP RULES ENGINE INTACT
         const payload = {
           clinic: { name: "Leo Klinik" },
           patient: {
