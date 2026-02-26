@@ -13,10 +13,9 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 border-b border-slate-100 pb-5">
 
         <div class="flex items-center gap-4 sm:gap-5">
-          <img src="logo.png" alt="SurgiCheck Logo" class="h-14 sm:h-20 object-contain flex-shrink-0" />
+          <img src="/logo.png" alt="SurgiCheck Logo" class="h-14 sm:h-20 object-contain flex-shrink-0" />
           <div class="border-l-2 border-slate-100 pl-4 sm:pl-5">
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight leading-snug">Pre-Operative Risk Assessment</h1>
-            <p class="text-sm text-slate-500 font-medium mt-0.5">Leo Clinic</p>
           </div>
         </div>
 
@@ -520,7 +519,7 @@
         const procName = document.getElementById("procedure").value;
 
         const payload = {
-          clinic: { name: "Leo Klinik" },
+          clinic: { name: "" },
           patient: {
             fullName: document.getElementById("fullName").value.trim(),
             phone: document.getElementById("phone").value.trim(),
