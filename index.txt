@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SurgiCheck | Pre-Operative Risk Assessment Platform</title>
+  <meta name="description" content="SurgiCheck helps clinicians and patients complete pre-operative risk assessments digitally — fast, structured, and paperless." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+    .lang-btn { transition: all 0.15s ease; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased">
+
+  <!-- Language Toggle -->
+  <div class="fixed top-4 right-4 z-50">
+    <div class="flex bg-white border border-slate-200 rounded-lg shadow-sm p-1">
+      <button onclick="setLang('en')" id="btn-en" class="lang-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-slate-900 text-white">🇬🇧 EN</button>
+      <button onclick="setLang('tr')" id="btn-tr" class="lang-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800">🇹🇷 TR</button>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="gradient-bg min-h-screen flex items-center justify-center px-4 py-24">
+    <div class="max-w-4xl mx-auto text-center">
+
+      <div class="flex justify-center mb-10">
+        <div class="bg-white rounded-2xl px-8 py-5 shadow-lg">
+          <img src="logo.png" alt="SurgiCheck" class="h-16 object-contain" />
+        </div>
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight mb-6">
+        <span data-en="Pre-Operative Risk" data-tr="Ameliyat Öncesi Risk">Pre-Operative Risk</span><br />
+        <span class="text-blue-400" data-en="Assessment, Reimagined" data-tr="Değerlendirmesi, Yeniden">Assessment, Reimagined</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 leading-relaxed"
+         data-en="SurgiCheck digitizes pre-operative screening — structured questionnaires, instant risk scores, and seamless clinician review. Paperless. Fast. Reliable."
+         data-tr="SurgiCheck, ameliyat öncesi değerlendirmeyi dijitalleştirir — yapılandırılmış anketler, anlık risk skorları ve klinisyen incelemesi. Kağıtsız. Hızlı. Güvenilir.">
+        SurgiCheck digitizes pre-operative screening — structured questionnaires, instant risk scores, and seamless clinician review. Paperless. Fast. Reliable.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="patient-en.html" id="link-patient"
+           class="inline-flex items-center justify-center gap-2 bg-white text-slate-900 font-bold px-8 py-4 rounded-xl text-base hover:bg-slate-100 transition-colors shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span data-en="Patient Form" data-tr="Hasta Formu">Patient Form</span>
+        </a>
+        <a href="clinician-en.html" id="link-clinician"
+           class="inline-flex items-center justify-center gap-2 bg-blue-500 text-white font-bold px-8 py-4 rounded-xl text-base hover:bg-blue-600 transition-colors shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span data-en="Clinician Dashboard" data-tr="Klinisyen Paneli">Clinician Dashboard</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-24 px-4 bg-slate-50">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4"
+            data-en="Everything you need, nothing you don't"
+            data-tr="İhtiyacınız olan her şey, fazlası değil">
+          Everything you need, nothing you don't
+        </h2>
+        <p class="text-slate-500 text-lg max-w-xl mx-auto"
+           data-en="Designed for busy surgical teams and their patients."
+           data-tr="Yoğun cerrahi ekipler ve hastaları için tasarlandı.">
+          Designed for busy surgical teams and their patients.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="card-hover bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2"
+              data-en="Structured Questionnaire"
+              data-tr="Yapılandırılmış Anket">Structured Questionnaire</h3>
+          <p class="text-slate-500 text-sm leading-relaxed"
+             data-en="Multi-step patient form covering medical history, lifestyle, medications, and consent — available in Turkish and English."
+             data-tr="Tıbbi geçmiş, yaşam tarzı, ilaçlar ve onayı kapsayan çok adımlı hasta formu — Türkçe ve İngilizce.">
+            Multi-step patient form covering medical history, lifestyle, medications, and consent — available in Turkish and English.
+          </p>
+        </div>
+
+        <div class="card-hover bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+          <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2"
+              data-en="Instant Risk Scoring"
+              data-tr="Anlık Risk Skoru">Instant Risk Scoring</h3>
+          <p class="text-slate-500 text-sm leading-relaxed"
+             data-en="Automatic risk classification based on patient answers. Low, moderate, and high risk categories with clear visual indicators."
+             data-tr="Hasta yanıtlarına göre otomatik risk sınıflandırması. Net görsel göstergelerle düşük, orta ve yüksek risk kategorileri.">
+            Automatic risk classification based on patient answers. Low, moderate, and high risk categories with clear visual indicators.
+          </p>
+        </div>
+
+        <div class="card-hover bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+          <div class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-2"
+              data-en="Clinician Dashboard"
+              data-tr="Klinisyen Paneli">Clinician Dashboard</h3>
+          <p class="text-slate-500 text-sm leading-relaxed"
+             data-en="Review all patient submissions in one place. Filter by risk level, search cases, and print structured reports."
+             data-tr="Tüm hasta başvurularını tek bir yerden inceleyin. Risk düzeyine göre filtreleyin, vakaları arayın ve yapılandırılmış raporlar yazdırın.">
+            Review all patient submissions in one place. Filter by risk level, search cases, and print structured reports.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-24 px-4 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4"
+            data-en="How it works"
+            data-tr="Nasıl çalışır">How it works</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div class="text-center">
+          <div class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black mx-auto mb-5">1</div>
+          <h3 class="font-bold text-slate-900 mb-2"
+              data-en="Patient fills the form"
+              data-tr="Hasta formu doldurur">Patient fills the form</h3>
+          <p class="text-slate-500 text-sm"
+             data-en="On their phone or a tablet at the clinic, before the appointment."
+             data-tr="Randevudan önce telefonunda veya klinikte bir tablette.">On their phone or a tablet at the clinic, before the appointment.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black mx-auto mb-5">2</div>
+          <h3 class="font-bold text-slate-900 mb-2"
+              data-en="Risk is calculated"
+              data-tr="Risk hesaplanır">Risk hesaplanır</h3>
+          <p class="text-slate-500 text-sm"
+             data-en="The system scores the answers and flags high-risk conditions automatically."
+             data-tr="Sistem yanıtları puanlar ve yüksek riskli durumları otomatik olarak işaretler.">The system scores the answers and flags high-risk conditions automatically.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-xl font-black mx-auto mb-5">3</div>
+          <h3 class="font-bold text-slate-900 mb-2"
+              data-en="Clinician reviews"
+              data-tr="Klinisyen inceler">Clinician reviews</h3>
+          <p class="text-slate-500 text-sm"
+             data-en="Doctor opens the dashboard, sees the case, and makes the clearance decision."
+             data-tr="Doktor paneli açar, vakayı görür ve onay kararını verir.">Doctor opens the dashboard, sees the case, and makes the clearance decision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 px-4 gradient-bg">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6"
+          data-en="Ready to get started?"
+          data-tr="Başlamaya hazır mısınız?">Ready to get started?</h2>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="patient-en.html" id="cta-patient"
+           class="inline-flex items-center justify-center gap-2 bg-white text-slate-900 font-bold px-8 py-4 rounded-xl text-base hover:bg-slate-100 transition-colors">
+          <span data-en="I'm a Patient" data-tr="Hastayım">I'm a Patient</span>
+        </a>
+        <a href="clinician-en.html" id="cta-clinician"
+           class="inline-flex items-center justify-center gap-2 bg-blue-500 text-white font-bold px-8 py-4 rounded-xl text-base hover:bg-blue-600 transition-colors">
+          <span data-en="I'm a Clinician" data-tr="Klinisyenim">I'm a Clinician</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 px-4 bg-slate-900 text-center">
+    <p class="text-slate-500 text-sm">
+      © 2025 SurgiCheck ·
+      <span data-en="All rights reserved." data-tr="Tüm hakları saklıdır.">All rights reserved.</span>
+    </p>
+  </footer>
+
+  <script>
+    const lang = localStorage.getItem('sc-lang') || 'en';
+    setLang(lang);
+
+    function setLang(l) {
+      localStorage.setItem('sc-lang', l);
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = l === 'tr' ? el.dataset.tr : el.dataset.en;
+      });
+
+      // Update links
+      const patientLink = l === 'tr' ? 'patient.html' : 'patient-en.html';
+      const clinicianLink = l === 'tr' ? 'clinician.html' : 'clinician-en.html';
+      ['link-patient', 'cta-patient'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.href = patientLink;
+      });
+      ['link-clinician', 'cta-clinician'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.href = clinicianLink;
+      });
+
+      // Update lang toggle buttons
+      document.getElementById('btn-en').className = l === 'en'
+        ? 'lang-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-slate-900 text-white'
+        : 'lang-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800';
+      document.getElementById('btn-tr').className = l === 'tr'
+        ? 'lang-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-slate-900 text-white'
+        : 'lang-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-800';
+
+      // Update html lang attr
+      document.documentElement.lang = l;
+    }
+  </script>
+
+</body>
+</html>
