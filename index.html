@@ -220,45 +220,60 @@
     </div>
   </section>
 
-  <section id="features" class="py-24 px-6 bg-white relative">
-    <div class="max-w-7xl mx-auto">
-      <div class="max-w-2xl reveal">
-        <div class="text-xs font-black uppercase tracking-widest text-brand-600" data-tr="TEMEL ÖZELLİKLER" data-en="CORE FEATURES">TEMEL ÖZELLİKLER</div>
-        <h2 class="mt-4 text-3xl lg:text-4xl font-black tracking-tight text-slate-900 leading-tight">
-          <span data-tr="Kural tabanlı, izlenebilir," data-en="Rule-based, traceable,">Kural tabanlı, izlenebilir,</span><br/>
-          <span data-tr="klinik iş akışına uyumlu." data-en="built for clinical workflows.">klinik iş akışına uyumlu.</span>
+  <section id=”features” class=”py-24 px-6 bg-white relative”>
+    <div class=”max-w-7xl mx-auto”>
+
+      <!-- Header -->
+      <div class=”max-w-2xl mx-auto text-center mb-16 reveal”>
+        <div class=”text-xs font-black uppercase tracking-widest text-brand-600 mb-4” data-tr=”TEMEL ÖZELLİKLER” data-en=”CORE FEATURES”>TEMEL ÖZELLİKLER</div>
+        <h2 class=”text-3xl lg:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-4”>
+          <span data-tr=”Kural tabanlı, izlenebilir,” data-en=”Rule-based, traceable,”>Kural tabanlı, izlenebilir,</span><br/>
+          <span data-tr=”klinik iş akışına uyumlu.” data-en=”built for clinical workflows.”>klinik iş akışına uyumlu.</span>
         </h2>
-        <p class="mt-4 text-slate-500 font-medium leading-relaxed text-lg" data-tr="SurgiCheck, intake otomasyonunun ötesinde bir risk governance platformu olarak vaka verisini işler, risk sinyallerini kurallarla yönetir ve açıklanabilir çıktılar üretir." data-en="SurgiCheck goes beyond intake automation as a risk governance platform, processing case data, managing risk signals through rules, and generating explainable outputs.">
+        <p class=”text-slate-500 font-medium leading-relaxed” data-tr=”SurgiCheck, intake otomasyonunun ötesinde bir risk governance platformu olarak vaka verisini işler, risk sinyallerini kurallarla yönetir ve açıklanabilir çıktılar üretir.” data-en=”SurgiCheck goes beyond intake automation as a risk governance platform, processing case data, managing risk signals through rules, and generating explainable outputs.”>
           SurgiCheck, intake otomasyonunun ötesinde bir risk governance platformu olarak vaka verisini işler, risk sinyallerini kurallarla yönetir ve açıklanabilir çıktılar üretir.
         </p>
       </div>
 
-      <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal">
-          <div class="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm">
-            <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      <!-- Bento grid -->
+      <div class=”grid grid-cols-1 md:grid-cols-6 gap-5 reveal”>
+
+        <!-- Large featured card — spans 4 cols -->
+        <div class=”md:col-span-4 rounded-3xl bg-slate-950 text-white p-10 flex flex-col justify-between min-h-[280px] relative overflow-hidden”>
+          <div class=”absolute inset-0 opacity-10” style=”background:radial-gradient(circle at 80% 20%,#3b82f6,transparent 60%);”></div>
+          <div class=”relative z-10”>
+            <div class=”w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6”>
+              <svg class=”w-6 h-6 text-white” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M13 10V3L4 14h7v7l9-11h-7z”/></svg>
+            </div>
+            <h3 class=”text-xl font-black mb-3” data-tr=”Hızlı Triyaj & Standardizasyon” data-en=”Rapid Triage & Standardisation”>Hızlı Triyaj & Standardizasyon</h3>
+            <p class=”text-slate-300 text-sm leading-relaxed max-w-md” data-tr=””Uygun / Şartlı / Uygun Değil” sınıflaması ile tüm ekip aynı kriterleri kullanır. Karar belirsizliği ve tekrar eden manuel değerlendirmeler ortadan kalkar.” data-en=”With 'Cleared / Conditional / Denied' classification, the whole team uses the same criteria. Decision ambiguity and repetitive manual reviews are eliminated.”>”Uygun / Şartlı / Uygun Değil” sınıflaması ile tüm ekip aynı kriterleri kullanır. Karar belirsizliği ve tekrar eden manuel değerlendirmeler ortadan kalkar.</p>
           </div>
-          <h3 class="text-lg font-black text-slate-900 mb-2" data-tr="Audit Trail & Versiyonlama" data-en="Audit Trail & Versioning">Audit Trail & Versiyonlama</h3>
-          <p class="text-sm font-medium text-slate-500 leading-relaxed" data-tr="Kural seti sürümü, kim-ne zaman onayladı, hangi veriye göre karar verildi sisteme kaydedilir." data-en="Rule set versions, approval timestamps, and data foundations for decisions are systematically logged.">Kural seti sürümü, kim-ne zaman onayladı, hangi veriye göre karar verildi sisteme kaydedilir.</p>
+          <div class=”relative z-10 mt-8 flex gap-3”>
+            <span class=”inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs font-semibold text-white”><span class=”w-1.5 h-1.5 rounded-full bg-emerald-400”></span><span data-tr=”Uygun” data-en=”Cleared”>Uygun</span></span>
+            <span class=”inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs font-semibold text-white”><span class=”w-1.5 h-1.5 rounded-full bg-amber-400”></span><span data-tr=”Şartlı” data-en=”Conditional”>Şartlı</span></span>
+            <span class=”inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs font-semibold text-white”><span class=”w-1.5 h-1.5 rounded-full bg-rose-400”></span><span data-tr=”Uygun Değil” data-en=”Denied”>Uygun Değil</span></span>
+          </div>
         </div>
 
-        <div class="card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal" style="transition-delay: 100ms;">
-          <div class="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm">
-            <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <!-- Tall card — spans 2 cols -->
+        <div class=”md:col-span-2 rounded-3xl bg-slate-50 border border-slate-100 p-8 flex flex-col card-hover”>
+          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
+            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z”/></svg>
           </div>
-          <h3 class="text-lg font-black text-slate-900 mb-2" data-tr="Clearance PDF Raporu" data-en="Clearance PDF Report">Clearance PDF Raporu</h3>
-          <p class="text-sm font-medium text-slate-500 leading-relaxed" data-tr="Standart rapor şablonu: Risk gerekçesi, klinik öneriler, tetkik listesi ve resmi imza alanları." data-en="Standard report template includes risk justification, clinical recommendations, lab lists, and signature areas.">Standart rapor şablonu: Risk gerekçesi, klinik öneriler, tetkik listesi ve resmi imza alanları.</p>
+          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”Audit Trail & Versiyonlama” data-en=”Audit Trail & Versioning”>Audit Trail & Versiyonlama</h3>
+          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Kural seti sürümü, kim-ne zaman onayladı ve hangi veriye göre karar verildiği sisteme kaydedilir.” data-en=”Rule set versions, approval timestamps, and the data behind each decision are systematically logged.”>Kural seti sürümü, kim-ne zaman onayladı ve hangi veriye göre karar verildiği sisteme kaydedilir.</p>
         </div>
 
-        <div class=”card-hover bg-brand-600 border border-brand-500 rounded-3xl p-8 reveal text-white shadow-xl shadow-brand-900/10” style=”transition-delay: 200ms;”>
-          <div class=”w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6”>
-            <svg class=”w-6 h-6 text-white” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M13 10V3L4 14h7v7l9-11h-7z”/></svg>
+        <!-- Bottom row: 3 equal cards -->
+        <div class=”md:col-span-2 rounded-3xl bg-slate-50 border border-slate-100 p-8 flex flex-col card-hover”>
+          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
+            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z”/></svg>
           </div>
-          <h3 class=”text-lg font-black mb-2” data-tr=”Hızlı Triyaj & Verim” data-en=”Rapid Triage & Efficiency”>Hızlı Triyaj & Verim</h3>
-          <p class=”text-sm font-medium text-brand-100 leading-relaxed” data-tr=””Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır.” data-en=”Eliminates repetitive tasks and decision ambiguity with clear 'Cleared / Conditional / Denied' classifications.”>”Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır.</p>
+          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”Clearance PDF Raporu” data-en=”Clearance PDF Report”>Clearance PDF Raporu</h3>
+          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Risk gerekçesi, klinik öneriler, tetkik listesi ve imza alanları içeren standart rapor şablonu.” data-en=”Standard report template with risk justification, clinical recommendations, lab lists, and signature areas.”>Risk gerekçesi, klinik öneriler, tetkik listesi ve imza alanları içeren standart rapor şablonu.</p>
         </div>
 
-        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 300ms;”>
+        <div class=”md:col-span-2 rounded-3xl bg-slate-50 border border-slate-100 p-8 flex flex-col card-hover”>
           <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
             <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z”/></svg>
           </div>
@@ -266,7 +281,7 @@
           <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Rol bazlı erişim kontrolleri ile ekip üyelerinize farklı yetki seviyeleri tanımlayın.” data-en=”Define different permission levels for team members with role-based access controls.”>Rol bazlı erişim kontrolleri ile ekip üyelerinize farklı yetki seviyeleri tanımlayın.</p>
         </div>
 
-        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 400ms;”>
+        <div class=”md:col-span-2 rounded-3xl bg-slate-50 border border-slate-100 p-8 flex flex-col card-hover”>
           <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
             <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z”/></svg>
           </div>
@@ -274,13 +289,6 @@
           <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Risk dağılımı, karar oranları ve operasyonel KPI'ları tek panelden izleyin.” data-en=”Monitor risk distribution, decision rates, and operational KPIs from a single dashboard.”>Risk dağılımı, karar oranları ve operasyonel KPI'ları tek panelden izleyin.</p>
         </div>
 
-        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 500ms;”>
-          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
-            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z”/></svg>
-          </div>
-          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”GDPR Uyumlu Altyapı” data-en=”GDPR-Compliant Infrastructure”>GDPR Uyumlu Altyapı</h3>
-          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Uçtan uca şifreleme, veri minimizasyonu ve AB veri merkezleri ile yasal uyumluluk.” data-en=”End-to-end encryption, data minimization, and EU data centres for legal compliance.”>Uçtan uca şifreleme, veri minimizasyonu ve AB veri merkezleri ile yasal uyumluluk.</p>
-        </div>
       </div>
     </div>
   </section>
@@ -332,18 +340,103 @@
         </div>
       </div>
 
-      <div id="sample-report" class="mt-20 grid lg:grid-cols-2 gap-10 items-center reveal">
-        <div class="rounded-3xl border border-slate-200/80 bg-white/90 p-4 shadow-2xl shadow-slate-200/50">
-          <img src="sample-clearance-report.svg" alt="Sample clearance PDF" loading="lazy" class="w-full rounded-2xl border border-slate-200 shadow-sm" />
+      <div id="sample-report" class="mt-20 grid lg:grid-cols-2 gap-12 items-center reveal">
+
+        <!-- Inline PDF mockup -->
+        <div class="rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/60 overflow-hidden">
+          <!-- PDF header bar -->
+          <div class="bg-slate-900 px-7 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="font-black text-white text-sm tracking-tight">SurgiCheck</span>
+              <span class="text-slate-500 text-xs">|</span>
+              <span class="text-slate-400 text-xs font-semibold" data-tr="Cerrahi Uygunluk Raporu" data-en="Surgical Clearance Report">Cerrahi Uygunluk Raporu</span>
+            </div>
+            <span class="text-xs text-slate-500 font-mono">v2.1.4</span>
+          </div>
+
+          <div class="p-7 space-y-5">
+            <!-- Patient header row -->
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1" data-tr="HASTA / VAKA" data-en="PATIENT / CASE">HASTA / VAKA</div>
+                <div class="text-base font-black text-slate-900">Hasta #A-1042</div>
+                <div class="text-sm text-slate-500 font-medium mt-0.5" data-tr="Rinoplasti • 38 yaş • K" data-en="Rhinoplasty • 38 yrs • F">Rinoplasti • 38 yaş • K</div>
+                <div class="text-xs text-slate-400 mt-0.5 font-mono">2026-02-27 09:14</div>
+              </div>
+              <div class="flex-shrink-0">
+                <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-center">
+                  <div class="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1" data-tr="KARAR" data-en="DECISION">KARAR</div>
+                  <div class="text-sm font-black text-amber-700" data-tr="Şartlı Uygun" data-en="Conditional">Şartlı Uygun</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-px bg-slate-100"></div>
+
+            <!-- Risk signals -->
+            <div>
+              <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3" data-tr="TESPİT EDİLEN RİSK SİNYALLERİ" data-en="DETECTED RISK SIGNALS">TESPİT EDİLEN RİSK SİNYALLERİ</div>
+              <div class="space-y-2">
+                <div class="flex items-center gap-3 rounded-xl bg-rose-50 border border-rose-100 px-4 py-2.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></span>
+                  <span class="text-xs font-semibold text-rose-800" data-tr="BMI 34.2 — Yüksek komplikasyon riski (RC-17)" data-en="BMI 34.2 — Elevated complication risk (RC-17)">BMI 34.2 — Yüksek komplikasyon riski (RC-17)</span>
+                </div>
+                <div class="flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-100 px-4 py-2.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
+                  <span class="text-xs font-semibold text-amber-800" data-tr="Aktif sigara kullanımı &lt;4 hafta (RC-22)" data-en="Active smoking &lt;4 weeks (RC-22)">Aktif sigara kullanımı &lt;4 hafta (RC-22)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-px bg-slate-100"></div>
+
+            <!-- Recommended actions -->
+            <div>
+              <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3" data-tr="ÖNERİLEN KLİNİK AKSİYONLAR" data-en="RECOMMENDED CLINICAL ACTIONS">ÖNERİLEN KLİNİK AKSİYONLAR</div>
+              <div class="space-y-2 text-xs font-medium text-slate-600">
+                <div class="flex items-start gap-2"><span class="w-4 h-4 rounded bg-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-400 font-black">1</span><span data-tr="4 hafta sigara bırakma hedefi + tekrar değerlendirme" data-en="4-week smoking cessation target + reassessment">4 hafta sigara bırakma hedefi + tekrar değerlendirme</span></div>
+                <div class="flex items-start gap-2"><span class="w-4 h-4 rounded bg-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-400 font-black">2</span><span data-tr="Anestezi konsültasyonu ve ek tetkik planı" data-en="Anesthesia consultation and additional lab panel">Anestezi konsültasyonu ve ek tetkik planı</span></div>
+              </div>
+            </div>
+
+            <div class="h-px bg-slate-100"></div>
+
+            <!-- Sign-off -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2" data-tr="KLİNİSYEN ONAYI" data-en="CLINICIAN SIGN-OFF">KLİNİSYEN ONAYI</div>
+                <div class="w-40 border-b-2 border-dashed border-slate-200 h-6"></div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2" data-tr="KURAL SETİ" data-en="RULE SET">KURAL SETİ</div>
+                <div class="text-xs font-mono text-slate-500">RS-2026-Q1 r7</div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Right side text -->
         <div>
-          <h3 class="text-3xl font-black tracking-tight text-slate-900 mb-4" data-tr="Örnek Clearance Raporu" data-en="Sample Clearance Report">Örnek Clearance Raporu</h3>
-          <ul class="space-y-3 mb-7 text-slate-700 font-medium">
-            <li data-tr="• Yapılandırılmış sınıflandırma" data-en="• Structured classification">• Yapılandırılmış sınıflandırma</li>
-            <li data-tr="• Dokümante edilmiş risk sinyalleri" data-en="• Documented risk signals">• Dokümante edilmiş risk sinyalleri</li>
-            <li data-tr="• Önerilen aksiyonlar + klinisyen onayı" data-en="• Recommended actions + sign-off">• Önerilen aksiyonlar + klinisyen onayı</li>
+          <h3 class="text-3xl font-black tracking-tight text-slate-900 mb-5" data-tr="Örnek Clearance Raporu" data-en="Sample Clearance Report">Örnek Clearance Raporu</h3>
+          <p class="text-slate-500 font-medium leading-relaxed mb-8" data-tr="Her clearance kararı için otomatik olarak üretilen standart rapor, hem klinisyen hem hasta dosyası hem de denetçi için eksiksiz belgeleme sağlar." data-en="The standard report generated automatically for each clearance decision provides complete documentation for the clinician, patient record, and auditor alike.">Her clearance kararı için otomatik olarak üretilen standart rapor, hem klinisyen hem hasta dosyası hem de denetçi için eksiksiz belgeleme sağlar.</p>
+          <ul class="space-y-4 mb-9">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-brand-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-slate-700 font-medium text-sm" data-tr="Yapılandırılmış sınıflandırma (Uygun / Şartlı / Uygun Değil)" data-en="Structured classification (Cleared / Conditional / Denied)">Yapılandırılmış sınıflandırma (Uygun / Şartlı / Uygun Değil)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-brand-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-slate-700 font-medium text-sm" data-tr="Kural referanslı ve dokümante edilmiş risk sinyalleri" data-en="Rule-referenced and documented risk signals">Kural referanslı ve dokümante edilmiş risk sinyalleri</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-brand-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-slate-700 font-medium text-sm" data-tr="Önerilen aksiyonlar + imza alanı + kural seti versiyonu" data-en="Recommended actions + signature field + rule set version">Önerilen aksiyonlar + imza alanı + kural seti versiyonu</span>
+            </li>
           </ul>
-          <a href="sample-clearance-report.svg" download class="inline-flex items-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Örnek PDF Görselini İndir" data-en="Download Sample PDF">Örnek PDF Görselini İndir</a>
+          <a href="#contact" class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Demo Talep Et" data-en="Request Demo">
+            <span data-tr="Demo Talep Et" data-en="Request Demo">Demo Talep Et</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
         </div>
       </div>
 
