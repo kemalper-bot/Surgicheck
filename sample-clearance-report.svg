@@ -1,0 +1,40 @@
+<svg width="1200" height="1680" viewBox="0 0 1200 1680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1680" fill="#F5F7FB"/>
+  <rect x="70" y="120" width="1060" height="1500" rx="18" fill="white" stroke="#D8E0EB" stroke-width="3"/>
+  <text x="130" y="210" font-family="Arial, sans-serif" font-size="62" font-weight="700" fill="#0F172A">SurgiCheck</text>
+  <text x="130" y="300" font-family="Arial, sans-serif" font-size="52" font-weight="700" fill="#0F172A">PRE-OPERATIVE CLEARANCE</text>
+  <text x="130" y="360" font-family="Arial, sans-serif" font-size="52" font-weight="700" fill="#0F172A">REPORT</text>
+  <text x="800" y="300" font-family="Arial, sans-serif" font-size="28" fill="#64748B">27/02/2026, 13:26:37</text>
+  <text x="800" y="340" font-family="Arial, sans-serif" font-size="24" fill="#94A3B8">e9kG95xBk8k5N9g4gmwE</text>
+  <line x1="130" y1="400" x2="1070" y2="400" stroke="#E2E8F0" stroke-width="3"/>
+
+  <rect x="130" y="450" width="940" height="200" rx="16" fill="#F8FAFC" stroke="#D8E0EB" stroke-width="2"/>
+  <text x="170" y="515" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#64748B">PATIENT:</text>
+  <text x="370" y="515" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#0F172A">Helen Kyra</text>
+  <text x="170" y="595" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#64748B">MEASURED BMI:</text>
+  <text x="370" y="595" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#0F172A">21.3</text>
+  <text x="600" y="515" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#64748B">PROCEDURE:</text>
+  <text x="820" y="515" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#0F172A">Tummy Tuck</text>
+  <text x="600" y="595" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#64748B">ASA CLASS:</text>
+  <text x="820" y="595" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#0F172A">Not Stated</text>
+
+  <text x="130" y="740" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="1" fill="#334155">IDENTIFIED RISKS &amp; INTERACTIONS</text>
+  <line x1="130" y1="770" x2="1070" y2="770" stroke="#CBD5E1" stroke-width="3"/>
+  <text x="130" y="840" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#1E293B">[HARD] Drug Interaction: GLP-1: Aspiration risk under anesthesia. Must be stopped.</text>
+  <line x1="130" y1="870" x2="1070" y2="870" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="130" y="940" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#1E293B">[SOFT] Poor Scarring: Scar consent must be obtained.</text>
+  <line x1="130" y1="970" x2="1070" y2="970" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="130" y="1040" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#1E293B">[SOFT] Past Abdominal Surgery: Fascial defect consideration.</text>
+  <line x1="130" y1="1070" x2="1070" y2="1070" stroke="#E2E8F0" stroke-width="2"/>
+
+  <rect x="130" y="1130" width="940" height="160" rx="16" fill="#F8FAFC" stroke="#D8E0EB" stroke-width="2"/>
+  <text x="170" y="1188" font-family="Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="1" fill="#334155">CLINICIAN RATIONALE &amp; NOTES</text>
+  <text x="170" y="1248" font-family="Arial, sans-serif" font-size="36" fill="#0F172A">No rationale provided.</text>
+
+  <line x1="130" y1="1370" x2="1070" y2="1370" stroke="#D8E0EB" stroke-width="2"/>
+  <text x="130" y="1430" font-family="Arial, sans-serif" font-size="30" fill="#64748B">This document was generated via a clinical decision support tool.</text>
+  <text x="130" y="1470" font-family="Arial, sans-serif" font-size="30" fill="#64748B">Final risk clearance remains the sole responsibility of the clinician.</text>
+  <text x="770" y="1490" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#CBD5E1">SURGEON SIGNATURE</text>
+  <line x1="770" y1="1550" x2="1070" y2="1550" stroke="#334155" stroke-width="4"/>
+  <text x="860" y="1590" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#0F172A">SIGNATURE</text>
+</svg>
