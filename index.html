@@ -120,9 +120,9 @@
 
       <div class="lg:col-span-6 reveal active">
         <div class="hero-mockup rounded-3xl bg-white/85 backdrop-blur border border-slate-200/60 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.35)] p-6 sm:p-8 relative">
-          <div class="hidden md:flex absolute -top-3 -right-2 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Explainable risk signals" data-en="Explainable risk signals">Explainable risk signals</div>
-          <div class="hidden md:flex absolute top-1/2 -left-8 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Clinician-controlled recommendations" data-en="Clinician-controlled recommendations">Clinician-controlled recommendations</div>
-          <div class="hidden md:flex absolute -bottom-3 right-10 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Audit-ready classification" data-en="Audit-ready classification">Audit-ready classification</div>
+          <div class="hidden md:flex absolute -top-3 -right-2 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Açıklanabilir risk sinyalleri" data-en="Explainable risk signals">Açıklanabilir risk sinyalleri</div>
+          <div class="hidden md:flex absolute top-1/2 -left-8 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Klinisyen kontrollü öneriler" data-en="Clinician-controlled recommendations">Klinisyen kontrollü öneriler</div>
+          <div class="hidden md:flex absolute -bottom-3 right-10 text-xs bg-white/90 border border-slate-200 rounded-full px-3 py-1 shadow-sm" data-tr="Denetime hazır sınıflama" data-en="Audit-ready classification">Denetime hazır sınıflama</div>
 
           <div class="flex items-center justify-between mb-7 pb-5 border-b border-slate-100">
             <div>
@@ -232,7 +232,7 @@
 
       <div id="sample-report" class="mt-20 grid lg:grid-cols-2 gap-10 items-center reveal">
         <div class="rounded-3xl border border-slate-200/80 bg-white/90 p-4 shadow-2xl shadow-slate-200/50">
-          <img src="sample-clearance-report.svg" alt="Sample clearance PDF" loading="lazy" class="w-full rounded-2xl border border-slate-200 shadow-sm" />
+          <img id="sampleReportImage" src="sample-clearance-report-tr.svg" alt="Sample clearance PDF" loading="lazy" class="w-full rounded-2xl border border-slate-200 shadow-sm" />
         </div>
         <div>
           <h3 class="text-3xl font-black tracking-tight text-slate-900 mb-4" data-tr="Örnek Clearance Raporu" data-en="Sample Clearance Report">Örnek Clearance Raporu</h3>
@@ -241,7 +241,7 @@
             <li data-tr="• Dokümante edilmiş risk sinyalleri" data-en="• Documented risk signals">• Dokümante edilmiş risk sinyalleri</li>
             <li data-tr="• Önerilen aksiyonlar + klinisyen onayı" data-en="• Recommended actions + sign-off">• Önerilen aksiyonlar + klinisyen onayı</li>
           </ul>
-          <a href="sample-clearance-report.svg" download class="inline-flex items-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Örnek PDF Görselini İndir" data-en="Download Sample PDF">Örnek PDF Görselini İndir</a>
+          <a id="sampleReportDownload" href="sample-clearance-report-tr.svg" download class="inline-flex items-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Örnek PDF Görselini İndir" data-en="Download Sample PDF">Örnek PDF Görselini İndir</a>
         </div>
       </div>
 
@@ -251,7 +251,7 @@
             <h3 class="text-3xl font-black mb-2" data-tr="Tasarım Gereği Klinik Yönetişim" data-en="Clinical Governance by Design">Tasarım Gereği Klinik Yönetişim</h3>
             <p class="text-slate-300 text-sm font-medium" data-tr="Karar desteği üretir; nihai cerrahi kararı klinisyen verir." data-en="Produces decision support; final surgical decisions always remain with the clinician.">Karar desteği üretir; nihai cerrahi kararı klinisyen verir.</p>
           </div>
-          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border border-emerald-400/30 bg-emerald-400/10 text-emerald-300" data-tr="Clinical Governance Layer" data-en="Clinical Governance Layer">Clinical Governance Layer</span>
+          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border border-emerald-400/30 bg-emerald-400/10 text-emerald-300" data-tr="Klinik Yönetişim Katmanı" data-en="Clinical Governance Layer">Klinik Yönetişim Katmanı</span>
         </div>
         <div class="grid md:grid-cols-2 gap-4 text-sm font-medium text-slate-200">
           <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Deterministik kural mantığı</div>
@@ -264,7 +264,7 @@
       </div>
 
       <div class="mt-14 bg-white border border-slate-200 rounded-3xl p-8 reveal">
-        <h3 class="text-2xl font-black text-slate-900 mb-3" data-tr="When complications happen, documentation matters." data-en="When complications happen, documentation matters.">When complications happen, documentation matters.</h3>
+        <h3 class="text-2xl font-black text-slate-900 mb-3" data-tr="Komplikasyon olduğunda, dokümantasyon her şeyi değiştirir." data-en="When complications happen, documentation matters.">Komplikasyon olduğunda, dokümantasyon her şeyi değiştirir.</h3>
         <div class="grid md:grid-cols-3 gap-4 text-sm font-medium text-slate-600">
           <div>• Tutarlı triyaj kararları</div>
           <div>• Denetime hazır kayıtlar</div>
@@ -317,7 +317,7 @@
         </div>
 
         <div class="bg-slate-50 rounded-[2rem] p-11 border border-slate-200 reveal shadow-lg shadow-slate-200/30" style="transition-delay: 200ms;">
-          <div class="text-sm font-black text-slate-500 uppercase tracking-widest mb-4" data-tr="Enterprise" data-en="Enterprise">Enterprise</div>
+          <div class="text-sm font-black text-slate-500 uppercase tracking-widest mb-4" data-tr="Kurumsal" data-en="Enterprise">Kurumsal</div>
           <div class="text-4xl font-black text-slate-900 mb-2" data-tr="Özel Teklif" data-en="Custom Quote">Özel Teklif</div>
           <p class="text-sm font-medium text-slate-500 mb-8" data-tr="Zincir klinikler ve yüksek hacimli hastaneler." data-en="Chain clinics and high-volume hospitals.">Zincir klinikler ve yüksek hacimli hastaneler.</p>
           
@@ -452,6 +452,12 @@
       
       if(pEl) pEl.href = pLink;
       if(cEl) cEl.href = cLink;
+
+      const sampleImg = document.getElementById('sampleReportImage');
+      const sampleDl = document.getElementById('sampleReportDownload');
+      const sampleAsset = l === 'tr' ? 'sample-clearance-report-tr.svg' : 'sample-clearance-report-en.svg';
+      if(sampleImg) sampleImg.src = sampleAsset;
+      if(sampleDl) sampleDl.href = sampleAsset;
 
       // Update toggle button styles
       const activeClass = "bg-white text-slate-900 shadow-sm";
