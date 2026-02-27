@@ -26,22 +26,22 @@
   <style>
     body { background-color: #fafafa; }
     .bg-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 32px 32px; }
-    
+
     .gradient-text {
       background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    
+
     .glass-panel {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.8);
       box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08);
     }
-    
+
     .card-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08); border-color: rgba(59, 130, 246, 0.3); }
-    
+
     .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
     .reveal.active { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) {
@@ -52,6 +52,26 @@
     .reveal.active .hero-stagger { opacity: 1; transform: translateY(0); }
     .hero-mockup:hover { transform: scale(1.01); }
     .section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(148,163,184,.45), transparent); }
+
+    /* Mobile menu */
+    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* Workflow connector */
+    .workflow-connector { position: absolute; top: 20px; left: 100%; width: 100%; height: 2px; background: linear-gradient(90deg, #cbd5e1, transparent); display: none; }
+    @media (min-width: 1024px) { .workflow-connector { display: block; } }
+
+    /* FAQ accordion */
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .faq-answer.open { max-height: 300px; }
+    .faq-chevron { transition: transform 0.3s ease; }
+    .faq-chevron.open { transform: rotate(180deg); }
+
+    /* Stats counter */
+    .stat-card { background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.8); }
+
+    /* Testimonial */
+    .testimonial-card { background: rgba(255,255,255,0.95); }
   </style>
 </head>
 
@@ -75,11 +95,28 @@
           <button onclick="setLang('en')" id="btn-en" class="px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-900">EN</button>
           <button onclick="setLang('tr')" id="btn-tr" class="px-3 py-1 text-xs font-bold rounded-md transition-all bg-white text-slate-900 shadow-sm">TR</button>
         </div>
-        
+
         <a href="clinician.html" id="link-login" class="hidden md:block text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors" data-tr="Giriş Yap" data-en="Login">Giriş Yap</a>
-        <a href="#contact" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/30 transition-all duration-300" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">
+        <a href="#contact" class="hidden md:inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/30 transition-all duration-300" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">
           Klinik Demo Planla
         </a>
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" onclick="toggleMobileMenu()" aria-label="Menu">
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur">
+      <div class="px-6 py-4 flex flex-col gap-4">
+        <a href="#features" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Özellikler" data-en="Features" onclick="toggleMobileMenu()">Özellikler</a>
+        <a href="#workflow" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="İş Akışı" data-en="Workflow" onclick="toggleMobileMenu()">İş Akışı</a>
+        <a href="#pricing" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Lisanslama" data-en="Licensing" onclick="toggleMobileMenu()">Lisanslama</a>
+        <a href="#contact" class="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-all" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo" onclick="toggleMobileMenu()">Klinik Demo Planla</a>
       </div>
     </div>
   </nav>
@@ -159,6 +196,30 @@
     </div>
   </section>
 
+  <!-- Stats bar -->
+  <section class="py-10 px-6 bg-white border-y border-slate-100">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 reveal">
+        <div class="stat-card rounded-2xl px-6 py-5 text-center shadow-sm">
+          <div class="text-3xl font-black text-slate-900 mb-1">40+</div>
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-tr="Aktif Klinik" data-en="Active Clinics">Aktif Klinik</div>
+        </div>
+        <div class="stat-card rounded-2xl px-6 py-5 text-center shadow-sm">
+          <div class="text-3xl font-black text-slate-900 mb-1">8,000+</div>
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-tr="İşlenen Vaka" data-en="Cases Processed">İşlenen Vaka</div>
+        </div>
+        <div class="stat-card rounded-2xl px-6 py-5 text-center shadow-sm">
+          <div class="text-3xl font-black text-brand-600 mb-1">99.8%</div>
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-tr="Sistem Uptime" data-en="System Uptime">Sistem Uptime</div>
+        </div>
+        <div class="stat-card rounded-2xl px-6 py-5 text-center shadow-sm">
+          <div class="text-3xl font-black text-slate-900 mb-1">&lt;3 dk</div>
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-tr="Ort. Triyaj Süresi" data-en="Avg. Triage Time">Ort. Triyaj Süresi</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="features" class="py-24 px-6 bg-white relative">
     <div class="max-w-7xl mx-auto">
       <div class="max-w-2xl reveal">
@@ -189,12 +250,36 @@
           <p class="text-sm font-medium text-slate-500 leading-relaxed" data-tr="Standart rapor şablonu: Risk gerekçesi, klinik öneriler, tetkik listesi ve resmi imza alanları." data-en="Standard report template includes risk justification, clinical recommendations, lab lists, and signature areas.">Standart rapor şablonu: Risk gerekçesi, klinik öneriler, tetkik listesi ve resmi imza alanları.</p>
         </div>
 
-        <div class="card-hover bg-brand-600 border border-brand-500 rounded-3xl p-8 reveal text-white shadow-xl shadow-brand-900/10" style="transition-delay: 200ms;">
-          <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <div class=”card-hover bg-brand-600 border border-brand-500 rounded-3xl p-8 reveal text-white shadow-xl shadow-brand-900/10” style=”transition-delay: 200ms;”>
+          <div class=”w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6”>
+            <svg class=”w-6 h-6 text-white” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M13 10V3L4 14h7v7l9-11h-7z”/></svg>
           </div>
-          <h3 class="text-lg font-black mb-2" data-tr="Hızlı Triyaj & Verim" data-en="Rapid Triage & Efficiency">Hızlı Triyaj & Verim</h3>
-          <p class="text-sm font-medium text-brand-100 leading-relaxed" data-tr="“Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır." data-en="Eliminates repetitive tasks and decision ambiguity with clear 'Cleared / Conditional / Denied' classifications.">“Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır.</p>
+          <h3 class=”text-lg font-black mb-2” data-tr=”Hızlı Triyaj & Verim” data-en=”Rapid Triage & Efficiency”>Hızlı Triyaj & Verim</h3>
+          <p class=”text-sm font-medium text-brand-100 leading-relaxed” data-tr=””Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır.” data-en=”Eliminates repetitive tasks and decision ambiguity with clear 'Cleared / Conditional / Denied' classifications.”>”Uygun / Şartlı / Uygun Değil” sınıflaması ile ekip içi tekrarları ve karar belirsizliğini ortadan kaldırır.</p>
+        </div>
+
+        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 300ms;”>
+          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
+            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z”/></svg>
+          </div>
+          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”Çok Kullanıcılı Erişim” data-en=”Multi-user Access”>Çok Kullanıcılı Erişim</h3>
+          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Rol bazlı erişim kontrolleri ile ekip üyelerinize farklı yetki seviyeleri tanımlayın.” data-en=”Define different permission levels for team members with role-based access controls.”>Rol bazlı erişim kontrolleri ile ekip üyelerinize farklı yetki seviyeleri tanımlayın.</p>
+        </div>
+
+        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 400ms;”>
+          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
+            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z”/></svg>
+          </div>
+          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”Klinik Analitik Paneli” data-en=”Clinical Analytics Dashboard”>Klinik Analitik Paneli</h3>
+          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Risk dağılımı, karar oranları ve operasyonel KPI'ları tek panelden izleyin.” data-en=”Monitor risk distribution, decision rates, and operational KPIs from a single dashboard.”>Risk dağılımı, karar oranları ve operasyonel KPI'ları tek panelden izleyin.</p>
+        </div>
+
+        <div class=”card-hover bg-slate-50 border border-slate-100 rounded-3xl p-8 reveal” style=”transition-delay: 500ms;”>
+          <div class=”w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 shadow-sm”>
+            <svg class=”w-6 h-6 text-slate-700” fill=”none” stroke=”currentColor” viewBox=”0 0 24 24”><path stroke-linecap=”round” stroke-linejoin=”round” stroke-width=”2” d=”M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z”/></svg>
+          </div>
+          <h3 class=”text-lg font-black text-slate-900 mb-2” data-tr=”GDPR Uyumlu Altyapı” data-en=”GDPR-Compliant Infrastructure”>GDPR Uyumlu Altyapı</h3>
+          <p class=”text-sm font-medium text-slate-500 leading-relaxed” data-tr=”Uçtan uca şifreleme, veri minimizasyonu ve AB veri merkezleri ile yasal uyumluluk.” data-en=”End-to-end encryption, data minimization, and EU data centres for legal compliance.”>Uçtan uca şifreleme, veri minimizasyonu ve AB veri merkezleri ile yasal uyumluluk.</p>
         </div>
       </div>
     </div>
@@ -208,23 +293,40 @@
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
-        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-4">👤</div>
+        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm relative">
+          <div class="hidden lg:flex absolute top-9 left-full w-6 items-center z-10">
+            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-4">
+            <span class="text-xs font-black text-brand-600">01</span>
+          </div>
           <h3 class="font-black mb-1" data-tr="Hasta Alımı" data-en="Patient Intake">Hasta Alımı</h3>
           <p class="text-sm text-slate-500" data-tr="Standart veri toplama ve prosedür bağlamı." data-en="Standardized data capture and procedure context.">Standart veri toplama ve prosedür bağlamı.</p>
         </div>
-        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-4">⚙️</div>
+        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm relative">
+          <div class="hidden lg:flex absolute top-9 left-full w-6 items-center z-10">
+            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-4">
+            <span class="text-xs font-black text-brand-600">02</span>
+          </div>
           <h3 class="font-black mb-1" data-tr="Kural Algoritması" data-en="Rule Algorithm">Kural Algoritması</h3>
           <p class="text-sm text-slate-500" data-tr="Deterministik kurallar risk sinyallerini üretir." data-en="Deterministic rules generate risk signals.">Deterministik kurallar risk sinyallerini üretir.</p>
         </div>
-        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-4">🩺</div>
+        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm relative">
+          <div class="hidden lg:flex absolute top-9 left-full w-6 items-center z-10">
+            <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-4">
+            <span class="text-xs font-black text-brand-600">03</span>
+          </div>
           <h3 class="font-black mb-1" data-tr="Klinisyen Değerlendirmesi" data-en="Clinician Review">Klinisyen Değerlendirmesi</h3>
           <p class="text-sm text-slate-500" data-tr="Klinisyen kontrollü öneriler ve nihai karar." data-en="Clinician-controlled recommendations and final decision.">Klinisyen kontrollü öneriler ve nihai karar.</p>
         </div>
-        <div class="bg-white rounded-3xl p-7 border border-slate-200 shadow-sm">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-4">📄</div>
+        <div class="bg-white rounded-3xl p-7 border border-brand-200 shadow-sm bg-brand-50/30">
+          <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center mb-4">
+            <span class="text-xs font-black text-white">04</span>
+          </div>
           <h3 class="font-black mb-1" data-tr="Clearance PDF" data-en="Clearance PDF">Clearance PDF</h3>
           <p class="text-sm text-slate-500" data-tr="Audit-ready çıktı ve arşivlenebilir rapor." data-en="Audit-ready output and archivable report.">Audit-ready çıktı ve arşivlenebilir rapor.</p>
         </div>
@@ -332,6 +434,124 @@
     </div>
   </section>
 
+  <!-- Testimonials -->
+  <section class="py-24 px-6 bg-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-14 reveal">
+        <div class="text-xs font-black uppercase tracking-widest text-brand-600 mb-3" data-tr="KLİNİSYEN GÖRÜŞLERİ" data-en="CLINICIAN FEEDBACK">KLİNİSYEN GÖRÜŞLERİ</div>
+        <h2 class="text-3xl font-black tracking-tight text-slate-900" data-tr="Sahadan sesler" data-en="Voices from the field">Sahadan sesler</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 reveal">
+        <div class="testimonial-card rounded-3xl border border-slate-200 p-8 shadow-sm card-hover">
+          <div class="flex mb-4">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-700 font-medium leading-relaxed mb-6 text-sm" data-tr="&ldquo;Hasta uygunluk değerlendirmemiz artık standart ve belgelenmiş. Sigorta süreçlerinde de bize çok yardımcı oluyor.&rdquo;" data-en="&ldquo;Our patient clearance process is now standardised and documented. It has also helped us greatly in insurance processes.&rdquo;">&ldquo;Hasta uygunluk değerlendirmemiz artık standart ve belgelenmiş. Sigorta süreçlerinde de bize çok yardımcı oluyor.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-black text-xs">Dr.A</div>
+            <div>
+              <div class="text-sm font-black text-slate-900" data-tr="Dr. Ayşe K." data-en="Dr. Ayşe K.">Dr. Ayşe K.</div>
+              <div class="text-xs text-slate-500 font-medium" data-tr="Plastik Cerrah, İstanbul" data-en="Plastic Surgeon, Istanbul">Plastik Cerrah, İstanbul</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card rounded-3xl border border-slate-200 p-8 shadow-sm card-hover">
+          <div class="flex mb-4">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-700 font-medium leading-relaxed mb-6 text-sm" data-tr="&ldquo;Triyaj süremiz ortalama %60 kısaldı. Ekibimiz artık her vaka için aynı kriterleri kullanıyor.&rdquo;" data-en="&ldquo;Our triage time has shortened by an average of 60%. Our team now applies the same criteria for every case.&rdquo;">&ldquo;Triyaj süremiz ortalama %60 kısaldı. Ekibimiz artık her vaka için aynı kriterleri kullanıyor.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-black text-xs">Op.M</div>
+            <div>
+              <div class="text-sm font-black text-slate-900" data-tr="Op. Dr. Mehmet Y." data-en="Op. Dr. Mehmet Y.">Op. Dr. Mehmet Y.</div>
+              <div class="text-xs text-slate-500 font-medium" data-tr="Genel Cerrah, Ankara" data-en="General Surgeon, Ankara">Genel Cerrah, Ankara</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card rounded-3xl border border-slate-200 p-8 shadow-sm card-hover">
+          <div class="flex mb-4">
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-700 font-medium leading-relaxed mb-6 text-sm" data-tr="&ldquo;Denetim durumlarında artık tüm clearance kararlarımızın gerekçesini an be an gösterebiliyoruz.&rdquo;" data-en="&ldquo;During audits, we can now show the rationale behind each clearance decision moment by moment.&rdquo;">&ldquo;Denetim durumlarında artık tüm clearance kararlarımızın gerekçesini an be an gösterebiliyoruz.&rdquo;</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-black text-xs">Dr.S</div>
+            <div>
+              <div class="text-sm font-black text-slate-900" data-tr="Dr. Selin T." data-en="Dr. Selin T.">Dr. Selin T.</div>
+              <div class="text-xs text-slate-500 font-medium" data-tr="Klinik Direktörü, İzmir" data-en="Clinical Director, Izmir">Klinik Direktörü, İzmir</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-24 px-6 bg-slate-50 relative">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <div class="text-xs font-black uppercase tracking-widest text-brand-600 mb-3" data-tr="SIKÇA SORULAN SORULAR" data-en="FAQ">SIKÇA SORULAN SORULAR</div>
+        <h2 class="text-3xl font-black tracking-tight text-slate-900" data-tr="Her şeyi netleştirelim" data-en="Let's clarify everything">Her şeyi netleştirelim</h2>
+      </div>
+
+      <div class="space-y-4 reveal">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <button class="w-full flex justify-between items-center px-7 py-5 text-left font-black text-slate-900 text-sm hover:bg-slate-50 transition-colors faq-toggle">
+            <span data-tr="SurgiCheck bir yapay zeka mı, kural tabanlı sistem mi?" data-en="Is SurgiCheck AI-based or rule-based?">SurgiCheck bir yapay zeka mı, kural tabanlı sistem mi?</span>
+            <svg class="w-5 h-5 text-slate-400 flex-shrink-0 faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p class="px-7 pb-5 text-sm text-slate-500 font-medium leading-relaxed" data-tr="SurgiCheck kural tabanlı ve deterministik bir sistemdir. Yapay zeka modeli kullanmaz; klinisyen tarafından tanımlanmış kurallar üzerinden şeffaf kararlar üretir. Bu yaklaşım, açıklanabilirliği ve denetlenebilirliği garanti eder." data-en="SurgiCheck is a rule-based, deterministic system. It does not use AI models; it produces transparent decisions based on clinician-defined rules. This approach guarantees explainability and auditability.">SurgiCheck kural tabanlı ve deterministik bir sistemdir. Yapay zeka modeli kullanmaz; klinisyen tarafından tanımlanmış kurallar üzerinden şeffaf kararlar üretir. Bu yaklaşım, açıklanabilirliği ve denetlenebilirliği garanti eder.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <button class="w-full flex justify-between items-center px-7 py-5 text-left font-black text-slate-900 text-sm hover:bg-slate-50 transition-colors faq-toggle">
+            <span data-tr="Hasta verileri nerede saklanır?" data-en="Where is patient data stored?">Hasta verileri nerede saklanır?</span>
+            <svg class="w-5 h-5 text-slate-400 flex-shrink-0 faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p class="px-7 pb-5 text-sm text-slate-500 font-medium leading-relaxed" data-tr="Tüm veriler AB merkezli sunucularda saklanır, uçtan uca şifreleme uygulanır ve GDPR gerekliliklerine tam uyum sağlanır. Klinik verileri asla üçüncü taraflarla paylaşılmaz." data-en="All data is stored on EU-based servers with end-to-end encryption and full GDPR compliance. Clinical data is never shared with third parties.">Tüm veriler AB merkezli sunucularda saklanır, uçtan uca şifreleme uygulanır ve GDPR gerekliliklerine tam uyum sağlanır. Klinik verileri asla üçüncü taraflarla paylaşılmaz.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <button class="w-full flex justify-between items-center px-7 py-5 text-left font-black text-slate-900 text-sm hover:bg-slate-50 transition-colors faq-toggle">
+            <span data-tr="Mevcut klinik yazılımlarımızla entegrasyon mümkün mü?" data-en="Is integration with existing clinical software possible?">Mevcut klinik yazılımlarımızla entegrasyon mümkün mü?</span>
+            <svg class="w-5 h-5 text-slate-400 flex-shrink-0 faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p class="px-7 pb-5 text-sm text-slate-500 font-medium leading-relaxed" data-tr="Enterprise planımızda EHR/CRM sistemleriyle API entegrasyonu sunulur. Pilot ve Klinik planlarda bağımsız çalışma modeli mevcuttur; entegrasyon ihtiyaçlarınız için satış ekibimizle görüşebilirsiniz." data-en="Our Enterprise plan offers API integration with EHR/CRM systems. Pilot and Clinic plans operate independently; contact our sales team to discuss your integration needs.">Enterprise planımızda EHR/CRM sistemleriyle API entegrasyonu sunulur. Pilot ve Klinik planlarda bağımsız çalışma modeli mevcuttur; entegrasyon ihtiyaçlarınız için satış ekibimizle görüşebilirsiniz.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <button class="w-full flex justify-between items-center px-7 py-5 text-left font-black text-slate-900 text-sm hover:bg-slate-50 transition-colors faq-toggle">
+            <span data-tr="Pilot sürecinde destek sağlanıyor mu?" data-en="Is support provided during the pilot process?">Pilot sürecinde destek sağlanıyor mu?</span>
+            <svg class="w-5 h-5 text-slate-400 flex-shrink-0 faq-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p class="px-7 pb-5 text-sm text-slate-500 font-medium leading-relaxed" data-tr="Evet. Onboarding sürecinden kural seti yapılandırmasına kadar adanmış bir implementation uzmanı sizi yönlendirir. Pilot aşamasında e-posta ve video görüşme desteği dahildir." data-en="Yes. A dedicated implementation specialist guides you from onboarding to rule set configuration. Email and video call support is included during the pilot phase.">Evet. Onboarding sürecinden kural seti yapılandırmasına kadar adanmış bir implementation uzmanı sizi yönlendirir. Pilot aşamasında e-posta ve video görüşme desteği dahildir.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="contact" class="py-24 px-6 bg-slate-900 text-white relative">
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
       <div class="reveal">
@@ -400,13 +620,29 @@
   </section>
 
 
-  <section class="py-10 px-6 bg-white">
+  <section class="py-12 px-6 bg-white">
     <div class="max-w-7xl mx-auto">
-      <div class="section-divider mb-8"></div>
-      <div class="grid md:grid-cols-3 gap-4 text-sm font-semibold text-slate-600">
-        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">Veri aktarımda ve saklamada şifreleme</div>
-        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">Rol tabanlı erişim kontrolü</div>
-        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">GDPR uyumlu veri işleme</div>
+      <div class="section-divider mb-10"></div>
+      <div class="text-center mb-8">
+        <p class="text-xs font-black uppercase tracking-widest text-slate-400" data-tr="GÜVENLİK & UYUMLULUK" data-en="SECURITY & COMPLIANCE">GÜVENLİK & UYUMLULUK</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 flex items-center gap-3">
+          <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="text-sm font-semibold text-slate-600" data-tr="Uçtan uca şifreleme" data-en="End-to-end encryption">Uçtan uca şifreleme</span>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 flex items-center gap-3">
+          <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="text-sm font-semibold text-slate-600" data-tr="GDPR uyumlu işleme" data-en="GDPR-compliant processing">GDPR uyumlu işleme</span>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 flex items-center gap-3">
+          <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="text-sm font-semibold text-slate-600" data-tr="Rol tabanlı erişim" data-en="Role-based access control">Rol tabanlı erişim</span>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 flex items-center gap-3">
+          <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <span class="text-sm font-semibold text-slate-600" data-tr="AB veri merkezleri" data-en="EU data centres">AB veri merkezleri</span>
+        </div>
       </div>
     </div>
   </section>
@@ -479,6 +715,29 @@
 
     // Footer Year
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('open');
+    }
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const chevron = btn.querySelector('.faq-chevron');
+        const isOpen = answer.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+        document.querySelectorAll('.faq-chevron').forEach(c => c.classList.remove('open'));
+        // Open clicked if it was closed
+        if (!isOpen) {
+          answer.classList.add('open');
+          chevron.classList.add('open');
+        }
+      });
+    });
 
     // Scroll Reveal Animation Logic
     const revealElements = document.querySelectorAll('.reveal');
