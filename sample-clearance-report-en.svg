@@ -1,0 +1,44 @@
+<svg width="900" height="1280" viewBox="0 0 900 1280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1280" fill="#F3F6FA"/>
+  <rect x="38" y="74" width="824" height="1140" rx="14" fill="white" stroke="#D6DEE8" stroke-width="3"/>
+
+  <text x="86" y="150" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="700" fill="#0F172A">SurgiCheck</text>
+  <text x="86" y="220" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800" letter-spacing="1" fill="#0F172A">
+    <tspan x="86" dy="0">PRE-OPERATIVE CLEARANCE</tspan>
+    <tspan x="86" dy="62">REPORT</tspan>
+  </text>
+  <text x="810" y="226" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="32" fill="#64748B">27.02.2026 13:52:44</text>
+  <text x="810" y="266" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="24" fill="#94A3B8">e9kG95xBk8k5N9g4gmwE</text>
+  <line x1="86" y1="330" x2="814" y2="330" stroke="#DCE4EE" stroke-width="3"/>
+
+  <rect x="86" y="370" width="728" height="140" rx="14" fill="#F8FAFC" stroke="#D7E0EA" stroke-width="2"/>
+  <text x="112" y="420" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#64748B">PATIENT:</text>
+  <text x="290" y="420" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700" fill="#0F172A">Helen Kyra</text>
+  <text x="112" y="474" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#64748B">MEASURED BMI:</text>
+  <text x="290" y="474" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700" fill="#0F172A">21.3</text>
+  <text x="470" y="420" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#64748B">PROCEDURE:</text>
+  <text x="640" y="420" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700" fill="#0F172A">Tummy Tuck</text>
+  <text x="470" y="474" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#64748B">ASA CLASS:</text>
+  <text x="640" y="474" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700" fill="#0F172A">Not Stated</text>
+
+  <text x="86" y="568" font-family="Inter, Arial, sans-serif" font-size="31" font-weight="700" letter-spacing="1" fill="#334155">IDENTIFIED RISKS &amp; INTERACTIONS</text>
+  <line x1="86" y1="588" x2="814" y2="588" stroke="#C8D3E1" stroke-width="3"/>
+
+  <text x="86" y="654" font-family="Inter, Arial, sans-serif" font-size="34" fill="#1E293B"><tspan font-weight="700">[HARD] Drug Interaction:</tspan> GLP-1: Aspiration risk. Must be stopped.</text>
+  <line x1="86" y1="676" x2="814" y2="676" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="86" y="740" font-family="Inter, Arial, sans-serif" font-size="34" fill="#1E293B"><tspan font-weight="700">[SOFT] Poor Scarring:</tspan> Scar consent must be obtained.</text>
+  <line x1="86" y1="762" x2="814" y2="762" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="86" y="826" font-family="Inter, Arial, sans-serif" font-size="34" fill="#1E293B"><tspan font-weight="700">[SOFT] Past Abdominal Surgery:</tspan> Fascial defect consideration.</text>
+  <line x1="86" y1="848" x2="814" y2="848" stroke="#E2E8F0" stroke-width="2"/>
+
+  <rect x="86" y="890" width="728" height="122" rx="14" fill="#F8FAFC" stroke="#D7E0EA" stroke-width="2"/>
+  <text x="112" y="934" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="1" fill="#334155">CLINICIAN RATIONALE &amp; NOTES</text>
+  <text x="112" y="982" font-family="Inter, Arial, sans-serif" font-size="33" fill="#0F172A">No rationale provided.</text>
+
+  <line x1="86" y1="1062" x2="814" y2="1062" stroke="#D7E0EA" stroke-width="2"/>
+  <text x="86" y="1110" font-family="Inter, Arial, sans-serif" font-size="26" fill="#64748B">This document was generated via a clinical decision support tool.</text>
+  <text x="86" y="1148" font-family="Inter, Arial, sans-serif" font-size="26" fill="#64748B">Final risk evaluation and clearance remain with the managing clinician.</text>
+  <text x="650" y="1148" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#CBD5E1">SURGEON SIGNATURE</text>
+  <line x1="712" y1="1204" x2="814" y2="1204" stroke="#334155" stroke-width="4"/>
+  <text x="738" y="1240" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="700" fill="#0F172A">SIGNATURE</text>
+</svg>
