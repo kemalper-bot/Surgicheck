@@ -577,7 +577,10 @@
           updatedAt: serverTimestamp()
         };
 
-        const ref = await addDoc(collection(db, "cases"), payload);
+        const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Connection timed out. Please check your internet and try again.")), 15000)
+  );
+  const ref = await Promise.race([addDoc(collection(db, "cases"), payload), timeoutPromise]);
 
         document.getElementById("sec-4").classList.add("hidden");
         document.getElementById("sec-success").classList.remove("hidden");

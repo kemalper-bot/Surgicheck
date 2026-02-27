@@ -510,7 +510,10 @@
           updatedAt: serverTimestamp()
         };
 
-        const ref = await addDoc(collection(db, "cases"), payload);
+        const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 15000)
+  );
+  const ref = await Promise.race([addDoc(collection(db, "cases"), payload), timeoutPromise]);
 
         document.getElementById("sec-4").classList.add("hidden");
         document.getElementById("sec-success").classList.remove("hidden");
