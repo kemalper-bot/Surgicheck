@@ -330,7 +330,7 @@
       </div>
 
       <div class="bg-white rounded-3xl p-8 reveal" style="transition-delay: 100ms;">
-        <form onsubmit="event.preventDefault(); alert('Demo talebiniz başarıyla alındı.');" class="space-y-5">
+        <form onsubmit="handleDemoSubmit(event);" class="space-y-5">
           <div>
             <label class="text-xs font-bold text-slate-500 uppercase" data-tr="Ad Soyad" data-en="Full Name">Ad Soyad</label>
             <input required type="text" class="w-full mt-1 border-b-2 border-slate-200 bg-transparent py-2 text-slate-900 focus:border-brand-600 focus:outline-none transition-colors font-medium" />
@@ -382,7 +382,12 @@
     function setLang(l) {
       localStorage.setItem('sc-lang', l);
       document.documentElement.lang = l;
-      
+
+      // Update page title
+      document.title = l === 'tr'
+        ? 'SurgiCheck | Estetik Cerrahide Akıllı Risk Analizi'
+        : 'SurgiCheck | Risk Analysis & Decision Support';
+
       // Update text contents
       document.querySelectorAll('[data-en]').forEach(el => {
         el.textContent = l === 'tr' ? el.dataset.tr : el.dataset.en;
@@ -409,6 +414,17 @@
         btnEn.className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'en' ? activeClass : passiveClass}`;
         btnTr.className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'tr' ? activeClass : passiveClass}`;
       }
+    }
+
+    // Form submission handler (bilingual alert)
+    function handleDemoSubmit(e) {
+      e.preventDefault();
+      const l = localStorage.getItem('sc-lang') || 'tr';
+      const msg = l === 'tr'
+        ? 'Demo talebiniz başarıyla alındı. En kısa sürede size dönüş yapacağız.'
+        : 'Your demo request has been received. We will get back to you shortly.';
+      alert(msg);
+      e.target.reset();
     }
 
     // Footer Year
