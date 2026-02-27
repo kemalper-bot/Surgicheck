@@ -95,12 +95,12 @@
           <span data-tr="Klinik Yönetişim Platformu" data-en="Clinical Governance Platform">Klinik Yönetişim Platformu</span>
         </div>
 
-        <h1 class="text-4xl lg:text-[3.35rem] font-black tracking-tight leading-[1.08] mb-5 text-slate-900" data-tr="Risk clearance kararlarını standardize edin, klinik kontrolü koruyun." data-en="Standardize risk clearance decisions while keeping clinical control.">
-          Risk clearance kararlarını standardize edin, klinik kontrolü koruyun.
+        <h1 class="text-4xl lg:text-[3.35rem] font-black tracking-tight leading-[1.08] mb-5 text-slate-900" data-tr="Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun." data-en="Standardize risk clearance decisions while keeping clinical control.">
+          Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun.
         </h1>
 
-        <p class="text-lg text-slate-500 leading-relaxed mb-9 font-medium max-w-xl" data-tr="Explainable rule logic, clinician-controlled review ve audit-ready documentation ile vaka akışını güvenle yönetin." data-en="Manage case flow with explainable rule logic, clinician-controlled review, and audit-ready documentation.">
-          Explainable rule logic, clinician-controlled review ve audit-ready documentation ile vaka akışını güvenle yönetin.
+        <p class="text-lg text-slate-500 leading-relaxed mb-9 font-medium max-w-xl" data-tr="Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin." data-en="Manage case flow with explainable rule logic, clinician-controlled review, and audit-ready documentation.">
+          Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin.
         </p>
 
         <div class="grid sm:grid-cols-2 gap-4 mb-9">
@@ -110,11 +110,11 @@
         <a href="#sample-report" class="inline-flex items-center text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors mb-9" data-tr="Örnek Clearance PDF İndir" data-en="Download Sample Clearance Report">Örnek Clearance PDF İndir</a>
 
         <div class="flex flex-wrap items-center gap-6 border-t border-slate-200 pt-6 text-xs font-semibold text-slate-500">
-          <span data-tr="Explainable risk signals" data-en="Explainable risk signals">Explainable risk signals</span>
+          <span data-tr="Açıklanabilir risk sinyalleri" data-en="Explainable risk signals">Açıklanabilir risk sinyalleri</span>
           <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-          <span data-tr="Clinician-controlled recommendations" data-en="Clinician-controlled recommendations">Clinician-controlled recommendations</span>
+          <span data-tr="Klinisyen kontrollü öneriler" data-en="Clinician-controlled recommendations">Klinisyen kontrollü öneriler</span>
           <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-          <span data-tr="Audit-ready classification" data-en="Audit-ready classification">Audit-ready classification</span>
+          <span data-tr="Denetime hazır sınıflama" data-en="Audit-ready classification">Denetime hazır sınıflama</span>
         </div>
       </div>
 
@@ -231,40 +231,35 @@
       </div>
 
       <div id="sample-report" class="mt-20 grid lg:grid-cols-2 gap-10 items-center reveal">
-        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/40">
-          <div class="aspect-[4/3] rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-200">
-              <h3 class="font-black text-slate-800">SurgiCheck Clearance Report</h3>
-              <span class="text-xs font-bold text-slate-500">PDF</span>
-            </div>
-            <div class="mt-4 space-y-2 text-sm text-slate-600">
-              <div class="h-2 bg-slate-200 rounded w-1/2"></div>
-              <div class="h-2 bg-slate-100 rounded w-full"></div>
-              <div class="h-2 bg-slate-100 rounded w-5/6"></div>
-              <div class="mt-5 h-24 border border-slate-200 rounded-lg bg-white"></div>
-            </div>
-          </div>
+        <div class="rounded-3xl border border-slate-200/80 bg-white/90 p-4 shadow-2xl shadow-slate-200/50">
+          <img src="sample-clearance-report.svg" alt="Sample clearance PDF" loading="lazy" class="w-full rounded-2xl border border-slate-200 shadow-sm" />
         </div>
         <div>
           <h3 class="text-3xl font-black tracking-tight text-slate-900 mb-4" data-tr="Örnek Clearance Raporu" data-en="Sample Clearance Report">Örnek Clearance Raporu</h3>
           <ul class="space-y-3 mb-7 text-slate-700 font-medium">
-            <li data-tr="• Structured classification" data-en="• Structured classification">• Structured classification</li>
-            <li data-tr="• Documented risk signals" data-en="• Documented risk signals">• Documented risk signals</li>
-            <li data-tr="• Recommended actions + sign-off" data-en="• Recommended actions + sign-off">• Recommended actions + sign-off</li>
+            <li data-tr="• Yapılandırılmış sınıflandırma" data-en="• Structured classification">• Yapılandırılmış sınıflandırma</li>
+            <li data-tr="• Dokümante edilmiş risk sinyalleri" data-en="• Documented risk signals">• Dokümante edilmiş risk sinyalleri</li>
+            <li data-tr="• Önerilen aksiyonlar + klinisyen onayı" data-en="• Recommended actions + sign-off">• Önerilen aksiyonlar + klinisyen onayı</li>
           </ul>
-          <a href="#contact" class="inline-flex items-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Örnek PDF İndir" data-en="Download Sample PDF">Örnek PDF İndir</a>
+          <a href="sample-clearance-report.svg" download class="inline-flex items-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-colors" data-tr="Örnek PDF Görselini İndir" data-en="Download Sample PDF">Örnek PDF Görselini İndir</a>
         </div>
       </div>
 
-      <div class="mt-20 rounded-3xl bg-slate-950 text-white p-10 reveal">
-        <h3 class="text-3xl font-black mb-5" data-tr="Tasarım Gereği Klinik Yönetişim" data-en="Clinical Governance by Design">Tasarım Gereği Klinik Yönetişim</h3>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm font-medium text-slate-300">
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Deterministik kural mantığı</div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Şeffaf karar katmanları</div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Otonom cerrahi karar yok</div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Cerrah kontrollü çıktı</div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Versiyonlanmış kural setleri</div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-4">Denetim izi hazır</div>
+      <div class="mt-20 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-10 reveal border border-slate-700 shadow-2xl shadow-slate-900/30">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
+          <div>
+            <h3 class="text-3xl font-black mb-2" data-tr="Tasarım Gereği Klinik Yönetişim" data-en="Clinical Governance by Design">Tasarım Gereği Klinik Yönetişim</h3>
+            <p class="text-slate-300 text-sm font-medium" data-tr="Karar desteği üretir; nihai cerrahi kararı klinisyen verir." data-en="Produces decision support; final surgical decisions always remain with the clinician.">Karar desteği üretir; nihai cerrahi kararı klinisyen verir.</p>
+          </div>
+          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border border-emerald-400/30 bg-emerald-400/10 text-emerald-300" data-tr="Clinical Governance Layer" data-en="Clinical Governance Layer">Clinical Governance Layer</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 text-sm font-medium text-slate-200">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Deterministik kural mantığı</div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Şeffaf karar katmanları</div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Otonom cerrahi karar yok</div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Cerrah kontrollü çıktı</div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Versiyonlanmış kural setleri</div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-4"><span class="text-emerald-300 mr-2">✓</span>Denetim izi hazır</div>
         </div>
       </div>
 
