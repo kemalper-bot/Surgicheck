@@ -158,6 +158,16 @@
             <label class="text-sm font-medium text-slate-700 mb-1 block">Diğer Düzenli İlaçlar / Takviyeler</label>
             <input id="med_other" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="Tansiyon, tiroid ilaçları, vitaminler vb. isimlerini yazınız..." />
           </div>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-sm font-medium text-slate-700 mb-1 block">Riskli ilaçlarda son doz tarihi</label>
+              <input id="med_last_dose" type="date" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" />
+            </div>
+            <div>
+              <label class="text-sm font-medium text-slate-700 mb-1 block">Kesme planı / ilaç dozu notu</label>
+              <input id="med_stop_note" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="Örn: Ozempic haftalık, son doz 5 gün önce" />
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -489,6 +499,8 @@
             medPsych: document.getElementById("med_psych").checked,
             medSteroid: document.getElementById("med_steroid").checked,
             medOther: document.getElementById("med_other").value.trim() || null,
+            medLastDoseDate: document.getElementById("med_last_dose").value || null,
+            medStopPlanNote: document.getElementById("med_stop_note").value.trim() || null,
 
             smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
             smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
