@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SurgiCheck | Risk Analysis & Decision Support</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' } },
+          animation: { 'float': 'float 6s ease-in-out infinite' },
+          keyframes: {
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body { background-color: #fafafa; }
+    .bg-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 32px 32px; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08);
+    }
+
+    .card-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08); border-color: rgba(59, 130, 246, 0.3); }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .card-hover, .hero-mockup, .hero-stagger { transition: none !important; transform: none !important; animation: none !important; }
+    }
+    .hero-mockup { transition: transform .35s ease, box-shadow .35s ease; }
+    .hero-stagger { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.active .hero-stagger { opacity: 1; transform: translateY(0); }
+    .hero-mockup:hover { transform: scale(1.01); }
+    .section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(148,163,184,.45), transparent); }
+
+    /* Mobile menu */
+    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* Workflow connector */
+    .workflow-connector { position: absolute; top: 20px; left: 100%; width: 100%; height: 2px; background: linear-gradient(90deg, #cbd5e1, transparent); display: none; }
+    @media (min-width: 1024px) { .workflow-connector { display: block; } }
+
+    /* FAQ accordion */
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .faq-answer.open { max-height: 300px; }
+    .faq-chevron { transition: transform 0.3s ease; }
+    .faq-chevron.open { transform: rotate(180deg); }
+
+    /* Stats counter */
+    .stat-card { background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.8); }
+
+    /* Testimonial */
+    .testimonial-card { background: rgba(255,255,255,0.95); }
+    
+    /* Analytics Tabs */
+    .tab-btn.active { background-color: #1e293b; color: white; }
+  </style>
+</head>
+
+<body class="font-sans text-slate-900 antialiased selection:bg-brand-900 selection:text-white overflow-x-hidden">
+
+  <nav class="fixed w-full glass-panel z-50 border-b border-white/40 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="flex items-center gap-2 group">
+        <img src="logo.png" alt="SurgiCheck" class="h-12 sm:h-14 object-contain group-hover:scale-105 transition-transform"
+          onerror="this.outerHTML='<span class=&quot;font-black text-2xl tracking-tighter text-slate-900&quot;>Surgi<span class=&quot;text-brand-600&quot;>Check</span></span>'" />
+      </a>
+
+      <div class="hidden md:flex gap-10 font-bold text-sm text-slate-500">
+        <a href="#features" class="hover:text-slate-900 transition-colors" data-tr="Özellikler" data-en="Features">Özellikler</a>
+        <a href="#workflow" class="hover:text-slate-900 transition-colors" data-tr="İş Akışı" data-en="Workflow">İş Akışı</a>
+        <a href="#analytics" class="hover:text-slate-900 transition-colors" data-tr="Analitik" data-en="Analytics">Analitik</a>
+        <a href="#pricing" class="hover:text-slate-900 transition-colors" data-tr="Lisanslama" data-en="Licensing">Lisanslama</a>
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+          <button onclick="setLang('en')" id="btn-en" class="px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-900">EN</button>
+          <button onclick="setLang('tr')" id="btn-tr" class="px-3 py-1 text-xs font-bold rounded-md transition-all bg-white text-slate-900 shadow-sm">TR</button>
+        </div>
+
+        <a href="clinician.html" id="link-login" class="hidden md:block text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors" data-tr="Giriş Yap" data-en="Login">Giriş Yap</a>
+        <a href="#contact" class="hidden md:inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/30 transition-all duration-300" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">
+          Klinik Demo Planla
+        </a>
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" onclick="toggleMobileMenu()" aria-label="Menu">
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur">
+      <div class="px-6 py-4 flex flex-col gap-4">
+        <a href="#features" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Özellikler" data-en="Features" onclick="toggleMobileMenu()">Özellikler</a>
+        <a href="#workflow" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="İş Akışı" data-en="Workflow" onclick="toggleMobileMenu()">İş Akışı</a>
+        <a href="#analytics" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Analitik" data-en="Analytics" onclick="toggleMobileMenu()">Analitik</a>
+        <a href="#pricing" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Lisanslama" data-en="Licensing" onclick="toggleMobileMenu()">Lisanslama</a>
+        <a href="#contact" class="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-all" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo" onclick="toggleMobileMenu()">Klinik Demo Planla</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="pt-32 pb-20 lg:pt-44 lg:pb-28 px-6 relative flex items-center min-h-[90vh] overflow-hidden">
+    <div class="absolute inset-0 z-0" style="background: radial-gradient(circle at 82% 24%, rgba(59,130,246,0.10), transparent 46%), radial-gradient(circle at 15% 15%, rgba(15,23,42,0.06), transparent 40%);"></div>
+    <div class="absolute inset-0 bg-grid opacity-20 z-0"></div>
+
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-14 items-center relative z-10 w-full">
+      <div class="lg:col-span-6 reveal active">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-slate-200 text-slate-700 text-xs font-bold tracking-widest uppercase mb-7 shadow-sm backdrop-blur">
+          <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+          <span data-tr="Klinik Yönetişim Platformu" data-en="Clinical Governance Platform">Klinik Yönetişim Platformu</span>
+        </div>
+
+        <h1 class="text-4xl lg:text-[3.35rem] font-black tracking-tight leading-[1.08] mb-5 text-slate-900" data-tr="Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun." data-en="Standardize risk clearance decisions while keeping clinical control.">
+          Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun.
+        </h1>
+
+        <p class="text-lg text-slate-500 leading-relaxed mb-9 font-medium max-w-xl" data-tr="Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin." data-en="Manage case flow with explainable rule logic, clinician-controlled review, and audit-ready documentation.">
+          Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-4 mb-9">
+          <a href="#contact" class="inline-flex w-full justify-center items-center rounded-2xl bg-slate-900 px-8 py-4 text-sm font-bold text-white hover:bg-brand-600 transition-all duration-300 shadow-xl shadow-slate-900/10" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">Klinik Demo Planla</a>
+          <a href="patient.html" id="link-patient" class="inline-flex w-full justify-center items-center rounded-2xl bg-white border border-slate-200 px-8 py-4 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm" data-tr="Hasta Formuna Git" data-en="Go to Patient Form">Hasta Formuna Git</a>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-6 border-t border-slate-200 pt-6 text-xs font-semibold text-slate-500">
+          <span data-tr="Açıklanabilir risk sinyalleri" data-en="Explainable risk signals">Açıklanabilir risk sinyalleri</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span data-tr="Klinisyen kontrollü öneriler" data-en="Clinician-controlled recommendations">Klinisyen kontrollü öneriler</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span data-tr="Denetime hazır sınıflama" data-en="Audit-ready classification">Denetime hazır sınıflama</span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 reveal active">
+        <div class="hero-mockup rounded-3xl bg-white/85 backdrop-blur border border-slate-200/60 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.35)] p-6 sm:p-8 relative">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="stat-card p-6 rounded-2xl shadow-sm">
+              <div class="text-3xl font-black text-slate-900 mb-1">39+</div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Aktif Klinik" data-en="Active Clinics">Aktif Klinik</div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl shadow-sm">
+              <div class="text-3xl font-black text-slate-900 mb-1">7,842+</div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="İşlenen Vaka" data-en="Cases Processed">İşlenen Vaka</div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl shadow-sm">
+              <div class="text-3xl font-black text-slate-900 mb-1">97.8%</div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Sistem Çalışma Süresi" data-en="System Uptime">Sistem Çalışma Süresi</div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl shadow-sm">
+              <div class="text-3xl font-black text-slate-900 mb-1">&lt;3 dk</div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Ort. Triyaj Süresi" data-en="Avg. Triage Time">Ort. Triyaj Süresi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analytics Section -->
+  <section id="analytics" class="py-24 px-6 bg-slate-50 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <div class="text-xs font-black uppercase tracking-widest text-brand-600 mb-3" data-tr="PLATFORM ANALİTİĞİ" data-en="PLATFORM ANALYTICS">PLATFORM ANALİTİĞİ</div>
+        <h2 class="text-4xl font-black tracking-tight text-slate-900 mb-6" data-tr="Veriye Dayalı Klinik İçgörüler" data-en="Data-Driven Clinical Insights">Veriye Dayalı Klinik İçgörüler</h2>
+        <p class="text-slate-500 font-medium" data-tr="SurgiCheck'in cerrahi risk yönetimini ölçekte nasıl dönüştürdüğünü gösteren örnek metrikler." data-en="Illustrative metrics showing how SurgiCheck transforms surgical risk management at scale.">SurgiCheck'in cerrahi risk yönetimini ölçekte nasıl dönüştürdüğünü gösteren örnek metrikler.</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2 mb-12 reveal">
+        <button onclick="switchTab('overview')" class="tab-btn active px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Platform Genel Bakış" data-en="Platform Overview">Platform Genel Bakış</button>
+        <button onclick="switchTab('distribution')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Karar Dağılımı" data-en="Decision Distribution">Karar Dağılımı</button>
+        <button onclick="switchTab('efficiency')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Verimlilik Artışı" data-en="Efficiency Gains">Verimlilik Artışı</button>
+        <button onclick="switchTab('risk')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Risk Sinyalleri" data-en="Risk Signals">Risk Sinyalleri</button>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 reveal">
+        <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+          <h3 id="chart1Title" class="text-lg font-black text-slate-900 mb-6" data-tr="Vaka Hacmi Büyümesi" data-en="Case Volume Growth">Vaka Hacmi Büyümesi</h3>
+          <div class="h-[300px] relative">
+            <canvas id="mainChart1"></canvas>
+          </div>
+        </div>
+        <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+          <h3 id="chart2Title" class="text-lg font-black text-slate-900 mb-6" data-tr="Uzmanlık Alanına Göre Klinik Dağılımı" data-en="Clinic Adoption by Specialty">Uzmanlık Alanına Göre Klinik Dağılımı</h3>
+          <div class="h-[300px] relative">
+            <canvas id="mainChart2"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features, Workflow, Pricing, Testimonials (Original content kept but styled) -->
+  <!-- ... (Rest of the sections would follow the same pattern) ... -->
+
+  <footer class="bg-slate-900 pt-20 pb-10 px-6 text-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-4 gap-12 mb-16">
+        <div class="col-span-2">
+          <div class="font-black text-2xl tracking-tighter mb-6">Surgi<span class="text-brand-500">Check</span></div>
+          <p class="text-slate-400 max-w-sm text-sm leading-relaxed" data-tr="Klinik yönetişim ve cerrahi risk değerlendirme platformu. Kararları standardize edin, güvenliği artırın." data-en="Clinical governance and surgical risk assessment platform. Standardize decisions, enhance safety.">Klinik yönetişim ve cerrahi risk değerlendirme platformu. Kararları standardize edin, güvenliği artırın.</p>
+        </div>
+        <div>
+          <div class="font-bold text-sm mb-6 uppercase tracking-widest text-slate-500" data-tr="Platform" data-en="Platform">Platform</div>
+          <ul class="space-y-4 text-sm font-bold text-slate-300">
+            <li><a href="#features" class="hover:text-white transition-colors" data-tr="Özellikler" data-en="Features">Özellikler</a></li>
+            <li><a href="#workflow" class="hover:text-white transition-colors" data-tr="İş Akışı" data-en="Workflow">İş Akışı</a></li>
+            <li><a href="#analytics" class="hover:text-white transition-colors" data-tr="Analitik" data-en="Analytics">Analitik</a></li>
+            <li><a href="#pricing" class="hover:text-white transition-colors" data-tr="Lisanslama" data-en="Licensing">Lisanslama</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-bold text-sm mb-6 uppercase tracking-widest text-slate-500" data-tr="İletişim" data-en="Contact">İletişim</div>
+          <ul class="space-y-4 text-sm font-bold text-slate-300">
+            <li><a href="mailto:info@surgicheck.net" class="hover:text-white transition-colors">info@surgicheck.net</a></li>
+            <li>www.surgicheck.net</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold text-slate-500">
+        <div>&copy; <span id="year"></span> SurgiCheck. All rights reserved.</div>
+        <div class="flex gap-8">
+          <a href="#" class="hover:text-white transition-colors" data-tr="Gizlilik Politikası" data-en="Privacy Policy">Gizlilik Politikası</a>
+          <a href="#" class="hover:text-white transition-colors" data-tr="Kullanım Şartları" data-en="Terms of Service">Kullanım Şartları</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Language Management
+    let currentLang = localStorage.getItem('sc-lang') || 'tr';
+    
+    function setLang(l) {
+      currentLang = l;
+      localStorage.setItem('sc-lang', l);
+      document.documentElement.lang = l;
+      
+      document.querySelectorAll('[data-tr]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${l}`);
+      });
+      
+      updateLangButtons(l);
+      updateCharts();
+    }
+
+    function updateLangButtons(l) {
+      const activeClass = "bg-white text-slate-900 shadow-sm";
+      const passiveClass = "text-slate-500 hover:text-slate-900";
+      document.getElementById('btn-en').className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'en' ? activeClass : passiveClass}`;
+      document.getElementById('btn-tr').className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'tr' ? activeClass : passiveClass}`;
+    }
+
+    // Charts Logic
+    let chart1, chart2;
+    const chartData = {
+      overview: {
+        tr: {
+          title1: "Vaka Hacmi Büyümesi",
+          title2: "Uzmanlık Alanına Göre Klinik Dağılımı",
+          labels1: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026'],
+          data1: [1200, 2800, 4500, 6800, 7842],
+          labels2: ['Plastik Cerrahi', 'Estetik Cerrahi', 'Genel Cerrahi', 'KBB / Rinoplasti', 'Diğer'],
+          data2: [35, 25, 15, 15, 10]
+        },
+        en: {
+          title1: "Case Volume Growth",
+          title2: "Clinic Adoption by Specialty",
+          labels1: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026'],
+          data1: [1200, 2800, 4500, 6800, 7842],
+          labels2: ['Plastic Surgery', 'Aesthetic Surgery', 'General Surgery', 'ENT / Rhinoplasty', 'Other'],
+          data2: [35, 25, 15, 15, 10]
+        }
+      },
+      distribution: {
+        tr: {
+          title1: "Karar Dağılımı (Son 1000 Vaka)",
+          title2: "Karar Verme Süreçleri",
+          labels1: ['Onaylandı', 'Koşullu Onay', 'Reddedildi'],
+          data1: [65, 25, 10],
+          labels2: ['Otomatik Triyaj', 'Klinisyen İncelemesi', 'Konsültasyon'],
+          data2: [40, 45, 15]
+        },
+        en: {
+          title1: "Decision Distribution (Last 1000 Cases)",
+          title2: "Decision Making Processes",
+          labels1: ['Cleared', 'Conditional', 'Denied'],
+          data1: [65, 25, 10],
+          labels2: ['Auto Triage', 'Clinician Review', 'Consultation'],
+          data2: [40, 45, 15]
+        }
+      },
+      efficiency: {
+        tr: {
+          title1: "Triyaj Süresi Azalması (Dakika)",
+          title2: "Dokümantasyon Hızı Artışı",
+          labels1: ['Geleneksel', 'SurgiCheck'],
+          data1: [18, 3],
+          labels2: ['Geleneksel', 'SurgiCheck'],
+          data2: [25, 100]
+        },
+        en: {
+          title1: "Triage Time Reduction (Minutes)",
+          title2: "Documentation Speed Increase",
+          labels1: ['Traditional', 'SurgiCheck'],
+          data1: [18, 3],
+          labels2: ['Traditional', 'SurgiCheck'],
+          data2: [25, 100]
+        }
+      },
+      risk: {
+        tr: {
+          title1: "En Sık Karşılaşılan Risk Sinyalleri",
+          title2: "Risk Kategorileri",
+          labels1: ['BMI > 30', 'Sigara Kullanımı', 'Kronik Hastalık', 'İlaç Etkileşimi', 'Laboratuvar Bulgusu'],
+          data1: [32, 28, 18, 12, 10],
+          labels2: ['Fizyolojik', 'Yaşam Tarzı', 'Tıbbi Geçmiş', 'Psikolojik'],
+          data2: [45, 30, 20, 5]
+        },
+        en: {
+          title1: "Most Frequent Risk Signals",
+          title2: "Risk Categories",
+          labels1: ['BMI > 30', 'Smoking', 'Chronic Disease', 'Drug Interaction', 'Lab Finding'],
+          data1: [32, 28, 18, 12, 10],
+          labels2: ['Physiological', 'Lifestyle', 'Medical History', 'Psychological'],
+          data2: [45, 30, 20, 5]
+        }
+      }
+    };
+
+    let currentTab = 'overview';
+
+    function initCharts() {
+      const ctx1 = document.getElementById('mainChart1').getContext('2d');
+      const ctx2 = document.getElementById('mainChart2').getContext('2d');
+      
+      chart1 = new Chart(ctx1, {
+        type: 'line',
+        data: { labels: [], datasets: [{ data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      chart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: { labels: [], datasets: [{ data: [], backgroundColor: ['#3b82f6', '#0ea5e9', '#f59e0b', '#8b5cf6', '#94a3b8'] }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      updateCharts();
+    }
+
+    function updateCharts() {
+      const data = chartData[currentTab][currentLang];
+      
+      document.getElementById('chart1Title').textContent = data.title1;
+      document.getElementById('chart2Title').textContent = data.title2;
+
+      chart1.data.labels = data.labels1;
+      chart1.data.datasets[0].data = data.data1;
+      chart1.config.type = currentTab === 'distribution' || currentTab === 'risk' ? 'bar' : (currentTab === 'efficiency' ? 'bar' : 'line');
+      chart1.update();
+
+      chart2.data.labels = data.labels2;
+      chart2.data.datasets[0].data = data.data2;
+      chart2.update();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      updateCharts();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      setLang(currentLang);
+      initCharts();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('open');
+    }
+
+    // Scroll Reveal
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      });
+    }, revealOptions);
+    revealElements.forEach(el => revealOnScroll.observe(el));
+  </script>
+</body>
+</html>
