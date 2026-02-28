@@ -456,66 +456,127 @@
     return flags;
   }
 
-  const medicationGuidanceMap = {
+  const aestheticClinicalRules = {
     med_glp1: {
-      rationale: "GLP-1 reseptör agonistleri (semaglutid, liraglutid vb.) mide boşalmasını geciktirebilir. Bu durum anestezi indüksiyonunda residual gastrik içerik ve aspirasyon riskini artırır.",
-      hold: "Haftalık preparatlar için ideal olarak son dozdan sonra 7 gün; günlük preparatlar için en az 24 saat önce kesim planı anestezi ekibiyle doğrulanmalıdır.",
-      plan: "Son doz tarihi hastadan alınmalı; semptomatik hastada (bulantı, kusma, abdominal distansiyon) elektif işlem ertelenmelidir."
+      severity: "HARD_STOP",
+      title: "GLP-1 Agonistleri & Pulmoner Aspirasyon",
+      mechanism: "Vagal aracılı gastrik motilite inhibisyonu nedeniyle standart NPO süresi yetersiz kalabilir; indüksiyonda regürjitasyon/aspirasyon riski artar.",
+      action_protocol: [
+        "Haftalık formlar (semaglutid): Elektif cerrahiden yaklaşık 7 gün önce kesim planı yapılmalı.",
+        "Günlük formlar (liraglutid vb.): Operasyon günü dozu anestezi planına göre ertelenmeli/kesilmelidir.",
+        "Clearance şartı: Son doz tarihi doğrulanmalı; semptomatik hastada pre-op gastrik değerlendirme (POCUS) veya RSI planı düşünülmelidir."
+      ]
     },
-    anticoag_active: {
-      rationale: "Aktif antikoagülan/antitrombosit tedavi perioperatif kanama riskini artırır; plansız kesim de tromboemboli riski doğurur.",
-      hold: "İlaç türüne göre kişiselleştirilmiş kesme-köprüleme planı gerekir (DOAK, warfarin, aspirin, klopidogrel farklı yönetilir).",
-      plan: "Kardiyoloji/anestezi ile yazılı perioperatif plan olmadan elektif cerrahiye girilmemelidir."
-    },
-    anticoag_verify: {
-      rationale: "Hastanın kan sulandırıcı beyanı ilaç adı/dozu/son kullanım zamanı ile doğrulanmadığında ciddi kanama veya pıhtı riski gözden kaçabilir.",
-      hold: "İlaç adı ve son doz tarihi doğrulanana kadar ameliyat günü kesinleştirilmemelidir.",
-      plan: "Reçete/fotoğraf/epikriz ile doğrulama yapılıp CV alanı güncellenmelidir."
-    },
-    med_ocp_dvt: {
-      rationale: "Östrojen içeren OCP/HRT venöz tromboemboli riskini artırır; majör vücut şekillendirme cerrahilerinde risk katlanabilir.",
-      hold: "Elektif majör cerrahi öncesi çoğu rehber 4 hafta önce kesmeyi ve alternatif kontrasepsiyonu önerir.",
-      plan: "DVT profilaksisi (mekanik + gerektiğinde farmakolojik) ameliyat planına eklenmelidir."
-    },
-    med_ocp: {
-      rationale: "OCP/HRT kullanımı hastanın bazal tromboz riskini etkileyebilir.",
-      hold: "Prosedürün büyüklüğüne göre kesme gerekliliği değerlendirilir; majör cerrahide daha erken kesim düşünülür.",
-      plan: "Risk sınıflaması (Caprini vb.) içinde ilaç kullanımı mutlaka işlenmelidir."
+    smoking_active: {
+      severity: "HARD_STOP",
+      title: "Nikotin / E-Sigara & Flep Nekrozu",
+      mechanism: "Nikotin ilişkili vazospazm ve mikrosirkülasyon bozulması flep perfüzyonunu düşürür; nekroz ve yara komplikasyonu riski yükselir.",
+      action_protocol: [
+        "Operasyondan en az 4 hafta önce kesin bırakma hedeflenmelidir.",
+        "Yüksek riskli vakalarda ameliyat sabahı cotinine doğrulaması düşünülebilir."
+      ]
     },
     med_acne: {
-      rationale: "İzotretinoin ile ilgili eski literatürde yara iyileşmesi/skar riskine dair çekinceler vardır; güncel yaklaşım prosedür bazlı değerlendirmedir.",
-      hold: "Rutin, uzun kesim zorunluluğu yerine cerrahi tipine göre dermatoloji/plastik cerrahi ortak kararı önerilir.",
-      plan: "Hastada keloid öyküsü veya agresif resurfacing planı varsa daha konservatif yaklaşım seçilebilir."
+      severity: "WARNING",
+      title: "İzotretinoin & Skar Kalitesi",
+      mechanism: "Epitelizasyon ve dermal remodeling süreçlerinde değişiklik, bazı hastalarda skar kalitesini olumsuz etkileyebilir.",
+      action_protocol: [
+        "Skar kalitesinin kritik olduğu vakalarda dermatoloji/plastik cerrahi ortak kararıyla ilaç kesimi sonrası bekleme süresi planlanmalıdır (klinikte sık yaklaşım 6-12 ay değerlendirmesidir)."
+      ]
+    },
+    csection: {
+      severity: "WARNING",
+      title: "Geçmiş Sezaryen Skarı & Perforatör Hasarı",
+      mechanism: "Alt abdominal skar ve yapışıklıklar perforatör anatomiyi değiştirebilir; diseksiyon planını etkiler.",
+      action_protocol: [
+        "Perforatör koruyucu diseksiyon stratejisi planlanmalı; gerekiyorsa pre-op Doppler/USG ile vasküler haritalama yapılmalıdır."
+      ]
+    },
+    anticoag_active: {
+      severity: "HARD_STOP",
+      title: "Aktif Antikoagülan & Kanama Riski",
+      mechanism: "Aktif antikoagülan/antitrombosit tedavi perioperatif kanama riskini artırır; plansız kesim tromboemboli riski doğurur.",
+      action_protocol: [
+        "DOAK/warfarin/aspirin/klopidogrel için kişiselleştirilmiş kesme-köprüleme planı yazılı olmalıdır.",
+        "Kardiyoloji-anestezi ortak planı olmadan elektif cerrahiye girilmemelidir."
+      ]
+    },
+    anticoag_verify: {
+      severity: "VERIFY",
+      title: "Kan Sulandırıcı Beyanı Doğrulanmalı",
+      mechanism: "İlaç adı/dozu/son kullanım zamanı doğrulanmadan doğru kanama-pıhtı dengesi kurmak mümkün değildir.",
+      action_protocol: [
+        "Reçete/fotoğraf/epikriz ile ilaç doğrulaması tamamlanmalı.",
+        "Son doz tarihi netleşmeden ameliyat tarihi kesinleştirilmemelidir."
+      ]
+    },
+    med_ocp_dvt: {
+      severity: "WARNING",
+      title: "OKS/HRT + Majör Cerrahi & VTE",
+      mechanism: "Östrojen içeren tedaviler majör cerrahide venöz tromboemboli riskini artırabilir.",
+      action_protocol: [
+        "Elektif majör cerrahi öncesi kesme ve alternatif kontrasepsiyon planı değerlendirilmelidir.",
+        "DVT profilaksisi (mekanik ± farmakolojik) cerrahi planına eklenmelidir."
+      ]
+    },
+    med_ocp: {
+      severity: "WARNING",
+      title: "Doğum Kontrol/Hormon & Tromboz Profili",
+      mechanism: "Hormonal tedaviler hastanın bazal tromboz risk profilini değiştirebilir.",
+      action_protocol: [
+        "Prosedür büyüklüğüne göre kesme gereksinimi bireyselleştirilmelidir.",
+        "Risk skorlama (ör. Caprini) içinde mutlaka işlenmelidir."
+      ]
     },
     med_steroid: {
-      rationale: "Kronik steroid kullanımı adrenal supresyon, enfeksiyon ve yara iyileşme problemlerine yol açabilir.",
-      hold: "Ani kesim önerilmez; perioperatif stres dozu gerekliliği anestezi tarafından değerlendirilmelidir.",
-      plan: "Günlük doz ve kullanım süresi sorgulanmalı, gerekiyorsa endokrin/anestezi görüşü alınmalıdır."
+      severity: "VERIFY",
+      title: "Kronik Steroid & Adrenal Supresyon",
+      mechanism: "Uzun süreli steroid kullanımı adrenal supresyon, enfeksiyon ve yara iyileşme sorunlarıyla ilişkilidir.",
+      action_protocol: [
+        "Ani kesimden kaçınılmalı; perioperatif stres dozu gereksinimi anestezi tarafından planlanmalıdır.",
+        "Günlük doz ve kullanım süresi net kaydedilmelidir."
+      ]
     },
     med_psych: {
-      rationale: "Psikotrop ilaçlar anesteziklerle etkileşebilir; ek olarak psikiyatrik komorbiditeler post-op memnuniyeti etkileyebilir.",
-      hold: "Birçok antidepresan ani kesilmez; ilaç bazında psikiyatri/anestezi ortak planı gerekir.",
-      plan: "İlaç listesi doğrulanmalı, intihar riski/BDD şüphesi varsa ameliyat öncesi psikiyatrik değerlendirme istenmelidir."
+      severity: "WARNING",
+      title: "Psikotrop İlaçlar & Perioperatif Uyum",
+      mechanism: "Psikotrop ilaç-anestezik etkileşimleri ve psikiyatrik komorbiditeler perioperatif yönetimi etkileyebilir.",
+      action_protocol: [
+        "İlaçlar ani kesilmemeli; psikiyatri/anestezi ortak planı yapılmalıdır.",
+        "BDD/intihar riski gibi kırılganlıklar varsa pre-op psikiyatrik değerlendirme istenmelidir."
+      ]
     },
     med_sglt2: {
-      rationale: "SGLT2 inhibitörleri (empagliflozin, dapagliflozin vb.) perioperatif dönemde öglisemik diyabetik ketoasidoz riskini artırabilir.",
-      hold: "Planlı cerrahide genellikle ameliyat öncesi en az 3 gün (ertugliflozin için 4 gün) kesme önerilir.",
-      plan: "Diyabet ve hidrasyon yönetimi için anestezi/endokrin koordinasyonu ile tekrar başlama zamanı belirlenmelidir."
+      severity: "HARD_STOP",
+      title: "SGLT2 İnhibitörleri & Öglisemik DKA",
+      mechanism: "SGLT2 inhibitörleri perioperatif dönemde öglisemik ketoasidoz riskini artırabilir.",
+      action_protocol: [
+        "Planlı cerrahide çoğu ajan için en az 3 gün (ertugliflozin için 4 gün) kesme planı uygulanmalıdır.",
+        "Anestezi/endokrin koordinasyonuyla hidrasyon ve yeniden başlama planı oluşturulmalıdır."
+      ]
     },
     med_nsaid: {
-      rationale: "NSAID'ler trombosit fonksiyonunu etkileyerek kanama riskini artırabilir; böbrek fonksiyonları ve sıvı dengesi üzerinde de etkileri olabilir.",
-      hold: "İlacın yarı ömrüne göre çoğunlukla 1-3 gün önce kesim planlanır; kişisel riskler göz önüne alınır.",
-      plan: "Ağrı yönetimi için alternatif analjezi planı yazılı olarak oluşturulmalıdır."
+      severity: "WARNING",
+      title: "Düzenli NSAID Kullanımı & Kanama/Renal Etki",
+      mechanism: "NSAID'ler trombosit fonksiyonunu ve renal hemodinamiyi etkileyerek perioperatif riski artırabilir.",
+      action_protocol: [
+        "Yarı ömre göre çoğu ajan için 1-3 gün önce kesim planlanmalıdır.",
+        "Alternatif analjezi protokolü yazılı hale getirilmelidir."
+      ]
     },
     med_supplements: {
-      rationale: "Bitkisel ürünler ve bazı takviyeler (ginkgo, sarımsak, ginseng, omega-3 vb.) kanama, sedasyon veya ilaç metabolizmasını etkileyebilir.",
-      hold: "Çoğu bitkisel/takviyenin elektif cerrahiden 7 gün önce kesilmesi güvenli yaklaşım olarak tercih edilir.",
-      plan: "Takviyelerin tam isim/doz listesi alınmalı; anestezi formuna açıkça işlenmelidir."
+      severity: "VERIFY",
+      title: "Bitkisel/Takviye Ürünler & Etkileşim",
+      mechanism: "Bazı takviyeler kanama eğilimi, sedasyon veya ilaç metabolizmasını etkileyebilir.",
+      action_protocol: [
+        "Ürün adı/dozu/sıklığı net liste halinde alınmalıdır.",
+        "Elektif cerrahi öncesi çoğu ürün için yaklaşık 7 gün kesim planı tercih edilir."
+      ]
     }
   };
 
-  function getGuidanceForFlag(flag) {
-    return medicationGuidanceMap[flag.key] || null;
+  function getClinicalRuleForFlag(flag) {
+    return aestheticClinicalRules[flag.key] || null;
   }
 
   function gateFromFlags(flags) {
@@ -816,7 +877,7 @@
           : f.type === "SOFT"
             ? "border-amber-300 text-amber-900 bg-amber-50"
             : "border-blue-300 text-blue-900 bg-blue-50";
-        const guidance = getGuidanceForFlag(f);
+        const guidance = getClinicalRuleForFlag(f);
 
         const item = document.createElement(guidance ? "details" : "div");
         item.className = `text-sm rounded-xl border-2 ${cls}`;
@@ -830,7 +891,7 @@
             : f.type === "SOFT"
               ? "Klinik Dikkat"
               : "Doğrulama";
-          summary.innerHTML = `<span>[${f.type}] ${f.title}</span><span class="text-xs font-black opacity-70">${detailBadgeText}</span>`;
+          summary.innerHTML = `<span>[${guidance.severity}] ${guidance.title}</span><span class="text-xs font-black opacity-70">${detailBadgeText}</span>`;
           item.appendChild(summary);
 
           const body = document.createElement("div");
@@ -839,18 +900,14 @@
             <p class="font-semibold mb-2">${f.desc}</p>
             <div class="space-y-2">
               <div>
-                <p class="font-bold">Bilimsel Gerekçe</p>
-                <ul class="list-disc pl-5"><li>${guidance.rationale}</li></ul>
+                <p class="font-bold">Patofizyoloji</p>
+                <ul class="list-disc pl-5"><li>${guidance.mechanism}</li></ul>
               </div>
               <div>
-                <p class="font-bold">Önerilen Ara/Kesme Zamanı</p>
-                <ul class="list-disc pl-5"><li>${guidance.hold}</li></ul>
+                <p class="font-bold">Operasyonel Protokol</p>
+                <ul class="list-disc pl-5 mt-1 space-y-1">${guidance.action_protocol.map(action => `<li>${action}</li>`).join("")}</ul>
               </div>
-              <div>
-                <p class="font-bold">Klinik Aksiyon</p>
-                <ul class="list-disc pl-5"><li>${guidance.plan}</li></ul>
-              </div>
-            </div>
+                          </div>
           `;
           item.appendChild(body);
         } else {
