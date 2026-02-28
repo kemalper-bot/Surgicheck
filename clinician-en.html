@@ -388,7 +388,7 @@
         flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Blood Thinner — CV Required", desc: "Patient stated usage. Verification pending." });
       }
 
-      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "Drug Interaction: GLP-1", desc: "Aspiration risk under anesthesia. Must be stopped." });
+      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "Drug Interaction: GLP-1", desc: "Delayed gastric emptying may increase regurgitation/aspiration risk under anesthesia." });
 
       if (r.medOcp) {
         const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
@@ -402,6 +402,9 @@
       if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne", title: "Drug Interaction: Isotretinoin", desc: "Delayed wound healing and poor scar risk." });
       if (r.medPsych || r.psych) flags.push({ type: "SOFT", key: "med_psych", title: "Psychiatric History", desc: "Evaluate for Body Dysmorphic Disorder (BDD)." });
       if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid", title: "Drug: Steroids", desc: "Adrenal suppression and infection risk." });
+      if (r.medSglt2) flags.push({ type: "HARD", key: "med_sglt2", title: "Drug Interaction: SGLT2", desc: "Perioperative euglycemic ketoacidosis risk; pre-op hold is required." });
+      if (r.medNsaid) flags.push({ type: "SOFT", key: "med_nsaid", title: "Drug: Regular NSAID", desc: "Perioperative bleeding and renal risk profile should be reviewed." });
+      if (r.medSupplements) flags.push({ type: "VERIFY", key: "med_supplements", title: "Supplements: Herbal Products", desc: "Herbal products may affect bleeding and anesthetic interactions." });
 
       if (smokingCV === "active") {
         flags.push({ type: "SOFT", key: "smoking_active", title: "Active Smoker", desc: "High risk of flap necrosis." });
@@ -423,6 +426,130 @@
       if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revision Surgery", desc: "Anatomical plane difficulty." });
     } catch (e) {}
     return flags;
+  }
+
+
+  const aestheticClinicalRules = {
+    med_glp1: {
+      severity: "HARD_STOP",
+      title: "GLP-1 Agonists & Pulmonary Aspiration",
+      mechanism: "Vagal-mediated gastric motility suppression may leave residual gastric content despite standard fasting.",
+      action_protocol: [
+        "Weekly formulations (semaglutide): plan hold ~7 days before elective surgery.",
+        "Daily formulations (liraglutide etc.): withhold on surgery day per anesthesia plan.",
+        "Clearance: confirm last dose timing; consider gastric POCUS or RSI when symptomatic/high-risk."
+      ]
+    },
+    smoking_active: {
+      severity: "HARD_STOP",
+      title: "Nicotine / E-Cigarette & Flap Necrosis",
+      mechanism: "Nicotine-associated vasospasm and microcirculatory impairment increase flap ischemia/necrosis risk.",
+      action_protocol: [
+        "Target complete cessation at least 4 weeks pre-op.",
+        "Consider cotinine verification in high-risk body-contouring cases."
+      ]
+    },
+    med_acne: {
+      severity: "WARNING",
+      title: "Isotretinoin & Scar Quality",
+      mechanism: "Altered epithelial and dermal remodeling dynamics may negatively affect scar quality in selected patients.",
+      action_protocol: [
+        "For scar-critical procedures, align hold timing with dermatology/plastic surgery; many clinics assess a 6-12 month window case-by-case."
+      ]
+    },
+    csection: {
+      severity: "WARNING",
+      title: "Prior C-Section Scar & Perforator Risk",
+      mechanism: "Lower abdominal scar/adhesions may alter perforator anatomy and dissection safety.",
+      action_protocol: [
+        "Plan perforator-preserving dissection; use pre-op Doppler/US mapping when needed."
+      ]
+    },
+    anticoag_active: {
+      severity: "HARD_STOP",
+      title: "Active Anticoagulation & Bleeding Risk",
+      mechanism: "Active anticoagulant/antiplatelet therapy increases perioperative bleeding; unplanned interruption can raise thromboembolic risk.",
+      action_protocol: [
+        "A written individualized hold/bridge plan (DOAC/warfarin/aspirin/clopidogrel) is required.",
+        "Do not proceed with elective surgery without cardiology/anesthesia consensus."
+      ]
+    },
+    anticoag_verify: {
+      severity: "VERIFY",
+      title: "Blood Thinner Declaration Requires Verification",
+      mechanism: "Without verified medication/dose/last intake, bleeding-thrombosis balance cannot be safely managed.",
+      action_protocol: [
+        "Verify against prescription/photo/discharge summary.",
+        "Do not finalize operation date until last-dose timing is clear."
+      ]
+    },
+    med_ocp_dvt: {
+      severity: "WARNING",
+      title: "OCP/HRT + Major Surgery & VTE",
+      mechanism: "Estrogen-containing therapy may increase perioperative venous thromboembolism risk in major procedures.",
+      action_protocol: [
+        "Review pre-op hold timing and alternative contraception.",
+        "Include mechanical ± pharmacologic VTE prophylaxis in the plan."
+      ]
+    },
+    med_ocp: {
+      severity: "WARNING",
+      title: "Birth Control/Hormones & Thrombotic Profile",
+      mechanism: "Hormonal therapy can modify baseline thrombosis risk.",
+      action_protocol: [
+        "Individualize hold decision based on procedure magnitude and risk profile.",
+        "Document within formal risk scoring (e.g., Caprini)."
+      ]
+    },
+    med_steroid: {
+      severity: "VERIFY",
+      title: "Chronic Steroid Use & Adrenal Suppression",
+      mechanism: "Long-term steroids are associated with adrenal suppression, infection risk, and impaired wound healing.",
+      action_protocol: [
+        "Avoid abrupt cessation; assess perioperative stress-dose needs with anesthesia.",
+        "Document daily dose and treatment duration."
+      ]
+    },
+    med_psych: {
+      severity: "WARNING",
+      title: "Psychotropic Medications & Perioperative Coordination",
+      mechanism: "Psychotropic-anesthetic interactions and psychiatric comorbidity can influence perioperative safety and outcomes.",
+      action_protocol: [
+        "Do not abruptly stop chronic psychiatric medication; coordinate with psychiatry/anesthesia.",
+        "Request pre-op psychiatric assessment when BDD/self-harm risk is suspected."
+      ]
+    },
+    med_sglt2: {
+      severity: "HARD_STOP",
+      title: "SGLT2 Inhibitors & Euglycemic DKA",
+      mechanism: "SGLT2 inhibitors can increase perioperative euglycemic ketoacidosis risk.",
+      action_protocol: [
+        "For planned surgery, hold most agents at least 3 days pre-op (ertugliflozin: 4 days).",
+        "Coordinate hydration/glucose management and restart timing with endocrinology/anesthesia."
+      ]
+    },
+    med_nsaid: {
+      severity: "WARNING",
+      title: "Regular NSAID Use & Bleeding/Renal Impact",
+      mechanism: "NSAIDs may affect platelet function and renal hemodynamics, altering perioperative risk.",
+      action_protocol: [
+        "Most agents are held 1-3 days pre-op depending on half-life and patient risk.",
+        "Define alternative analgesia plan before surgery."
+      ]
+    },
+    med_supplements: {
+      severity: "VERIFY",
+      title: "Herbal/Supplement Use & Drug Interaction",
+      mechanism: "Some supplements alter bleeding tendency, sedation, or drug metabolism.",
+      action_protocol: [
+        "Capture exact product name, dose, and frequency.",
+        "For elective surgery, many supplements are held about 7 days pre-op."
+      ]
+    }
+  };
+
+  function getClinicalRuleForFlag(flag) {
+    return aestheticClinicalRules[flag.key] || null;
   }
 
   function gateFromFlags(flags) {
@@ -563,6 +690,9 @@
     if (r.medAcne) medsList.push("Acne Meds");
     if (r.medPsych) medsList.push("Psychiatric");
     if (r.medSteroid) medsList.push("Steroids");
+    if (r.medSglt2) medsList.push("SGLT2 (Diabetes)");
+    if (r.medNsaid) medsList.push("Regular NSAID");
+    if (r.medSupplements) medsList.push("Herbal/Supplements");
 
     // Patient Declaration — safe DOM rendering
     const decl = document.getElementById("patientDeclaration");
@@ -600,6 +730,17 @@
     medsOtherDiv.appendChild(medsOtherLbl);
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
+
+    const medTimingDiv = document.createElement("div");
+    medTimingDiv.className = "col-span-2";
+    const medTimingLbl = document.createElement("span");
+    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    medTimingLbl.textContent = "Medication Last Dose / Hold Note";
+    const medTimingVal = document.createElement("i");
+    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Not specified";
+    medTimingDiv.appendChild(medTimingLbl);
+    medTimingDiv.appendChild(medTimingVal);
+    grid.appendChild(medTimingDiv);
 
     const hasCardiac = r.cardiac || r.ht || r.diabetes;
     const cardiacDiv = document.createElement("div");
@@ -703,29 +844,78 @@
           : f.type === "SOFT"
             ? "border-amber-300 text-amber-900 bg-amber-50"
             : "border-blue-300 text-blue-900 bg-blue-50";
-        const item = document.createElement("div");
-        item.className = `text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1`;
-        const title = document.createElement("b");
-        title.textContent = `[${f.type}] ${f.title}`;
-        const desc = document.createElement("span");
-        desc.textContent = f.desc;
-        item.appendChild(title);
-        item.appendChild(desc);
+        const guidance = getClinicalRuleForFlag(f);
+
+        const item = document.createElement(guidance ? "details" : "div");
+        item.className = `text-sm rounded-xl border-2 ${cls}`;
+
+        if (guidance) {
+          item.open = f.type === "HARD";
+          const summary = document.createElement("summary");
+          summary.className = "list-none cursor-pointer p-4 font-bold flex items-start justify-between gap-3";
+          const detailBadgeText = f.type === "HARD"
+            ? "Red Flag"
+            : f.type === "SOFT"
+              ? "Clinical Attention"
+              : "Verification";
+          summary.innerHTML = `<span>[${guidance.severity}] ${guidance.title}</span><span class="text-xs font-black opacity-70">${detailBadgeText}</span>`;
+          item.appendChild(summary);
+
+          const body = document.createElement("div");
+          body.className = "px-4 pb-4 -mt-1 text-sm";
+          body.innerHTML = `
+            <p class="font-semibold mb-2">${f.desc}</p>
+            <div class="space-y-2">
+              <div>
+                <p class="font-bold">Pathophysiology</p>
+                <ul class="list-disc pl-5"><li>${guidance.mechanism}</li></ul>
+              </div>
+              <div>
+                <p class="font-bold">Operational Protocol</p>
+                <ul class="list-disc pl-5 mt-1 space-y-1">${guidance.action_protocol.map(action => `<li>${action}</li>`).join("")}</ul>
+              </div>
+            </div>
+          `;
+          item.appendChild(body);
+        } else {
+          item.classList.add("p-4", "flex", "flex-col", "gap-1");
+          const title = document.createElement("b");
+          title.textContent = `[${f.type}] ${f.title}`;
+          const desc = document.createElement("span");
+          desc.textContent = f.desc;
+          item.appendChild(title);
+          item.appendChild(desc);
+        }
         el.appendChild(item);
       });
     }
 
     const gate = gateFromFlags(flags);
     const sug = document.getElementById("gateSuggestion");
-    const gateMap = {
+    const isValidated = document.getElementById("v_smoking").checked
+      && document.getElementById("v_meds").checked
+      && document.getElementById("v_labs").checked;
+
+    const preliminaryMap = {
+      eligible: { text: "Based on patient declaration, no major risk signal yet. Final decision requires clinician verification and test review.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
+      conditional: { text: "Patient declaration indicates cautionary risks. Complete verification/tests before final eligibility.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
+      verify: { text: "Declaration requires verification steps. Priority: complete clinical confirmation and tests.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      ineligible: { text: "Major risk signal from declaration. Immediate action: complete tests and clinician verification before final decision.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
+    };
+
+    const finalMap = {
       eligible: { text: "Routine process.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
       conditional: { text: "Conditional approval suggested.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
-      verify: { text: "Clinician verification required.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      verify: { text: "Verification gaps must be completed.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
       ineligible: { text: "MAJOR RISK DETECTED! Surgery not recommended.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
     };
+
+    const activeMap = isValidated ? finalMap : preliminaryMap;
+    const title = isValidated ? "Final System Suggestion" : "Preliminary Assessment (Patient Declaration)";
+
     sug.classList.remove("hidden");
-    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${gateMap[gate].cls}`;
-    sug.textContent = `System Suggestion: ${gateMap[gate].text}`;
+    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${activeMap[gate].cls}`;
+    sug.textContent = `${title}: ${activeMap[gate].text}`;
   }
 
   window.updateReportPreview = function () {
@@ -777,7 +967,9 @@
   };
 
   window.rerunFlags = function () { renderCurrentFlags(); window.updateReportPreview(); };
-  document.getElementById("v_labs").addEventListener("change", window.updateReportPreview);
+  ["v_smoking", "v_meds", "v_labs"].forEach(id => {
+    document.getElementById(id).addEventListener("change", window.rerunFlags);
+  });
 
   document.getElementById("saveBtn").addEventListener("click", async () => {
     if (!selectedCaseId) return;
