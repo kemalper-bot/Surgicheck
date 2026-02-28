@@ -1,429 +1,1351 @@
-<!doctype html>
-<html lang="tr" class="scroll-smooth">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SurgiCheck | Risk Analysis & Decision Support</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-          colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' } },
-          animation: { 'float': 'float 6s ease-in-out infinite' },
-          keyframes: {
-            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
-          }
-        }
-      }
-    }
-  </script>
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SurgiCheck — Platform Analysis Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    body { background-color: #fafafa; }
-    .bg-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 32px 32px; }
+    /* ── Reset & Tokens ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .gradient-text {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+    :root {
+      --navy:   #0d1b2a;
+      --dark:   #1a2b3c;
+      --mid:    #243447;
+      --accent: #00c896;
+      --accent2:#0ea5e9;
+      --warn:   #f59e0b;
+      --danger: #ef4444;
+      --light:  #f0f4f8;
+      --white:  #ffffff;
+      --text:   #334155;
+      --muted:  #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ── Scrollbar ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--light); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    /* ── Nav ────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: .6rem;
+      color: var(--white); font-weight: 700; font-size: 1.1rem; text-decoration: none;
+    }
+    .nav-brand .shield {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: rgba(255,255,255,.75); text-decoration: none;
+      font-size: .875rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-badge {
+      background: var(--accent); color: var(--navy);
+      font-size: .75rem; font-weight: 700;
+      padding: .25rem .75rem; border-radius: 20px;
+    }
+
+    /* ── Hero ───────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--dark) 60%, #0f2d3d 100%);
+      color: var(--white);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, rgba(0,200,150,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(14,165,233,.1) 0%, transparent 50%);
+    }
+    .hero-content { position: relative; max-width: 800px; margin: 0 auto; }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(0,200,150,.15); border: 1px solid rgba(0,200,150,.35);
+      color: var(--accent); font-size: .8rem; font-weight: 600; letter-spacing: .08em;
+      padding: .35rem 1rem; border-radius: 20px; margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+      line-height: 1.15; margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.1rem; color: rgba(255,255,255,.75);
+      max-width: 600px; margin: 0 auto 2rem;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--accent); color: var(--navy);
+      font-weight: 700; font-size: .95rem;
+      padding: .75rem 1.75rem; border-radius: 8px;
+      text-decoration: none; transition: transform .2s, box-shadow .2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,200,150,.4); }
+
+    /* ── KPI Strip ──────────────────────────────────────────────── */
+    .kpi-strip {
+      background: var(--white);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .kpi-item {
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-item:hover { background: #f8fafc; }
+    .kpi-value {
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .kpi-label { font-size: .8rem; color: var(--muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-top: .25rem; }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .section { padding: 4rem 0; }
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-tag {
+      display: inline-block;
+      color: var(--accent); font-size: .75rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+    .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--navy); }
+    .section-sub { color: var(--muted); margin-top: .5rem; max-width: 560px; margin-left: auto; margin-right: auto; }
+
+    /* ── Cards ──────────────────────────────────────────────────── */
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 1.75rem;
+      border: 1px solid var(--border);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+    .card-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+    .card-body { font-size: .9rem; color: var(--muted); }
+
+    /* ── Grid helpers ───────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+    /* ── Feature cards ──────────────────────────────────────────── */
+    .feature-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.5rem; border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; }
+    .feature-card p { font-size: .85rem; color: var(--muted); }
+
+    /* ── Workflow ───────────────────────────────────────────────── */
+    .workflow-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; position: relative;
+    }
+    .workflow-grid::before {
+      content: '';
+      position: absolute; top: 36px; left: 12.5%; right: 12.5%;
+      height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 0;
+    }
+    .workflow-step {
+      text-align: center; padding: 1.5rem 1rem;
+      position: relative; z-index: 1;
+    }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--navy); font-weight: 800; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 16px rgba(0,200,150,.35);
+    }
+    .workflow-step h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .35rem; }
+    .workflow-step p { font-size: .82rem; color: var(--muted); }
+
+    /* ── Decision badges ────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .35rem .9rem; border-radius: 20px;
+      font-size: .8rem; font-weight: 700;
+    }
+    .badge-cleared { background: #dcfce7; color: #166534; }
+    .badge-conditional { background: #fef3c7; color: #92400e; }
+    .badge-denied { background: #fee2e2; color: #991b1b; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-cleared { background: #22c55e; }
+    .dot-conditional { background: #f59e0b; }
+    .dot-denied { background: #ef4444; }
+
+    /* ── Charts ─────────────────────────────────────────────────── */
+    .chart-wrap {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.75rem; border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .chart-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.25rem; }
+    .chart-sub { font-size: .8rem; color: var(--muted); margin-top: .25rem; margin-bottom: 1rem; }
+    canvas { max-height: 280px; }
+
+    /* ── Pricing ────────────────────────────────────────────────── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .pricing-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 2rem; border: 2px solid var(--border);
+      box-shadow: var(--shadow); position: relative;
+      transition: transform .2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.featured {
+      background: var(--navy); color: var(--white);
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(0,200,150,.25);
+    }
+    .pricing-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: var(--navy);
+      font-size: .72rem; font-weight: 800; letter-spacing: .05em;
+      padding: .25rem .85rem; border-radius: 20px; text-transform: uppercase;
+    }
+    .pricing-tier { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: .5rem; }
+    .pricing-price { font-size: 2.4rem; font-weight: 800; color: var(--navy); line-height: 1; }
+    .pricing-card.featured .pricing-price { color: var(--white); }
+    .pricing-period { font-size: .85rem; color: var(--muted); }
+    .pricing-card.featured .pricing-period { color: rgba(255,255,255,.6); }
+    .pricing-desc { font-size: .85rem; color: var(--muted); margin: .75rem 0 1.25rem; }
+    .pricing-card.featured .pricing-desc { color: rgba(255,255,255,.7); }
+    .pricing-features { list-style: none; }
+    .pricing-features li {
+      font-size: .85rem; color: var(--text);
+      padding: .4rem 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .pricing-card.featured .pricing-features li { color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.1); }
+    .pricing-features li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+    .pricing-btn {
+      display: block; text-align: center; margin-top: 1.5rem;
+      padding: .75rem; border-radius: 8px; font-weight: 700; font-size: .9rem;
+      text-decoration: none; transition: all .2s;
+      background: var(--light); color: var(--navy); border: 2px solid var(--border);
+    }
+    .pricing-card.featured .pricing-btn {
+      background: var(--accent); color: var(--navy); border-color: var(--accent);
+    }
+    .pricing-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+    /* ── Testimonials ───────────────────────────────────────────── */
+    .testimonial-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.75rem; border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .stars { color: #f59e0b; font-size: 1rem; margin-bottom: .75rem; }
+    .testimonial-text { font-size: .92rem; color: var(--text); font-style: italic; margin-bottom: 1.25rem; line-height: 1.7; }
+    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--navy); font-weight: 800; font-size: .9rem;
+    }
+    .author-name { font-weight: 700; font-size: .9rem; color: var(--navy); }
+    .author-role { font-size: .78rem; color: var(--muted); }
+
+    /* ── FAQ ────────────────────────────────────────────────────── */
+    .faq-item {
+      background: var(--white); border-radius: var(--radius);
+      border: 1px solid var(--border); overflow: hidden; margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .faq-question {
+      width: 100%; text-align: left; padding: 1.25rem 1.5rem;
+      background: none; border: none; cursor: pointer;
+      font-size: .95rem; font-weight: 700; color: var(--navy);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background .2s;
+    }
+    .faq-question:hover { background: #f8fafc; }
+    .faq-icon { font-size: 1.2rem; color: var(--accent); transition: transform .3s; }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+      padding: 0 1.5rem;
+      font-size: .9rem; color: var(--muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 1.5rem 1.25rem; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ── Governance checklist ───────────────────────────────────── */
+    .gov-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .gov-item {
+      display: flex; align-items: center; gap: .75rem;
+      background: var(--white); border-radius: 10px;
+      padding: 1rem 1.25rem; border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .gov-check {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--navy); font-size: .85rem; font-weight: 800; flex-shrink: 0;
+    }
+    .gov-item span { font-size: .88rem; font-weight: 600; color: var(--navy); }
+
+    /* ── Security strip ─────────────────────────────────────────── */
+    .security-strip {
+      background: var(--navy);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; border-radius: var(--radius); overflow: hidden;
+    }
+    .sec-item {
+      background: var(--dark); padding: 1.5rem;
+      text-align: center;
+    }
+    .sec-icon { font-size: 1.6rem; margin-bottom: .5rem; }
+    .sec-label { font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.85); }
+
+    /* ── CTA Banner ─────────────────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--navy), var(--dark));
+      border-radius: var(--radius); padding: 3rem 2rem;
+      text-align: center; color: var(--white);
+      border: 1px solid rgba(0,200,150,.2);
+      box-shadow: 0 8px 40px rgba(0,0,0,.15);
+    }
+    .cta-banner h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: .75rem; }
+    .cta-banner p { color: rgba(255,255,255,.7); margin-bottom: 1.75rem; }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: var(--navy);
+      font-weight: 700; padding: .75rem 1.75rem; border-radius: 8px;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,200,150,.4); }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border: 2px solid rgba(255,255,255,.3);
+      font-weight: 700; padding: .75rem 1.75rem; border-radius: 8px;
+      text-decoration: none; transition: all .2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,.5);
+      text-align: center; padding: 2rem;
+      font-size: .82rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── Tabs ───────────────────────────────────────────────────── */
+    .tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab-btn {
+      padding: .5rem 1.25rem; border-radius: 20px;
+      border: 2px solid var(--border); background: var(--white);
+      font-size: .85rem; font-weight: 600; color: var(--muted);
+      cursor: pointer; transition: all .2s;
+    }
+    .tab-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .tab-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Comparison table ───────────────────────────────────────── */
+    .comp-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .comp-table th {
+      background: var(--navy); color: var(--white);
+      padding: .9rem 1rem; text-align: left; font-weight: 700;
+    }
+    .comp-table th:first-child { border-radius: var(--radius) 0 0 0; }
+    .comp-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+    .comp-table td { padding: .85rem 1rem; border-bottom: 1px solid var(--border); }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:nth-child(even) td { background: #f8fafc; }
+    .comp-table tr:hover td { background: #f0fdf4; }
+    .check { color: var(--accent); font-weight: 700; }
+    .cross { color: var(--danger); }
+    .partial { color: var(--warn); }
+
+    /* ── Sample case ────────────────────────────────────────────── */
+    .case-card {
+      background: var(--navy); border-radius: var(--radius);
+      padding: 1.75rem; color: var(--white);
+      border: 1px solid rgba(0,200,150,.2);
+    }
+    .case-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; }
+    .case-id { font-size: .75rem; color: rgba(255,255,255,.5); font-weight: 600; letter-spacing: .08em; }
+    .case-title { font-size: 1.05rem; font-weight: 700; margin-top: .2rem; }
+    .risk-signal {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .75rem 1rem; border-radius: 8px; margin-bottom: .5rem;
+      font-size: .85rem;
+    }
+    .risk-high { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+    .risk-med { background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.3); color: #fcd34d; }
+    .risk-ok { background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.2); color: #6ee7b7; }
+    .action-item {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: .85rem; color: rgba(255,255,255,.8);
+    }
+    .action-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); color: var(--navy);
+      font-weight: 800; font-size: .75rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
 
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08);
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+      .grid-3, .pricing-grid { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .workflow-grid { grid-template-columns: repeat(2, 1fr); }
+      .workflow-grid::before { display: none; }
+      .gov-grid { grid-template-columns: 1fr; }
+      .security-strip { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .workflow-grid { grid-template-columns: 1fr; }
     }
 
-    .card-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08); border-color: rgba(59, 130, 246, 0.3); }
+    /* ── Animate on scroll ──────────────────────────────────────── */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    .reveal.active { opacity: 1; transform: translateY(0); }
-    @media (prefers-reduced-motion: reduce) {
-      .reveal, .card-hover, .hero-mockup, .hero-stagger { transition: none !important; transform: none !important; animation: none !important; }
-    }
-    .hero-mockup { transition: transform .35s ease, box-shadow .35s ease; }
-    .hero-stagger { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
-    .reveal.active .hero-stagger { opacity: 1; transform: translateY(0); }
-    .hero-mockup:hover { transform: scale(1.01); }
-    .section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(148,163,184,.45), transparent); }
+    /* ── Progress bar ───────────────────────────────────────────── */
+    .progress-bar-wrap { background: var(--border); border-radius: 6px; height: 8px; overflow: hidden; margin-top: .5rem; }
+    .progress-bar { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1.2s ease; }
 
-    /* Mobile menu */
-    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-    #mobile-menu.open { max-height: 400px; }
-
-    /* Workflow connector */
-    .workflow-connector { position: absolute; top: 20px; left: 100%; width: 100%; height: 2px; background: linear-gradient(90deg, #cbd5e1, transparent); display: none; }
-    @media (min-width: 1024px) { .workflow-connector { display: block; } }
-
-    /* FAQ accordion */
-    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1); }
-    .faq-answer.open { max-height: 300px; }
-    .faq-chevron { transition: transform 0.3s ease; }
-    .faq-chevron.open { transform: rotate(180deg); }
-
-    /* Stats counter */
-    .stat-card { background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.8); }
-
-    /* Testimonial */
-    .testimonial-card { background: rgba(255,255,255,0.95); }
-    
-    /* Analytics Tabs */
-    .tab-btn.active { background-color: #1e293b; color: white; }
+    /* ── Divider ────────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 0; }
   </style>
 </head>
+<body>
 
-<body class="font-sans text-slate-900 antialiased selection:bg-brand-900 selection:text-white overflow-x-hidden">
+<!-- ── Navigation ──────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="https://www.surgicheck.net" target="_blank">
+    <div class="shield">🛡️</div>
+    SurgiCheck
+  </a>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#features">Features</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#testimonials">Testimonials</a>
+  </div>
+  <span class="nav-badge">Platform Analysis</span>
+</nav>
 
-  <nav class="fixed w-full glass-panel z-50 border-b border-white/40 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="#" class="flex items-center gap-2 group">
-        <img src="logo.png" alt="SurgiCheck" class="h-12 sm:h-14 object-contain group-hover:scale-105 transition-transform"
-          onerror="this.outerHTML='<span class=&quot;font-black text-2xl tracking-tighter text-slate-900&quot;>Surgi<span class=&quot;text-brand-600&quot;>Check</span></span>'" />
-      </a>
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<section class="hero" id="overview">
+  <div class="hero-content">
+    <div class="hero-tag">Clinical Governance Platform</div>
+    <h1>SurgiCheck: <span>Intelligent Risk Analysis</span><br>for Aesthetic Surgery</h1>
+    <p>A comprehensive analysis of SurgiCheck's rule-based surgical clearance platform — standardizing risk decisions while keeping clinicians in control.</p>
+    <a class="hero-cta" href="https://www.surgicheck.net" target="_blank">
+      Visit SurgiCheck ↗
+    </a>
+  </div>
+</section>
 
-      <div class="hidden md:flex gap-10 font-bold text-sm text-slate-500">
-        <a href="#features" class="hover:text-slate-900 transition-colors" data-tr="Özellikler" data-en="Features">Özellikler</a>
-        <a href="#workflow" class="hover:text-slate-900 transition-colors" data-tr="İş Akışı" data-en="Workflow">İş Akışı</a>
-        <a href="#analytics" class="hover:text-slate-900 transition-colors" data-tr="Analitik" data-en="Analytics">Analitik</a>
-        <a href="#pricing" class="hover:text-slate-900 transition-colors" data-tr="Lisanslama" data-en="Licensing">Lisanslama</a>
+<!-- ── KPI Strip ────────────────────────────────────────────────── -->
+<div class="kpi-strip">
+  <div class="kpi-item fade-in">
+    <div class="kpi-value" data-target="40" data-suffix="+">0+</div>
+    <div class="kpi-label">Active Clinics</div>
+  </div>
+  <div class="kpi-item fade-in">
+    <div class="kpi-value" data-target="8000" data-suffix="+">0+</div>
+    <div class="kpi-label">Cases Processed</div>
+  </div>
+  <div class="kpi-item fade-in">
+    <div class="kpi-value" data-target="99.8" data-suffix="%" data-decimal="1">0%</div>
+    <div class="kpi-label">System Uptime</div>
+  </div>
+  <div class="kpi-item fade-in">
+    <div class="kpi-value">&lt;3 min</div>
+    <div class="kpi-label">Avg. Triage Time</div>
+  </div>
+</div>
+
+<!-- ── What is SurgiCheck ───────────────────────────────────────── -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">About the Platform</div>
+      <h2 class="section-title">What is SurgiCheck?</h2>
+      <p class="section-sub">A rule-based, traceable clinical governance platform built for surgical workflows.</p>
+    </div>
+    <div class="grid-2 fade-in">
+      <div class="card">
+        <h3 class="card-title" style="font-size:1.15rem; margin-bottom:.75rem;">The Core Problem It Solves</h3>
+        <p class="card-body" style="line-height:1.8;">In aesthetic and plastic surgery, patient clearance decisions are often inconsistent, undocumented, and difficult to audit. Different clinicians apply different criteria, creating liability exposure and operational inefficiency. SurgiCheck standardizes this process through deterministic rule logic — ensuring every patient assessment follows the same documented criteria, every time.</p>
       </div>
-
-      <div class="flex gap-4 items-center">
-        <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-          <button onclick="setLang('en')" id="btn-en" class="px-3 py-1 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-900">EN</button>
-          <button onclick="setLang('tr')" id="btn-tr" class="px-3 py-1 text-xs font-bold rounded-md transition-all bg-white text-slate-900 shadow-sm">TR</button>
-        </div>
-
-        <a href="clinician.html" id="link-login" class="hidden md:block text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors" data-tr="Giriş Yap" data-en="Login">Giriş Yap</a>
-        <a href="#contact" class="hidden md:inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-500/30 transition-all duration-300" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">
-          Klinik Demo Planla
-        </a>
-
-        <!-- Mobile hamburger -->
-        <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" onclick="toggleMobileMenu()" aria-label="Menu">
-          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
-          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
-          <span class="w-5 h-0.5 bg-slate-700 rounded transition-all"></span>
-        </button>
+      <div class="card">
+        <h3 class="card-title" style="font-size:1.15rem; margin-bottom:.75rem;">The Solution Approach</h3>
+        <p class="card-body" style="line-height:1.8;">Unlike AI-based systems, SurgiCheck uses <strong>transparent, clinician-defined rules</strong> to generate risk signals and clearance recommendations. This deterministic approach guarantees explainability and auditability — critical in regulated healthcare environments. The platform produces structured Cleared / Conditional / Denied classifications with full documentation trails, not black-box predictions.</p>
       </div>
     </div>
-
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur">
-      <div class="px-6 py-4 flex flex-col gap-4">
-        <a href="#features" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Özellikler" data-en="Features" onclick="toggleMobileMenu()">Özellikler</a>
-        <a href="#workflow" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="İş Akışı" data-en="Workflow" onclick="toggleMobileMenu()">İş Akışı</a>
-        <a href="#analytics" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Analitik" data-en="Analytics" onclick="toggleMobileMenu()">Analitik</a>
-        <a href="#pricing" class="font-bold text-slate-700 py-2 border-b border-slate-100" data-tr="Lisanslama" data-en="Licensing" onclick="toggleMobileMenu()">Lisanslama</a>
-        <a href="#contact" class="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-brand-600 transition-all" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo" onclick="toggleMobileMenu()">Klinik Demo Planla</a>
-      </div>
-    </div>
-  </nav>
-
-  <section class="pt-32 pb-20 lg:pt-44 lg:pb-28 px-6 relative flex items-center min-h-[90vh] overflow-hidden">
-    <div class="absolute inset-0 z-0" style="background: radial-gradient(circle at 82% 24%, rgba(59,130,246,0.10), transparent 46%), radial-gradient(circle at 15% 15%, rgba(15,23,42,0.06), transparent 40%);"></div>
-    <div class="absolute inset-0 bg-grid opacity-20 z-0"></div>
-
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-14 items-center relative z-10 w-full">
-      <div class="lg:col-span-6 reveal active">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-slate-200 text-slate-700 text-xs font-bold tracking-widest uppercase mb-7 shadow-sm backdrop-blur">
-          <span class="w-2 h-2 rounded-full bg-brand-500"></span>
-          <span data-tr="Klinik Yönetişim Platformu" data-en="Clinical Governance Platform">Klinik Yönetişim Platformu</span>
-        </div>
-
-        <h1 class="text-4xl lg:text-[3.35rem] font-black tracking-tight leading-[1.08] mb-5 text-slate-900" data-tr="Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun." data-en="Standardize risk clearance decisions while keeping clinical control.">
-          Risk değerlendirme kararlarını standardize edin, klinik kontrolü koruyun.
-        </h1>
-
-        <p class="text-lg text-slate-500 leading-relaxed mb-9 font-medium max-w-xl" data-tr="Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin." data-en="Manage case flow with explainable rule logic, clinician-controlled review, and audit-ready documentation.">
-          Açıklanabilir kural mantığı, klinisyen kontrollü değerlendirme ve denetime hazır dokümantasyon ile vaka akışını güvenle yönetin.
+    <div style="margin-top:1.5rem;" class="fade-in">
+      <div class="card" style="background: linear-gradient(135deg, #0d1b2a, #1a2b3c); color: white; border-color: rgba(0,200,150,.2);">
+        <p style="font-size:1rem; font-style:italic; color:rgba(255,255,255,.85); line-height:1.8; text-align:center; max-width:700px; margin:0 auto;">
+          "SurgiCheck goes beyond intake automation as a <strong style="color:#00c896;">risk governance platform</strong>, processing case data, managing risk signals through rules, and generating explainable outputs."
         </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div class="grid sm:grid-cols-2 gap-4 mb-9">
-          <a href="#contact" class="inline-flex w-full justify-center items-center rounded-2xl bg-slate-900 px-8 py-4 text-sm font-bold text-white hover:bg-brand-600 transition-all duration-300 shadow-xl shadow-slate-900/10" data-tr="Klinik Demo Planla" data-en="Book Clinical Demo">Klinik Demo Planla</a>
-          <a href="patient.html" id="link-patient" class="inline-flex w-full justify-center items-center rounded-2xl bg-white border border-slate-200 px-8 py-4 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm" data-tr="Hasta Formuna Git" data-en="Go to Patient Form">Hasta Formuna Git</a>
-        </div>
-        
-        <div class="flex flex-wrap items-center gap-6 border-t border-slate-200 pt-6 text-xs font-semibold text-slate-500">
-          <span data-tr="Açıklanabilir risk sinyalleri" data-en="Explainable risk signals">Açıklanabilir risk sinyalleri</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-          <span data-tr="Klinisyen kontrollü öneriler" data-en="Clinician-controlled recommendations">Klinisyen kontrollü öneriler</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-          <span data-tr="Denetime hazır sınıflama" data-en="Audit-ready classification">Denetime hazır sınıflama</span>
+<div class="divider"></div>
+
+<!-- ── Core Features ────────────────────────────────────────────── -->
+<section class="section" id="features" style="background:#f8fafc;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Core Features</div>
+      <h2 class="section-title">Rule-based, traceable, built for clinical workflows.</h2>
+      <p class="section-sub">Five integrated capabilities that transform surgical risk management.</p>
+    </div>
+    <div class="grid-3 fade-in" style="margin-bottom:1.5rem;">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#dcfce7;">⚡</div>
+        <h3>Rapid Triage & Standardisation</h3>
+        <p>Cleared / Conditional / Denied classification ensures the whole team uses the same criteria. Decision ambiguity and repetitive manual reviews are eliminated.</p>
+        <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+          <span class="badge badge-cleared"><span class="badge-dot dot-cleared"></span>Cleared</span>
+          <span class="badge badge-conditional"><span class="badge-dot dot-conditional"></span>Conditional</span>
+          <span class="badge badge-denied"><span class="badge-dot dot-denied"></span>Denied</span>
         </div>
       </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#dbeafe;">🛡️</div>
+        <h3>Audit Trail & Versioning</h3>
+        <p>Rule set versions, approval timestamps, and the data behind each decision are systematically logged. Full traceability for compliance and legal protection.</p>
+        <div style="margin-top:1rem; font-size:.8rem; color:var(--muted); background:#f8fafc; padding:.6rem .8rem; border-radius:6px; font-family:monospace;">Rule Set: RS-2026-Q1 r7</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7;">📄</div>
+        <h3>Clearance PDF Report</h3>
+        <p>Standard report template with risk justification, clinical recommendations, lab lists, and signature areas — automatically generated for every decision.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#f3e8ff;">👥</div>
+        <h3>Multi-user Access</h3>
+        <p>Role-based access controls allow different permission levels for team members — surgeons, nurses, administrators, and clinical directors each see what they need.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fce7f3;">📊</div>
+        <h3>Clinical Analytics Dashboard</h3>
+        <p>Monitor risk distribution, decision rates, and operational KPIs from a single dashboard. Track triage efficiency and clearance patterns over time.</p>
+      </div>
+      <div class="feature-card" style="background:var(--navy); border-color:rgba(0,200,150,.2);">
+        <div class="feature-icon" style="background:rgba(0,200,150,.15); color:var(--accent);">🔒</div>
+        <h3 style="color:white;">GDPR & Security</h3>
+        <p style="color:rgba(255,255,255,.7);">EU-based servers, end-to-end encryption, GDPR-compliant processing. Clinical data is never shared with third parties.</p>
+        <div style="margin-top:1rem; font-size:.78rem; color:rgba(255,255,255,.5);">AB veri merkezleri • EU Data Centers</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <div class="lg:col-span-6 reveal active">
-        <div class="hero-mockup rounded-3xl bg-white/85 backdrop-blur border border-slate-200/60 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.35)] p-6 sm:p-8 relative">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="stat-card p-6 rounded-2xl shadow-sm">
-              <div class="text-3xl font-black text-slate-900 mb-1">39+</div>
-              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Aktif Klinik" data-en="Active Clinics">Aktif Klinik</div>
+<div class="divider"></div>
+
+<!-- ── Workflow ──────────────────────────────────────────────────── -->
+<section class="section" id="workflow">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-title">From patient data to clearance report in 4 steps.</h2>
+    </div>
+    <div class="workflow-grid fade-in">
+      <div class="workflow-step">
+        <div class="step-num">01</div>
+        <h3>Patient Intake</h3>
+        <p>Standardized data capture and procedure context collection.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">02</div>
+        <h3>Rule Algorithm</h3>
+        <p>Deterministic rules process data and generate risk signals.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">03</div>
+        <h3>Clinician Review</h3>
+        <p>Clinician-controlled recommendations and final decision.</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">04</div>
+        <h3>Clearance PDF</h3>
+        <p>Audit-ready output and archivable report generated.</p>
+      </div>
+    </div>
+
+    <!-- Sample Case -->
+    <div style="margin-top:3rem;" class="fade-in">
+      <div class="section-header" style="margin-bottom:1.5rem;">
+        <div class="section-tag">Live Example</div>
+        <h2 class="section-title" style="font-size:1.5rem;">Sample Case Analysis</h2>
+      </div>
+      <div class="grid-2">
+        <div class="case-card">
+          <div class="case-header">
+            <div>
+              <div class="case-id">SAMPLE CASE ANALYSIS • ID: #A-1042</div>
+              <div class="case-title">Clearance Assessment — Rhinoplasty</div>
+              <div style="font-size:.8rem; color:rgba(255,255,255,.5); margin-top:.2rem;">38 yrs • Female • 2026-02-27</div>
             </div>
-            <div class="stat-card p-6 rounded-2xl shadow-sm">
-              <div class="text-3xl font-black text-slate-900 mb-1">7,842+</div>
-              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="İşlenen Vaka" data-en="Cases Processed">İşlenen Vaka</div>
-            </div>
-            <div class="stat-card p-6 rounded-2xl shadow-sm">
-              <div class="text-3xl font-black text-slate-900 mb-1">97.8%</div>
-              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Sistem Çalışma Süresi" data-en="System Uptime">Sistem Çalışma Süresi</div>
-            </div>
-            <div class="stat-card p-6 rounded-2xl shadow-sm">
-              <div class="text-3xl font-black text-slate-900 mb-1">&lt;3 dk</div>
-              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider" data-tr="Ort. Triyaj Süresi" data-en="Avg. Triage Time">Ort. Triyaj Süresi</div>
-            </div>
+            <span class="badge badge-conditional"><span class="badge-dot dot-conditional"></span>Conditional</span>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div style="font-size:.75rem; font-weight:700; letter-spacing:.08em; color:rgba(255,255,255,.5); margin-bottom:.5rem;">DETECTED RISK SIGNALS</div>
+            <div class="risk-signal risk-high">🔴 BMI 34.2 — Elevated complication risk (RC-17)</div>
+            <div class="risk-signal risk-med">🟡 Active smoking &lt;4 weeks (RC-22)</div>
+            <div class="risk-signal risk-ok">✓ Explainable rule refs: RC-17, RC-22</div>
+          </div>
+          <div>
+            <div style="font-size:.75rem; font-weight:700; letter-spacing:.08em; color:rgba(255,255,255,.5); margin-bottom:.5rem;">RECOMMENDED CLINICAL ACTIONS</div>
+            <div class="action-item"><div class="action-num">1</div> 4-week smoking cessation target + reassessment</div>
+            <div class="action-item"><div class="action-num">2</div> Anesthesia consultation and additional lab panel</div>
+          </div>
+          <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; font-size:.75rem; color:rgba(255,255,255,.4);">
+            <span>CLINICIAN SIGN-OFF</span>
+            <span>RULE SET: RS-2026-Q1 r7</span>
+          </div>
+        </div>
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <h3 class="card-title" style="font-size:1.05rem; margin-bottom:1rem;">Why This Matters</h3>
+            <p style="font-size:.88rem; color:var(--muted); line-height:1.8; margin-bottom:1rem;">This sample case demonstrates SurgiCheck's core value: a patient with two identifiable risk factors (elevated BMI and recent smoking) receives a <em>Conditional</em> clearance with specific, actionable steps — not a vague "consult your doctor."</p>
+            <p style="font-size:.88rem; color:var(--muted); line-height:1.8;">Every risk signal is tied to a named rule (RC-17, RC-22), making the decision fully explainable, auditable, and legally defensible.</p>
+          </div>
+          <div style="background:#f0fdf4; border-radius:10px; padding:1rem; border:1px solid #bbf7d0;">
+            <div style="font-size:.8rem; font-weight:700; color:#166534; margin-bottom:.5rem;">GOVERNANCE OUTCOME</div>
+            <div style="font-size:.85rem; color:#15803d;">When complications occur, this documentation shows the clinic followed a standardized, rule-based protocol — protecting both patient and provider.</div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Analytics Section -->
-  <section id="analytics" class="py-24 px-6 bg-slate-50 relative overflow-hidden">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
-        <div class="text-xs font-black uppercase tracking-widest text-brand-600 mb-3" data-tr="PLATFORM ANALİTİĞİ" data-en="PLATFORM ANALYTICS">PLATFORM ANALİTİĞİ</div>
-        <h2 class="text-4xl font-black tracking-tight text-slate-900 mb-6" data-tr="Veriye Dayalı Klinik İçgörüler" data-en="Data-Driven Clinical Insights">Veriye Dayalı Klinik İçgörüler</h2>
-        <p class="text-slate-500 font-medium" data-tr="SurgiCheck'in cerrahi risk yönetimini ölçekte nasıl dönüştürdüğünü gösteren örnek metrikler." data-en="Illustrative metrics showing how SurgiCheck transforms surgical risk management at scale.">SurgiCheck'in cerrahi risk yönetimini ölçekte nasıl dönüştürdüğünü gösteren örnek metrikler.</p>
-      </div>
+<div class="divider"></div>
 
-      <div class="flex flex-wrap justify-center gap-2 mb-12 reveal">
-        <button onclick="switchTab('overview')" class="tab-btn active px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Platform Genel Bakış" data-en="Platform Overview">Platform Genel Bakış</button>
-        <button onclick="switchTab('distribution')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Karar Dağılımı" data-en="Decision Distribution">Karar Dağılımı</button>
-        <button onclick="switchTab('efficiency')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Verimlilik Artışı" data-en="Efficiency Gains">Verimlilik Artışı</button>
-        <button onclick="switchTab('risk')" class="tab-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all border border-slate-200" data-tr="Risk Sinyalleri" data-en="Risk Signals">Risk Sinyalleri</button>
-      </div>
+<!-- ── Analytics / Charts ────────────────────────────────────────── -->
+<section class="section" id="analytics" style="background:#f8fafc;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Platform Analytics</div>
+      <h2 class="section-title">Data-Driven Clinical Insights</h2>
+      <p class="section-sub">Illustrative metrics showing how SurgiCheck transforms surgical risk management at scale.</p>
+    </div>
 
-      <div class="grid lg:grid-cols-2 gap-8 reveal">
-        <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-          <h3 id="chart1Title" class="text-lg font-black text-slate-900 mb-6" data-tr="Vaka Hacmi Büyümesi" data-en="Case Volume Growth">Vaka Hacmi Büyümesi</h3>
-          <div class="h-[300px] relative">
-            <canvas id="mainChart1"></canvas>
-          </div>
+    <div class="tabs fade-in">
+      <button class="tab-btn active" onclick="switchTab('overview-tab', this)">Platform Overview</button>
+      <button class="tab-btn" onclick="switchTab('decisions-tab', this)">Decision Distribution</button>
+      <button class="tab-btn" onclick="switchTab('efficiency-tab', this)">Efficiency Gains</button>
+      <button class="tab-btn" onclick="switchTab('risk-tab', this)">Risk Signals</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-panel active" id="overview-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Case Volume Growth</div>
+          <div class="chart-sub">Cumulative cases processed across active clinics</div>
+          <canvas id="caseVolumeChart"></canvas>
         </div>
-        <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-          <h3 id="chart2Title" class="text-lg font-black text-slate-900 mb-6" data-tr="Uzmanlık Alanına Göre Klinik Dağılımı" data-en="Clinic Adoption by Specialty">Uzmanlık Alanına Göre Klinik Dağılımı</h3>
-          <div class="h-[300px] relative">
-            <canvas id="mainChart2"></canvas>
-          </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Clinic Adoption by Specialty</div>
+          <div class="chart-sub">Distribution of active clinics by surgical specialty</div>
+          <canvas id="specialtyChart"></canvas>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Features, Workflow, Pricing, Testimonials (Original content kept but styled) -->
-  <!-- ... (Rest of the sections would follow the same pattern) ... -->
+    <!-- Decisions Tab -->
+    <div class="tab-panel" id="decisions-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Clearance Decision Distribution</div>
+          <div class="chart-sub">Typical breakdown of Cleared / Conditional / Denied outcomes</div>
+          <canvas id="decisionDonutChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Decision Outcomes by Procedure Type</div>
+          <div class="chart-sub">Clearance rates across common aesthetic procedures</div>
+          <canvas id="procedureChart"></canvas>
+        </div>
+      </div>
+    </div>
 
-  <footer class="bg-slate-900 pt-20 pb-10 px-6 text-white">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid md:grid-cols-4 gap-12 mb-16">
-        <div class="col-span-2">
-          <div class="font-black text-2xl tracking-tighter mb-6">Surgi<span class="text-brand-500">Check</span></div>
-          <p class="text-slate-400 max-w-sm text-sm leading-relaxed" data-tr="Klinik yönetişim ve cerrahi risk değerlendirme platformu. Kararları standardize edin, güvenliği artırın." data-en="Clinical governance and surgical risk assessment platform. Standardize decisions, enhance safety.">Klinik yönetişim ve cerrahi risk değerlendirme platformu. Kararları standardize edin, güvenliği artırın.</p>
+    <!-- Efficiency Tab -->
+    <div class="tab-panel" id="efficiency-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Triage Time Reduction</div>
+          <div class="chart-sub">Before vs. after SurgiCheck implementation (minutes per case)</div>
+          <canvas id="triageTimeChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Operational KPI Improvements</div>
+          <div class="chart-sub">Reported efficiency gains from clinician testimonials</div>
+          <canvas id="kpiChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Signals Tab -->
+    <div class="tab-panel" id="risk-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Most Frequent Risk Signals</div>
+          <div class="chart-sub">Top risk factors triggering Conditional or Denied outcomes</div>
+          <canvas id="riskSignalsChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Risk Signal Severity Distribution</div>
+          <div class="chart-sub">Proportion of high / medium / low risk signals detected</div>
+          <canvas id="riskSeverityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress metrics -->
+    <div class="card fade-in" style="margin-top:1.5rem;">
+      <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performance Metrics</h3>
+      <div class="grid-2">
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+            <span style="font-weight:600;">System Uptime</span>
+            <span style="color:var(--accent); font-weight:700;">99.8%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="99.8%"></div></div>
         </div>
         <div>
-          <div class="font-bold text-sm mb-6 uppercase tracking-widest text-slate-500" data-tr="Platform" data-en="Platform">Platform</div>
-          <ul class="space-y-4 text-sm font-bold text-slate-300">
-            <li><a href="#features" class="hover:text-white transition-colors" data-tr="Özellikler" data-en="Features">Özellikler</a></li>
-            <li><a href="#workflow" class="hover:text-white transition-colors" data-tr="İş Akışı" data-en="Workflow">İş Akışı</a></li>
-            <li><a href="#analytics" class="hover:text-white transition-colors" data-tr="Analitik" data-en="Analytics">Analitik</a></li>
-            <li><a href="#pricing" class="hover:text-white transition-colors" data-tr="Lisanslama" data-en="Licensing">Lisanslama</a></li>
-          </ul>
+          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+            <span style="font-weight:600;">Triage Standardisation Rate</span>
+            <span style="color:var(--accent); font-weight:700;">100%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
         </div>
         <div>
-          <div class="font-bold text-sm mb-6 uppercase tracking-widest text-slate-500" data-tr="İletişim" data-en="Contact">İletişim</div>
-          <ul class="space-y-4 text-sm font-bold text-slate-300">
-            <li><a href="mailto:info@surgicheck.net" class="hover:text-white transition-colors">info@surgicheck.net</a></li>
-            <li>www.surgicheck.net</li>
-          </ul>
+          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+            <span style="font-weight:600;">Average Triage Time Reduction</span>
+            <span style="color:var(--accent); font-weight:700;">60%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="60%"></div></div>
         </div>
-      </div>
-      <div class="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold text-slate-500">
-        <div>&copy; <span id="year"></span> SurgiCheck. All rights reserved.</div>
-        <div class="flex gap-8">
-          <a href="#" class="hover:text-white transition-colors" data-tr="Gizlilik Politikası" data-en="Privacy Policy">Gizlilik Politikası</a>
-          <a href="#" class="hover:text-white transition-colors" data-tr="Kullanım Şartları" data-en="Terms of Service">Kullanım Şartları</a>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+            <span style="font-weight:600;">Audit Documentation Coverage</span>
+            <span style="color:var(--accent); font-weight:700;">100%</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
         </div>
       </div>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Language Management
-    let currentLang = localStorage.getItem('sc-lang') || 'tr';
-    
-    function setLang(l) {
-      currentLang = l;
-      localStorage.setItem('sc-lang', l);
-      document.documentElement.lang = l;
-      
-      document.querySelectorAll('[data-tr]').forEach(el => {
-        el.textContent = el.getAttribute(`data-${l}`);
-      });
-      
-      updateLangButtons(l);
-      updateCharts();
+<div class="divider"></div>
+
+<!-- ── Clinical Governance ───────────────────────────────────────── -->
+<section class="section" id="governance">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Clinical Governance</div>
+      <h2 class="section-title">Governance by Design</h2>
+      <p class="section-sub">SurgiCheck produces decision support — final surgical decisions always remain with the clinician.</p>
+    </div>
+    <div class="grid-2 fade-in">
+      <div>
+        <div class="gov-grid">
+          <div class="gov-item"><div class="gov-check">✓</div><span>Deterministic rule logic</span></div>
+          <div class="gov-item"><div class="gov-check">✓</div><span>Transparent decision layers</span></div>
+          <div class="gov-item"><div class="gov-check">✓</div><span>No autonomous surgical decisions</span></div>
+          <div class="gov-item"><div class="gov-check">✓</div><span>Surgeon-controlled output</span></div>
+          <div class="gov-item"><div class="gov-check">✓</div><span>Versioned rule sets</span></div>
+          <div class="gov-item"><div class="gov-check">✓</div><span>Audit trail ready</span></div>
+        </div>
+        <div style="margin-top:1.25rem; background:#fef3c7; border-radius:10px; padding:1rem 1.25rem; border:1px solid #fde68a;">
+          <div style="font-size:.85rem; font-weight:700; color:#92400e; margin-bottom:.35rem;">⚠ When complications happen, documentation matters.</div>
+          <div style="font-size:.82rem; color:#a16207;">Consistent triage decisions • Audit-ready records • Clear rationale for clearance</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">SurgiCheck vs. Traditional Approach</div>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Traditional</th>
+              <th>SurgiCheck</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Standardized criteria</td><td class="cross">✗ Variable</td><td class="check">✓ Always</td></tr>
+            <tr><td>Audit trail</td><td class="cross">✗ Manual</td><td class="check">✓ Automatic</td></tr>
+            <tr><td>Decision explainability</td><td class="cross">✗ Implicit</td><td class="check">✓ Rule-referenced</td></tr>
+            <tr><td>Triage speed</td><td class="cross">✗ 15+ min</td><td class="check">✓ &lt;3 min</td></tr>
+            <tr><td>Multi-user consistency</td><td class="cross">✗ Inconsistent</td><td class="check">✓ Uniform</td></tr>
+            <tr><td>GDPR compliance</td><td class="partial">~ Varies</td><td class="check">✓ Built-in</td></tr>
+            <tr><td>EHR integration</td><td class="partial">~ Varies</td><td class="check">✓ Enterprise</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Pricing ──────────────────────────────────────────────────── -->
+<section class="section" id="pricing" style="background:#f8fafc;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Scalable Licensing</div>
+      <h2 class="section-title">Flexible structure from pilot to enterprise.</h2>
+      <p class="section-sub">Three tiers designed for every stage of clinical adoption.</p>
+    </div>
+    <div class="pricing-grid fade-in">
+      <!-- Pilot -->
+      <div class="pricing-card">
+        <div class="pricing-tier">Pilot</div>
+        <div class="pricing-price">€290</div>
+        <div class="pricing-period">/month</div>
+        <div class="pricing-desc">Structured validation environment before full deployment.</div>
+        <ul class="pricing-features">
+          <li>1 Clinic, 1 Surgeon</li>
+          <li>Limited Cases (100 Patients)</li>
+          <li>Clearance PDF</li>
+          <li>Basic Rule Set</li>
+          <li>Email & Video Support</li>
+        </ul>
+        <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Start Pilot →</a>
+      </div>
+      <!-- Clinical -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Recommended</div>
+        <div class="pricing-tier">Clinical</div>
+        <div class="pricing-price">€690<span style="font-size:1.2rem; font-weight:400;">+</span></div>
+        <div class="pricing-period">/month</div>
+        <div class="pricing-desc">Designed for daily surgical operations.</div>
+        <ul class="pricing-features">
+          <li>Rule Set Versioning</li>
+          <li>Clinic-specific Rule Layer</li>
+          <li>Multi-user Access</li>
+          <li>Clearance Documentation Archive</li>
+          <li>Unlimited Patients</li>
+          <li>Basic Analytics</li>
+        </ul>
+        <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Book Implementation Call →</a>
+      </div>
+      <!-- Enterprise -->
+      <div class="pricing-card">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price" style="font-size:1.6rem;">Custom</div>
+        <div class="pricing-period">Quote</div>
+        <div class="pricing-desc">Chain clinics and high-volume hospitals.</div>
+        <ul class="pricing-features">
+          <li>EHR/CRM Integration</li>
+          <li>Advanced KPI Reporting</li>
+          <li>Dedicated SLA Support</li>
+          <li>All Clinical features</li>
+          <li>Custom Rule Sets</li>
+        </ul>
+        <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Get Quote →</a>
+      </div>
+    </div>
+
+    <!-- Pricing comparison chart -->
+    <div class="chart-wrap fade-in" style="margin-top:2rem;">
+      <div class="chart-title">Plan Feature Comparison</div>
+      <canvas id="planCompareChart" style="max-height:220px;"></canvas>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Testimonials ─────────────────────────────────────────────── -->
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Clinician Feedback</div>
+      <h2 class="section-title">Voices from the Field</h2>
+    </div>
+    <div class="grid-3 fade-in">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Our patient clearance process is now standardised and documented. It has also helped us greatly in insurance processes."</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">AK</div>
+          <div>
+            <div class="author-name">Dr. Ayşe K.</div>
+            <div class="author-role">Plastic Surgeon, Istanbul</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"Our triage time has shortened by an average of 60%. Our team now applies the same criteria for every case."</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">MY</div>
+          <div>
+            <div class="author-name">Op. Dr. Mehmet Y.</div>
+            <div class="author-role">General Surgeon, Ankara</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text">"During audits, we can now show the rationale behind each clearance decision moment by moment."</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">ST</div>
+          <div>
+            <div class="author-name">Dr. Selin T.</div>
+            <div class="author-role">Clinical Director, Izmir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FAQ ──────────────────────────────────────────────────────── -->
+<section class="section" id="faq" style="background:#f8fafc;">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+    <div style="max-width:760px; margin:0 auto;" class="fade-in">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is SurgiCheck AI-based or rule-based?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">SurgiCheck is rule-based and deterministic. It does not use AI or machine learning models. Decisions are generated from clinician-defined rules, ensuring full explainability and auditability — critical requirements in regulated healthcare environments.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Where is patient data stored?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">All data is stored on EU-based servers with end-to-end encryption and full GDPR compliance. Clinical data is never shared with third parties under any circumstances.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is integration with existing clinical software possible?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">EHR/CRM API integration is available in the Enterprise plan. Pilot and Clinical plans operate in standalone mode. Contact the sales team to discuss specific integration requirements.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is support provided during the pilot process?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Yes. A dedicated implementation specialist guides you from onboarding through rule set configuration. Email and video call support are included throughout the pilot phase.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Security ─────────────────────────────────────────────────── -->
+<section class="section" id="security">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Security & Compliance</div>
+      <h2 class="section-title">Enterprise-grade data protection.</h2>
+    </div>
+    <div class="security-strip fade-in">
+      <div class="sec-item">
+        <div class="sec-icon">🔐</div>
+        <div class="sec-label">End-to-End Encryption</div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">🇪🇺</div>
+        <div class="sec-label">GDPR-Compliant Processing</div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">👤</div>
+        <div class="sec-label">Role-Based Access Control</div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">🏛️</div>
+        <div class="sec-label">EU Data Centers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTA ──────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="cta-banner fade-in">
+      <h2>See SurgiCheck in your clinic.</h2>
+      <p>Fill out the form and the team will get back to you within 24 hours with a pilot plan tailored to your clinic.</p>
+      <div class="cta-buttons">
+        <a class="btn-primary" href="https://www.surgicheck.net" target="_blank">Book Clinical Demo</a>
+        <a class="btn-outline" href="https://www.surgicheck.net" target="_blank">Download Sample Clearance PDF</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────────── -->
+<footer>
+  <p>This is an independent analysis report of <a href="https://www.surgicheck.net" target="_blank">SurgiCheck</a> — a clinical governance platform for aesthetic surgery risk clearance.</p>
+  <p style="margin-top:.5rem;">SurgiCheck © 2026 • Clinical Decision Support System • <a href="https://www.surgicheck.net" target="_blank">www.surgicheck.net</a></p>
+</footer>
+
+<!-- ── Scripts ──────────────────────────────────────────────────── -->
+<script>
+  /* ── Intersection Observer for fade-in ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  /* ── Counter animation ── */
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const decimal = parseInt(el.dataset.decimal || '0');
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = target * ease;
+      el.textContent = (decimal > 0 ? val.toFixed(decimal) : Math.floor(val).toLocaleString()) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
     }
+    requestAnimationFrame(update);
+  }
+  const kpiObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('[data-target]').forEach(animateCounter);
+        kpiObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.kpi-strip').forEach(el => kpiObserver.observe(el));
 
-    function updateLangButtons(l) {
-      const activeClass = "bg-white text-slate-900 shadow-sm";
-      const passiveClass = "text-slate-500 hover:text-slate-900";
-      document.getElementById('btn-en').className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'en' ? activeClass : passiveClass}`;
-      document.getElementById('btn-tr').className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${l === 'tr' ? activeClass : passiveClass}`;
+  /* ── Progress bars ── */
+  const pbObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.progress-bar').forEach(bar => {
+          setTimeout(() => { bar.style.width = bar.dataset.width; }, 200);
+        });
+        pbObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.card').forEach(el => pbObserver.observe(el));
+
+  /* ── Tabs ── */
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  /* ── FAQ ── */
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  /* ── Chart defaults ── */
+  Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+  Chart.defaults.color = '#64748b';
+
+  const accentGreen = '#00c896';
+  const accentBlue  = '#0ea5e9';
+  const accentAmber = '#f59e0b';
+  const accentRed   = '#ef4444';
+  const accentPurple= '#a855f7';
+
+  /* ── Case Volume Chart ── */
+  new Chart(document.getElementById('caseVolumeChart'), {
+    type: 'line',
+    data: {
+      labels: ['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026'],
+      datasets: [{
+        label: 'Cumulative Cases',
+        data: [800, 2100, 4200, 6500, 8000],
+        borderColor: accentGreen,
+        backgroundColor: 'rgba(0,200,150,.1)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: accentGreen,
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v.toLocaleString() } },
+        x: { grid: { display: false } }
+      }
     }
+  });
 
-    // Charts Logic
-    let chart1, chart2;
-    const chartData = {
-      overview: {
-        tr: {
-          title1: "Vaka Hacmi Büyümesi",
-          title2: "Uzmanlık Alanına Göre Klinik Dağılımı",
-          labels1: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026'],
-          data1: [1200, 2800, 4500, 6800, 7842],
-          labels2: ['Plastik Cerrahi', 'Estetik Cerrahi', 'Genel Cerrahi', 'KBB / Rinoplasti', 'Diğer'],
-          data2: [35, 25, 15, 15, 10]
-        },
-        en: {
-          title1: "Case Volume Growth",
-          title2: "Clinic Adoption by Specialty",
-          labels1: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026'],
-          data1: [1200, 2800, 4500, 6800, 7842],
-          labels2: ['Plastic Surgery', 'Aesthetic Surgery', 'General Surgery', 'ENT / Rhinoplasty', 'Other'],
-          data2: [35, 25, 15, 15, 10]
-        }
+  /* ── Specialty Chart ── */
+  new Chart(document.getElementById('specialtyChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Plastic Surgery', 'Aesthetic Surgery', 'General Surgery', 'ENT / Rhinoplasty', 'Other'],
+      datasets: [{
+        data: [35, 28, 18, 12, 7],
+        backgroundColor: [accentGreen, accentBlue, accentAmber, accentPurple, '#94a3b8'],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 12, padding: 14 } }
       },
-      distribution: {
-        tr: {
-          title1: "Karar Dağılımı (Son 1000 Vaka)",
-          title2: "Karar Verme Süreçleri",
-          labels1: ['Onaylandı', 'Koşullu Onay', 'Reddedildi'],
-          data1: [65, 25, 10],
-          labels2: ['Otomatik Triyaj', 'Klinisyen İncelemesi', 'Konsültasyon'],
-          data2: [40, 45, 15]
-        },
-        en: {
-          title1: "Decision Distribution (Last 1000 Cases)",
-          title2: "Decision Making Processes",
-          labels1: ['Cleared', 'Conditional', 'Denied'],
-          data1: [65, 25, 10],
-          labels2: ['Auto Triage', 'Clinician Review', 'Consultation'],
-          data2: [40, 45, 15]
-        }
+      cutout: '60%'
+    }
+  });
+
+  /* ── Decision Donut Chart ── */
+  new Chart(document.getElementById('decisionDonutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Cleared', 'Conditional', 'Denied'],
+      datasets: [{
+        data: [62, 28, 10],
+        backgroundColor: ['#22c55e', accentAmber, accentRed],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 12, padding: 14 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } }
       },
-      efficiency: {
-        tr: {
-          title1: "Triyaj Süresi Azalması (Dakika)",
-          title2: "Dokümantasyon Hızı Artışı",
-          labels1: ['Geleneksel', 'SurgiCheck'],
-          data1: [18, 3],
-          labels2: ['Geleneksel', 'SurgiCheck'],
-          data2: [25, 100]
+      cutout: '60%'
+    }
+  });
+
+  /* ── Procedure Chart ── */
+  new Chart(document.getElementById('procedureChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Rhinoplasty', 'Liposuction', 'Breast Aug.', 'Abdominoplasty', 'Facelift'],
+      datasets: [
+        { label: 'Cleared', data: [58, 65, 70, 52, 68], backgroundColor: '#22c55e' },
+        { label: 'Conditional', data: [30, 25, 20, 35, 22], backgroundColor: accentAmber },
+        { label: 'Denied', data: [12, 10, 10, 13, 10], backgroundColor: accentRed }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } }
+      }
+    }
+  });
+
+  /* ── Triage Time Chart ── */
+  new Chart(document.getElementById('triageTimeChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Manual Review', 'With SurgiCheck'],
+      datasets: [{
+        label: 'Minutes per Case',
+        data: [18, 3],
+        backgroundColor: [accentRed, accentGreen],
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, max: 25, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + ' min' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  /* ── KPI Chart ── */
+  new Chart(document.getElementById('kpiChart'), {
+    type: 'radar',
+    data: {
+      labels: ['Triage Speed', 'Documentation', 'Consistency', 'Audit Readiness', 'Team Alignment', 'Compliance'],
+      datasets: [
+        {
+          label: 'Before SurgiCheck',
+          data: [25, 35, 30, 20, 35, 30],
+          borderColor: '#94a3b8',
+          backgroundColor: 'rgba(148,163,184,.15)',
+          borderWidth: 2,
+          pointRadius: 4,
         },
-        en: {
-          title1: "Triage Time Reduction (Minutes)",
-          title2: "Documentation Speed Increase",
-          labels1: ['Traditional', 'SurgiCheck'],
-          data1: [18, 3],
-          labels2: ['Traditional', 'SurgiCheck'],
-          data2: [25, 100]
+        {
+          label: 'After SurgiCheck',
+          data: [90, 95, 100, 98, 92, 95],
+          borderColor: accentGreen,
+          backgroundColor: 'rgba(0,200,150,.15)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: accentGreen,
         }
-      },
-      risk: {
-        tr: {
-          title1: "En Sık Karşılaşılan Risk Sinyalleri",
-          title2: "Risk Kategorileri",
-          labels1: ['BMI > 30', 'Sigara Kullanımı', 'Kronik Hastalık', 'İlaç Etkileşimi', 'Laboratuvar Bulgusu'],
-          data1: [32, 28, 18, 12, 10],
-          labels2: ['Fizyolojik', 'Yaşam Tarzı', 'Tıbbi Geçmiş', 'Psikolojik'],
-          data2: [45, 30, 20, 5]
-        },
-        en: {
-          title1: "Most Frequent Risk Signals",
-          title2: "Risk Categories",
-          labels1: ['BMI > 30', 'Smoking', 'Chronic Disease', 'Drug Interaction', 'Lab Finding'],
-          data1: [32, 28, 18, 12, 10],
-          labels2: ['Physiological', 'Lifestyle', 'Medical History', 'Psychological'],
-          data2: [45, 30, 20, 5]
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          grid: { color: '#e2e8f0' },
+          ticks: { display: false },
+          pointLabels: { font: { size: 11 } }
         }
       }
-    };
-
-    let currentTab = 'overview';
-
-    function initCharts() {
-      const ctx1 = document.getElementById('mainChart1').getContext('2d');
-      const ctx2 = document.getElementById('mainChart2').getContext('2d');
-      
-      chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: { labels: [], datasets: [{ data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-      });
-
-      chart2 = new Chart(ctx2, {
-        type: 'doughnut',
-        data: { labels: [], datasets: [{ data: [], backgroundColor: ['#3b82f6', '#0ea5e9', '#f59e0b', '#8b5cf6', '#94a3b8'] }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-      });
-
-      updateCharts();
     }
+  });
 
-    function updateCharts() {
-      const data = chartData[currentTab][currentLang];
-      
-      document.getElementById('chart1Title').textContent = data.title1;
-      document.getElementById('chart2Title').textContent = data.title2;
-
-      chart1.data.labels = data.labels1;
-      chart1.data.datasets[0].data = data.data1;
-      chart1.config.type = currentTab === 'distribution' || currentTab === 'risk' ? 'bar' : (currentTab === 'efficiency' ? 'bar' : 'line');
-      chart1.update();
-
-      chart2.data.labels = data.labels2;
-      chart2.data.datasets[0].data = data.data2;
-      chart2.update();
+  /* ── Risk Signals Chart ── */
+  new Chart(document.getElementById('riskSignalsChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Elevated BMI (>30)', 'Active Smoking', 'Hypertension', 'Diabetes', 'Anticoagulants', 'Recent Surgery', 'Cardiac History'],
+      datasets: [{
+        label: 'Frequency (%)',
+        data: [34, 28, 19, 15, 12, 9, 7],
+        backgroundColor: [accentRed, accentAmber, accentBlue, accentPurple, accentGreen, '#94a3b8', '#cbd5e1'],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, max: 40, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } },
+        y: { grid: { display: false } }
+      }
     }
+  });
 
-    function switchTab(tab) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      updateCharts();
+  /* ── Risk Severity Chart ── */
+  new Chart(document.getElementById('riskSeverityChart'), {
+    type: 'pie',
+    data: {
+      labels: ['High Risk', 'Medium Risk', 'Low Risk / Clear'],
+      datasets: [{
+        data: [22, 28, 50],
+        backgroundColor: [accentRed, accentAmber, accentGreen],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } }
+      }
     }
+  });
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      setLang(currentLang);
-      initCharts();
-      document.getElementById('year').textContent = new Date().getFullYear();
-    });
-
-    // Mobile menu toggle
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('open');
+  /* ── Plan Comparison Radar ── */
+  new Chart(document.getElementById('planCompareChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Patient Limit', 'Rule Customisation', 'Multi-user', 'Analytics', 'EHR Integration', 'SLA Support'],
+      datasets: [
+        { label: 'Pilot (€290/mo)', data: [20, 30, 10, 10, 0, 40], backgroundColor: 'rgba(148,163,184,.7)', borderRadius: 4 },
+        { label: 'Clinical (€690+/mo)', data: [100, 80, 90, 60, 0, 70], backgroundColor: 'rgba(0,200,150,.7)', borderRadius: 4 },
+        { label: 'Enterprise (Custom)', data: [100, 100, 100, 100, 100, 100], backgroundColor: 'rgba(14,165,233,.7)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+      scales: {
+        y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } },
+        x: { grid: { display: false } }
+      }
     }
-
-    // Scroll Reveal
-    const revealElements = document.querySelectorAll('.reveal');
-    const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
-    const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
-      });
-    }, revealOptions);
-    revealElements.forEach(el => revealOnScroll.observe(el));
-  </script>
+  });
+</script>
 </body>
 </html>
