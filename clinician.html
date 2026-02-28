@@ -794,6 +794,12 @@
     };
   }
 
+  function isClinicianValidationComplete() {
+    return document.getElementById("v_smoking").checked
+      && document.getElementById("v_meds").checked
+      && document.getElementById("v_labs").checked;
+  }
+
   function renderCurrentFlags() {
     if (!selectedCase) return;
     const flags = computeFlags(selectedCase, getCVOverrides());
@@ -862,15 +868,28 @@
 
     const gate = gateFromFlags(flags);
     const sug = document.getElementById("gateSuggestion");
-    const gateMap = {
+    const isValidated = isClinicianValidationComplete();
+
+    const preliminaryMap = {
+      eligible: { text: "Hasta beyanına göre majör risk görünmüyor. Tetkik ve klinik doğrulama tamamlanmadan nihai karar verilmez.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
+      conditional: { text: "Hasta beyanına göre dikkat gerektiren riskler var. Tetkik/doğrulama sonrası nihai uygunluk belirlenmelidir.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
+      verify: { text: "Hasta beyanına göre doğrulanması gereken noktalar var. Öncelik: klinik doğrulama ve tetkik tamamlama.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      ineligible: { text: "Hasta beyanında majör risk sinyali mevcut. Bu aşamada yapılacak aksiyon: tetkikleri tamamlayıp klinik doğrulama sonrası nihai karar vermek.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
+    };
+
+    const finalMap = {
       eligible: { text: "Rutin süreç.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
       conditional: { text: "Şartlı onay önerilir.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
-      verify: { text: "Doğrulama gerekli.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      verify: { text: "Doğrulama eksikleri tamamlanmalı.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
       ineligible: { text: "MAJÖR RİSK! Operasyon önerilmez.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
     };
+
+    const activeMap = isValidated ? finalMap : preliminaryMap;
+    const title = isValidated ? "Nihai Sistem Önerisi" : "Ön Değerlendirme (Hasta Beyanı)";
+
     sug.classList.remove("hidden");
-    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${gateMap[gate].cls}`;
-    sug.textContent = `Sistem Önerisi: ${gateMap[gate].text}`;
+    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${activeMap[gate].cls}`;
+    sug.textContent = `${title}: ${activeMap[gate].text}`;
   }
 
   window.updateReportPreview = function () {
@@ -922,7 +941,9 @@
   };
 
   window.rerunFlags = function () { renderCurrentFlags(); window.updateReportPreview(); };
-  document.getElementById("v_labs").addEventListener("change", window.updateReportPreview);
+  ["v_smoking", "v_meds", "v_labs"].forEach(id => {
+    document.getElementById(id).addEventListener("change", window.rerunFlags);
+  });
 
   document.getElementById("saveBtn").addEventListener("click", async () => {
     if (!selectedCaseId) return;
