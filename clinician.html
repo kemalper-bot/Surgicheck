@@ -416,7 +416,7 @@
         flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Kan Sulandırıcı — CV Gerekli", desc: "Hastanın beyanı doğrulanmalı." });
       }
 
-      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "İlaç Etkileşimi: GLP-1", desc: "Aspirasyon riski. Ameliyat öncesi kesilmeli." });
+      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "İlaç Etkileşimi: GLP-1", desc: "Gastrik boşalmayı geciktirir; anestezide regürjitasyon/aspirasyon riskini artırır." });
 
       if (r.medOcp) {
         const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
@@ -430,6 +430,9 @@
       if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne", title: "İlaç Etkileşimi: İzotretinoin", desc: "Gecikmiş yara iyileşmesi ve skar riski." });
       if (r.medPsych || r.psych) flags.push({ type: "SOFT", key: "med_psych", title: "Psikiyatrik Öykü", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali." });
       if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid", title: "İlaç: Steroid", desc: "Adrenal süpresyon riski." });
+      if (r.medSglt2) flags.push({ type: "HARD", key: "med_sglt2", title: "İlaç Etkileşimi: SGLT2", desc: "Perioperatif öglisemik ketoasidoz riski nedeniyle preop ara verilmelidir." });
+      if (r.medNsaid) flags.push({ type: "SOFT", key: "med_nsaid", title: "İlaç: Düzenli NSAID", desc: "Perioperatif kanama ve renal etkiler açısından ilaç planı netleşmeli." });
+      if (r.medSupplements) flags.push({ type: "VERIFY", key: "med_supplements", title: "İlaç/Takviye: Bitkisel Ürün", desc: "Bitkisel ürünler anestezi ve kanama profilini etkileyebilir." });
 
       if (smokingCV === "active") {
         flags.push({ type: "SOFT", key: "smoking_active", title: "Aktif Sigara", desc: "Flep nekrozu riski çok yüksek." });
@@ -451,6 +454,68 @@
       if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahisi", desc: "Anatomik plan zorluğu." });
     } catch (e) {}
     return flags;
+  }
+
+  const medicationGuidanceMap = {
+    med_glp1: {
+      rationale: "GLP-1 reseptör agonistleri (semaglutid, liraglutid vb.) mide boşalmasını geciktirebilir. Bu durum anestezi indüksiyonunda residual gastrik içerik ve aspirasyon riskini artırır.",
+      hold: "Haftalık preparatlar için ideal olarak son dozdan sonra 7 gün; günlük preparatlar için en az 24 saat önce kesim planı anestezi ekibiyle doğrulanmalıdır.",
+      plan: "Son doz tarihi hastadan alınmalı; semptomatik hastada (bulantı, kusma, abdominal distansiyon) elektif işlem ertelenmelidir."
+    },
+    anticoag_active: {
+      rationale: "Aktif antikoagülan/antitrombosit tedavi perioperatif kanama riskini artırır; plansız kesim de tromboemboli riski doğurur.",
+      hold: "İlaç türüne göre kişiselleştirilmiş kesme-köprüleme planı gerekir (DOAK, warfarin, aspirin, klopidogrel farklı yönetilir).",
+      plan: "Kardiyoloji/anestezi ile yazılı perioperatif plan olmadan elektif cerrahiye girilmemelidir."
+    },
+    anticoag_verify: {
+      rationale: "Hastanın kan sulandırıcı beyanı ilaç adı/dozu/son kullanım zamanı ile doğrulanmadığında ciddi kanama veya pıhtı riski gözden kaçabilir.",
+      hold: "İlaç adı ve son doz tarihi doğrulanana kadar ameliyat günü kesinleştirilmemelidir.",
+      plan: "Reçete/fotoğraf/epikriz ile doğrulama yapılıp CV alanı güncellenmelidir."
+    },
+    med_ocp_dvt: {
+      rationale: "Östrojen içeren OCP/HRT venöz tromboemboli riskini artırır; majör vücut şekillendirme cerrahilerinde risk katlanabilir.",
+      hold: "Elektif majör cerrahi öncesi çoğu rehber 4 hafta önce kesmeyi ve alternatif kontrasepsiyonu önerir.",
+      plan: "DVT profilaksisi (mekanik + gerektiğinde farmakolojik) ameliyat planına eklenmelidir."
+    },
+    med_ocp: {
+      rationale: "OCP/HRT kullanımı hastanın bazal tromboz riskini etkileyebilir.",
+      hold: "Prosedürün büyüklüğüne göre kesme gerekliliği değerlendirilir; majör cerrahide daha erken kesim düşünülür.",
+      plan: "Risk sınıflaması (Caprini vb.) içinde ilaç kullanımı mutlaka işlenmelidir."
+    },
+    med_acne: {
+      rationale: "İzotretinoin ile ilgili eski literatürde yara iyileşmesi/skar riskine dair çekinceler vardır; güncel yaklaşım prosedür bazlı değerlendirmedir.",
+      hold: "Rutin, uzun kesim zorunluluğu yerine cerrahi tipine göre dermatoloji/plastik cerrahi ortak kararı önerilir.",
+      plan: "Hastada keloid öyküsü veya agresif resurfacing planı varsa daha konservatif yaklaşım seçilebilir."
+    },
+    med_steroid: {
+      rationale: "Kronik steroid kullanımı adrenal supresyon, enfeksiyon ve yara iyileşme problemlerine yol açabilir.",
+      hold: "Ani kesim önerilmez; perioperatif stres dozu gerekliliği anestezi tarafından değerlendirilmelidir.",
+      plan: "Günlük doz ve kullanım süresi sorgulanmalı, gerekiyorsa endokrin/anestezi görüşü alınmalıdır."
+    },
+    med_psych: {
+      rationale: "Psikotrop ilaçlar anesteziklerle etkileşebilir; ek olarak psikiyatrik komorbiditeler post-op memnuniyeti etkileyebilir.",
+      hold: "Birçok antidepresan ani kesilmez; ilaç bazında psikiyatri/anestezi ortak planı gerekir.",
+      plan: "İlaç listesi doğrulanmalı, intihar riski/BDD şüphesi varsa ameliyat öncesi psikiyatrik değerlendirme istenmelidir."
+    },
+    med_sglt2: {
+      rationale: "SGLT2 inhibitörleri (empagliflozin, dapagliflozin vb.) perioperatif dönemde öglisemik diyabetik ketoasidoz riskini artırabilir.",
+      hold: "Planlı cerrahide genellikle ameliyat öncesi en az 3 gün (ertugliflozin için 4 gün) kesme önerilir.",
+      plan: "Diyabet ve hidrasyon yönetimi için anestezi/endokrin koordinasyonu ile tekrar başlama zamanı belirlenmelidir."
+    },
+    med_nsaid: {
+      rationale: "NSAID'ler trombosit fonksiyonunu etkileyerek kanama riskini artırabilir; böbrek fonksiyonları ve sıvı dengesi üzerinde de etkileri olabilir.",
+      hold: "İlacın yarı ömrüne göre çoğunlukla 1-3 gün önce kesim planlanır; kişisel riskler göz önüne alınır.",
+      plan: "Ağrı yönetimi için alternatif analjezi planı yazılı olarak oluşturulmalıdır."
+    },
+    med_supplements: {
+      rationale: "Bitkisel ürünler ve bazı takviyeler (ginkgo, sarımsak, ginseng, omega-3 vb.) kanama, sedasyon veya ilaç metabolizmasını etkileyebilir.",
+      hold: "Çoğu bitkisel/takviyenin elektif cerrahiden 7 gün önce kesilmesi güvenli yaklaşım olarak tercih edilir.",
+      plan: "Takviyelerin tam isim/doz listesi alınmalı; anestezi formuna açıkça işlenmelidir."
+    }
+  };
+
+  function getGuidanceForFlag(flag) {
+    return medicationGuidanceMap[flag.key] || null;
   }
 
   function gateFromFlags(flags) {
@@ -591,6 +656,9 @@
     if (r.medAcne) medsList.push("Akne (İzotretinoin)");
     if (r.medPsych) medsList.push("Psikiyatrik");
     if (r.medSteroid) medsList.push("Steroid");
+    if (r.medSglt2) medsList.push("SGLT2 (Diyabet)");
+    if (r.medNsaid) medsList.push("Düzenli NSAID");
+    if (r.medSupplements) medsList.push("Bitkisel/Takviye");
 
     // Hasta Beyanı — DOM API ile XSS'e karşı güvenli render
     const decl = document.getElementById("patientDeclaration");
@@ -628,6 +696,17 @@
     medsOtherDiv.appendChild(medsOtherLbl);
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
+
+    const medTimingDiv = document.createElement("div");
+    medTimingDiv.className = "col-span-2";
+    const medTimingLbl = document.createElement("span");
+    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    medTimingLbl.textContent = "İlaç Son Doz / Plan Notu";
+    const medTimingVal = document.createElement("i");
+    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Belirtilmemiş";
+    medTimingDiv.appendChild(medTimingLbl);
+    medTimingDiv.appendChild(medTimingVal);
+    grid.appendChild(medTimingDiv);
 
     const hasCardiac = r.cardiac || r.ht || r.diabetes;
     const cardiacDiv = document.createElement("div");
@@ -731,14 +810,43 @@
           : f.type === "SOFT"
             ? "border-amber-300 text-amber-900 bg-amber-50"
             : "border-blue-300 text-blue-900 bg-blue-50";
-        const item = document.createElement("div");
-        item.className = `text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1`;
-        const title = document.createElement("b");
-        title.textContent = `[${f.type}] ${f.title}`;
-        const desc = document.createElement("span");
-        desc.textContent = f.desc;
-        item.appendChild(title);
-        item.appendChild(desc);
+        const guidance = getGuidanceForFlag(f);
+
+        const item = document.createElement(guidance ? "details" : "div");
+        item.className = `text-sm rounded-xl border-2 ${cls}`;
+
+        if (guidance) {
+          item.open = f.type === "HARD";
+          const summary = document.createElement("summary");
+          summary.className = "list-none cursor-pointer p-4 font-bold flex items-start justify-between gap-3";
+          const detailBadgeText = f.type === "HARD"
+            ? "Kırmızı Bayrak"
+            : f.type === "SOFT"
+              ? "Klinik Dikkat"
+              : "Doğrulama";
+          summary.innerHTML = `<span>[${f.type}] ${f.title}</span><span class="text-xs font-black opacity-70">${detailBadgeText}</span>`;
+          item.appendChild(summary);
+
+          const body = document.createElement("div");
+          body.className = "px-4 pb-4 -mt-1 text-sm";
+          body.innerHTML = `
+            <p class="font-semibold mb-2">${f.desc}</p>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><span class="font-bold">Bilimsel Gerekçe:</span> ${guidance.rationale}</li>
+              <li><span class="font-bold">Önerilen Ara/Kesme Zamanı:</span> ${guidance.hold}</li>
+              <li><span class="font-bold">Klinik Aksiyon:</span> ${guidance.plan}</li>
+            </ul>
+          `;
+          item.appendChild(body);
+        } else {
+          item.classList.add("p-4", "flex", "flex-col", "gap-1");
+          const title = document.createElement("b");
+          title.textContent = `[${f.type}] ${f.title}`;
+          const desc = document.createElement("span");
+          desc.textContent = f.desc;
+          item.appendChild(title);
+          item.appendChild(desc);
+        }
         el.appendChild(item);
       });
     }
