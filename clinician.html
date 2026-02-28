@@ -416,7 +416,7 @@
         flags.push({ type: "VERIFY", key: "anticoag_verify", title: "Kan Sulandırıcı — CV Gerekli", desc: "Hastanın beyanı doğrulanmalı." });
       }
 
-      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "İlaç Etkileşimi: GLP-1", desc: "Aspirasyon riski. Ameliyat öncesi kesilmeli." });
+      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1", title: "İlaç Etkileşimi: GLP-1", desc: "Gastrik boşalmayı geciktirir; anestezide regürjitasyon/aspirasyon riskini artırır." });
 
       if (r.medOcp) {
         const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
@@ -430,6 +430,9 @@
       if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne", title: "İlaç Etkileşimi: İzotretinoin", desc: "Gecikmiş yara iyileşmesi ve skar riski." });
       if (r.medPsych || r.psych) flags.push({ type: "SOFT", key: "med_psych", title: "Psikiyatrik Öykü", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali." });
       if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid", title: "İlaç: Steroid", desc: "Adrenal süpresyon riski." });
+      if (r.medSglt2) flags.push({ type: "HARD", key: "med_sglt2", title: "İlaç Etkileşimi: SGLT2", desc: "Perioperatif öglisemik ketoasidoz riski nedeniyle preop ara verilmelidir." });
+      if (r.medNsaid) flags.push({ type: "SOFT", key: "med_nsaid", title: "İlaç: Düzenli NSAID", desc: "Perioperatif kanama ve renal etkiler açısından ilaç planı netleşmeli." });
+      if (r.medSupplements) flags.push({ type: "VERIFY", key: "med_supplements", title: "İlaç/Takviye: Bitkisel Ürün", desc: "Bitkisel ürünler anestezi ve kanama profilini etkileyebilir." });
 
       if (smokingCV === "active") {
         flags.push({ type: "SOFT", key: "smoking_active", title: "Aktif Sigara", desc: "Flep nekrozu riski çok yüksek." });
@@ -451,6 +454,129 @@
       if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahisi", desc: "Anatomik plan zorluğu." });
     } catch (e) {}
     return flags;
+  }
+
+  const aestheticClinicalRules = {
+    med_glp1: {
+      severity: "HARD_STOP",
+      title: "GLP-1 Agonistleri & Pulmoner Aspirasyon",
+      mechanism: "Vagal aracılı gastrik motilite inhibisyonu nedeniyle standart NPO süresi yetersiz kalabilir; indüksiyonda regürjitasyon/aspirasyon riski artar.",
+      action_protocol: [
+        "Haftalık formlar (semaglutid): Elektif cerrahiden yaklaşık 7 gün önce kesim planı yapılmalı.",
+        "Günlük formlar (liraglutid vb.): Operasyon günü dozu anestezi planına göre ertelenmeli/kesilmelidir.",
+        "Clearance şartı: Son doz tarihi doğrulanmalı; semptomatik hastada pre-op gastrik değerlendirme (POCUS) veya RSI planı düşünülmelidir."
+      ]
+    },
+    smoking_active: {
+      severity: "HARD_STOP",
+      title: "Nikotin / E-Sigara & Flep Nekrozu",
+      mechanism: "Nikotin ilişkili vazospazm ve mikrosirkülasyon bozulması flep perfüzyonunu düşürür; nekroz ve yara komplikasyonu riski yükselir.",
+      action_protocol: [
+        "Operasyondan en az 4 hafta önce kesin bırakma hedeflenmelidir.",
+        "Yüksek riskli vakalarda ameliyat sabahı cotinine doğrulaması düşünülebilir."
+      ]
+    },
+    med_acne: {
+      severity: "WARNING",
+      title: "İzotretinoin & Skar Kalitesi",
+      mechanism: "Epitelizasyon ve dermal remodeling süreçlerinde değişiklik, bazı hastalarda skar kalitesini olumsuz etkileyebilir.",
+      action_protocol: [
+        "Skar kalitesinin kritik olduğu vakalarda dermatoloji/plastik cerrahi ortak kararıyla ilaç kesimi sonrası bekleme süresi planlanmalıdır (klinikte sık yaklaşım 6-12 ay değerlendirmesidir)."
+      ]
+    },
+    csection: {
+      severity: "WARNING",
+      title: "Geçmiş Sezaryen Skarı & Perforatör Hasarı",
+      mechanism: "Alt abdominal skar ve yapışıklıklar perforatör anatomiyi değiştirebilir; diseksiyon planını etkiler.",
+      action_protocol: [
+        "Perforatör koruyucu diseksiyon stratejisi planlanmalı; gerekiyorsa pre-op Doppler/USG ile vasküler haritalama yapılmalıdır."
+      ]
+    },
+    anticoag_active: {
+      severity: "HARD_STOP",
+      title: "Aktif Antikoagülan & Kanama Riski",
+      mechanism: "Aktif antikoagülan/antitrombosit tedavi perioperatif kanama riskini artırır; plansız kesim tromboemboli riski doğurur.",
+      action_protocol: [
+        "DOAK/warfarin/aspirin/klopidogrel için kişiselleştirilmiş kesme-köprüleme planı yazılı olmalıdır.",
+        "Kardiyoloji-anestezi ortak planı olmadan elektif cerrahiye girilmemelidir."
+      ]
+    },
+    anticoag_verify: {
+      severity: "VERIFY",
+      title: "Kan Sulandırıcı Beyanı Doğrulanmalı",
+      mechanism: "İlaç adı/dozu/son kullanım zamanı doğrulanmadan doğru kanama-pıhtı dengesi kurmak mümkün değildir.",
+      action_protocol: [
+        "Reçete/fotoğraf/epikriz ile ilaç doğrulaması tamamlanmalı.",
+        "Son doz tarihi netleşmeden ameliyat tarihi kesinleştirilmemelidir."
+      ]
+    },
+    med_ocp_dvt: {
+      severity: "WARNING",
+      title: "OKS/HRT + Majör Cerrahi & VTE",
+      mechanism: "Östrojen içeren tedaviler majör cerrahide venöz tromboemboli riskini artırabilir.",
+      action_protocol: [
+        "Elektif majör cerrahi öncesi kesme ve alternatif kontrasepsiyon planı değerlendirilmelidir.",
+        "DVT profilaksisi (mekanik ± farmakolojik) cerrahi planına eklenmelidir."
+      ]
+    },
+    med_ocp: {
+      severity: "WARNING",
+      title: "Doğum Kontrol/Hormon & Tromboz Profili",
+      mechanism: "Hormonal tedaviler hastanın bazal tromboz risk profilini değiştirebilir.",
+      action_protocol: [
+        "Prosedür büyüklüğüne göre kesme gereksinimi bireyselleştirilmelidir.",
+        "Risk skorlama (ör. Caprini) içinde mutlaka işlenmelidir."
+      ]
+    },
+    med_steroid: {
+      severity: "VERIFY",
+      title: "Kronik Steroid & Adrenal Supresyon",
+      mechanism: "Uzun süreli steroid kullanımı adrenal supresyon, enfeksiyon ve yara iyileşme sorunlarıyla ilişkilidir.",
+      action_protocol: [
+        "Ani kesimden kaçınılmalı; perioperatif stres dozu gereksinimi anestezi tarafından planlanmalıdır.",
+        "Günlük doz ve kullanım süresi net kaydedilmelidir."
+      ]
+    },
+    med_psych: {
+      severity: "WARNING",
+      title: "Psikotrop İlaçlar & Perioperatif Uyum",
+      mechanism: "Psikotrop ilaç-anestezik etkileşimleri ve psikiyatrik komorbiditeler perioperatif yönetimi etkileyebilir.",
+      action_protocol: [
+        "İlaçlar ani kesilmemeli; psikiyatri/anestezi ortak planı yapılmalıdır.",
+        "BDD/intihar riski gibi kırılganlıklar varsa pre-op psikiyatrik değerlendirme istenmelidir."
+      ]
+    },
+    med_sglt2: {
+      severity: "HARD_STOP",
+      title: "SGLT2 İnhibitörleri & Öglisemik DKA",
+      mechanism: "SGLT2 inhibitörleri perioperatif dönemde öglisemik ketoasidoz riskini artırabilir.",
+      action_protocol: [
+        "Planlı cerrahide çoğu ajan için en az 3 gün (ertugliflozin için 4 gün) kesme planı uygulanmalıdır.",
+        "Anestezi/endokrin koordinasyonuyla hidrasyon ve yeniden başlama planı oluşturulmalıdır."
+      ]
+    },
+    med_nsaid: {
+      severity: "WARNING",
+      title: "Düzenli NSAID Kullanımı & Kanama/Renal Etki",
+      mechanism: "NSAID'ler trombosit fonksiyonunu ve renal hemodinamiyi etkileyerek perioperatif riski artırabilir.",
+      action_protocol: [
+        "Yarı ömre göre çoğu ajan için 1-3 gün önce kesim planlanmalıdır.",
+        "Alternatif analjezi protokolü yazılı hale getirilmelidir."
+      ]
+    },
+    med_supplements: {
+      severity: "VERIFY",
+      title: "Bitkisel/Takviye Ürünler & Etkileşim",
+      mechanism: "Bazı takviyeler kanama eğilimi, sedasyon veya ilaç metabolizmasını etkileyebilir.",
+      action_protocol: [
+        "Ürün adı/dozu/sıklığı net liste halinde alınmalıdır.",
+        "Elektif cerrahi öncesi çoğu ürün için yaklaşık 7 gün kesim planı tercih edilir."
+      ]
+    }
+  };
+
+  function getClinicalRuleForFlag(flag) {
+    return aestheticClinicalRules[flag.key] || null;
   }
 
   function gateFromFlags(flags) {
@@ -591,6 +717,9 @@
     if (r.medAcne) medsList.push("Akne (İzotretinoin)");
     if (r.medPsych) medsList.push("Psikiyatrik");
     if (r.medSteroid) medsList.push("Steroid");
+    if (r.medSglt2) medsList.push("SGLT2 (Diyabet)");
+    if (r.medNsaid) medsList.push("Düzenli NSAID");
+    if (r.medSupplements) medsList.push("Bitkisel/Takviye");
 
     // Hasta Beyanı — DOM API ile XSS'e karşı güvenli render
     const decl = document.getElementById("patientDeclaration");
@@ -628,6 +757,17 @@
     medsOtherDiv.appendChild(medsOtherLbl);
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
+
+    const medTimingDiv = document.createElement("div");
+    medTimingDiv.className = "col-span-2";
+    const medTimingLbl = document.createElement("span");
+    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    medTimingLbl.textContent = "İlaç Son Doz / Plan Notu";
+    const medTimingVal = document.createElement("i");
+    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Belirtilmemiş";
+    medTimingDiv.appendChild(medTimingLbl);
+    medTimingDiv.appendChild(medTimingVal);
+    grid.appendChild(medTimingDiv);
 
     const hasCardiac = r.cardiac || r.ht || r.diabetes;
     const cardiacDiv = document.createElement("div");
@@ -715,6 +855,12 @@
     };
   }
 
+  function isClinicianValidationComplete() {
+    return document.getElementById("v_smoking").checked
+      && document.getElementById("v_meds").checked
+      && document.getElementById("v_labs").checked;
+  }
+
   function renderCurrentFlags() {
     if (!selectedCase) return;
     const flags = computeFlags(selectedCase, getCVOverrides());
@@ -731,29 +877,76 @@
           : f.type === "SOFT"
             ? "border-amber-300 text-amber-900 bg-amber-50"
             : "border-blue-300 text-blue-900 bg-blue-50";
-        const item = document.createElement("div");
-        item.className = `text-sm p-4 rounded-xl border-2 ${cls} flex flex-col gap-1`;
-        const title = document.createElement("b");
-        title.textContent = `[${f.type}] ${f.title}`;
-        const desc = document.createElement("span");
-        desc.textContent = f.desc;
-        item.appendChild(title);
-        item.appendChild(desc);
+        const guidance = getClinicalRuleForFlag(f);
+
+        const item = document.createElement(guidance ? "details" : "div");
+        item.className = `text-sm rounded-xl border-2 ${cls}`;
+
+        if (guidance) {
+          item.open = f.type === "HARD";
+          const summary = document.createElement("summary");
+          summary.className = "list-none cursor-pointer p-4 font-bold flex items-start justify-between gap-3";
+          const detailBadgeText = f.type === "HARD"
+            ? "Kırmızı Bayrak"
+            : f.type === "SOFT"
+              ? "Klinik Dikkat"
+              : "Doğrulama";
+          summary.innerHTML = `<span>[${guidance.severity}] ${guidance.title}</span><span class="text-xs font-black opacity-70">${detailBadgeText}</span>`;
+          item.appendChild(summary);
+
+          const body = document.createElement("div");
+          body.className = "px-4 pb-4 -mt-1 text-sm";
+          body.innerHTML = `
+            <p class="font-semibold mb-2">${f.desc}</p>
+            <div class="space-y-2">
+              <div>
+                <p class="font-bold">Patofizyoloji</p>
+                <ul class="list-disc pl-5"><li>${guidance.mechanism}</li></ul>
+              </div>
+              <div>
+                <p class="font-bold">Operasyonel Protokol</p>
+                <ul class="list-disc pl-5 mt-1 space-y-1">${guidance.action_protocol.map(action => `<li>${action}</li>`).join("")}</ul>
+              </div>
+                          </div>
+          `;
+          item.appendChild(body);
+        } else {
+          item.classList.add("p-4", "flex", "flex-col", "gap-1");
+          const title = document.createElement("b");
+          title.textContent = `[${f.type}] ${f.title}`;
+          const desc = document.createElement("span");
+          desc.textContent = f.desc;
+          item.appendChild(title);
+          item.appendChild(desc);
+        }
         el.appendChild(item);
       });
     }
 
     const gate = gateFromFlags(flags);
     const sug = document.getElementById("gateSuggestion");
-    const gateMap = {
+    const isValidated = isClinicianValidationComplete();
+
+    const preliminaryMap = {
+      eligible: { text: "Hasta beyanına göre majör risk görünmüyor. Tetkik ve klinik doğrulama tamamlanmadan nihai karar verilmez.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
+      conditional: { text: "Hasta beyanına göre dikkat gerektiren riskler var. Tetkik/doğrulama sonrası nihai uygunluk belirlenmelidir.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
+      verify: { text: "Hasta beyanına göre doğrulanması gereken noktalar var. Öncelik: klinik doğrulama ve tetkik tamamlama.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      ineligible: { text: "Hasta beyanında majör risk sinyali mevcut. Bu aşamada yapılacak aksiyon: tetkikleri tamamlayıp klinik doğrulama sonrası nihai karar vermek.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
+    };
+
+    const finalMap = {
       eligible: { text: "Rutin süreç.", cls: "bg-emerald-50 text-emerald-800 border-emerald-300" },
       conditional: { text: "Şartlı onay önerilir.", cls: "bg-amber-50 text-amber-800 border-amber-300" },
-      verify: { text: "Doğrulama gerekli.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
+      verify: { text: "Doğrulama eksikleri tamamlanmalı.", cls: "bg-blue-50 text-blue-800 border-blue-300" },
       ineligible: { text: "MAJÖR RİSK! Operasyon önerilmez.", cls: "bg-rose-50 text-rose-800 border-rose-300" },
     };
+
+    const activeMap = isValidated ? finalMap : preliminaryMap;
+    const title = isValidated ? "Nihai Sistem Önerisi" : "Ön Değerlendirme (Hasta Beyanı)";
+
     sug.classList.remove("hidden");
-    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${gateMap[gate].cls}`;
-    sug.textContent = `Sistem Önerisi: ${gateMap[gate].text}`;
+    sug.className = `mb-6 rounded-xl p-4 text-sm border-2 font-bold ${activeMap[gate].cls}`;
+    sug.textContent = `${title}: ${activeMap[gate].text}`;
   }
 
   window.updateReportPreview = function () {
@@ -805,7 +998,9 @@
   };
 
   window.rerunFlags = function () { renderCurrentFlags(); window.updateReportPreview(); };
-  document.getElementById("v_labs").addEventListener("change", window.updateReportPreview);
+  ["v_smoking", "v_meds", "v_labs"].forEach(id => {
+    document.getElementById(id).addEventListener("change", window.rerunFlags);
+  });
 
   document.getElementById("saveBtn").addEventListener("click", async () => {
     if (!selectedCaseId) return;
