@@ -153,6 +153,9 @@
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_acne" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Ağır Akne İlacı (Roaccutane, Zoretanin vb.)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_psych" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Psikiyatrik İlaç (Antidepresan, Xanax vb.)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_steroid" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Kortizon / Steroid Tedavisi</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_sglt2" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">SGLT2 Diyabet İlacı (Jardiance, Forxiga vb.)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_nsaid" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Sık NSAID Ağrı Kesici (ibuprofen, naproksen vb.)</span></label>
+            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm sm:col-span-2"><input type="checkbox" id="med_supplements" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Bitkisel/Takviye (ginkgo, sarımsak, ginseng, omega-3 vb.)</span></label>
           </div>
           <div class="mt-5">
             <label class="text-sm font-medium text-slate-700 mb-1 block">Diğer Düzenli İlaçlar / Takviyeler</label>
@@ -498,6 +501,9 @@
             medAcne: document.getElementById("med_acne").checked,
             medPsych: document.getElementById("med_psych").checked,
             medSteroid: document.getElementById("med_steroid").checked,
+            medSglt2: document.getElementById("med_sglt2").checked,
+            medNsaid: document.getElementById("med_nsaid").checked,
+            medSupplements: document.getElementById("med_supplements").checked,
             medOther: document.getElementById("med_other").value.trim() || null,
             medLastDoseDate: document.getElementById("med_last_dose").value || null,
             medStopPlanNote: document.getElementById("med_stop_note").value.trim() || null,
