@@ -831,11 +831,20 @@
           body.className = "px-4 pb-4 -mt-1 text-sm";
           body.innerHTML = `
             <p class="font-semibold mb-2">${f.desc}</p>
-            <ul class="list-disc pl-5 space-y-1.5">
-              <li><span class="font-bold">Bilimsel Gerekçe:</span> ${guidance.rationale}</li>
-              <li><span class="font-bold">Önerilen Ara/Kesme Zamanı:</span> ${guidance.hold}</li>
-              <li><span class="font-bold">Klinik Aksiyon:</span> ${guidance.plan}</li>
-            </ul>
+            <div class="space-y-2">
+              <div>
+                <p class="font-bold">Bilimsel Gerekçe</p>
+                <ul class="list-disc pl-5"><li>${guidance.rationale}</li></ul>
+              </div>
+              <div>
+                <p class="font-bold">Önerilen Ara/Kesme Zamanı</p>
+                <ul class="list-disc pl-5"><li>${guidance.hold}</li></ul>
+              </div>
+              <div>
+                <p class="font-bold">Klinik Aksiyon</p>
+                <ul class="list-disc pl-5"><li>${guidance.plan}</li></ul>
+              </div>
+            </div>
           `;
           item.appendChild(body);
         } else {
