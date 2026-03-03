@@ -637,7 +637,7 @@
           <li>Temel Kural Seti</li>
           <li>E-posta ve Video Desteği</li>
         </ul>
-        <a class="pricing-btn" href="clinician.html">Demo Talep Et →</a>
+        <a class="pricing-btn" href="#iletisim">Demo Talep Et →</a>
       </div>
       <div class="pricing-card featured">
         <div class="pricing-badge">Önerilen</div>
@@ -746,10 +746,19 @@
     <div class="cta-banner fade-in">
       <h2>SurgiCheck'i kliniğinizde görün.</h2>
       <p>Formu doldurun; ekibimiz 24 saat içinde kliniğinize özel bir pilot plan ile size dönecek.</p>
-      <div class="cta-buttons">
-        <a class="btn-primary" href="clinician.html">Demo Talep Et</a>
-        <a class="btn-outline" href="clinician.html">Klinisyen Girişi</a>
-      </div>
+      <form id="demoForm" onsubmit="submitDemoForm(event)" style="margin-top:1.5rem; display:flex; flex-direction:column; gap:.75rem; max-width:480px; margin-left:auto; margin-right:auto;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem;">
+          <input type="text" id="demoName" placeholder="Ad Soyad *" required style="padding:.75rem 1rem; border:2px solid rgba(255,255,255,.3); border-radius:8px; background:rgba(255,255,255,.12); color:#fff; font-size:.95rem; outline:none;">
+          <input type="text" id="demoClinic" placeholder="Klinik Adı *" required style="padding:.75rem 1rem; border:2px solid rgba(255,255,255,.3); border-radius:8px; background:rgba(255,255,255,.12); color:#fff; font-size:.95rem; outline:none;">
+          <input type="email" id="demoEmail" placeholder="E-posta *" required style="padding:.75rem 1rem; border:2px solid rgba(255,255,255,.3); border-radius:8px; background:rgba(255,255,255,.12); color:#fff; font-size:.95rem; outline:none;">
+          <input type="tel" id="demoPhone" placeholder="Telefon" style="padding:.75rem 1rem; border:2px solid rgba(255,255,255,.3); border-radius:8px; background:rgba(255,255,255,.12); color:#fff; font-size:.95rem; outline:none;">
+        </div>
+        <div class="cta-buttons">
+          <button type="submit" class="btn-primary" id="demoSubmitBtn">Demo Talep Et</button>
+          <a class="btn-outline" href="clinician.html">Klinisyen Girişi</a>
+        </div>
+        <p id="demoMsg" style="font-size:.85rem; margin:0; min-height:1.2em;"></p>
+      </form>
     </div>
   </div>
 </section>
@@ -909,6 +918,50 @@
     },
     options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } } }
   });
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
+    authDomain: "surgicheck-c137e.firebaseapp.com",
+    projectId: "surgicheck-c137e",
+    storageBucket: "surgicheck-c137e.firebasestorage.app",
+    messagingSenderId: "96665183235",
+    appId: "1:96665183235:web:f89a52324df1583cf19a36"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.submitDemoForm = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('demoSubmitBtn');
+    const msg = document.getElementById('demoMsg');
+    btn.disabled = true;
+    btn.textContent = 'Gönderiliyor…';
+    try {
+      await addDoc(collection(db, 'demoRequests'), {
+        name: document.getElementById('demoName').value.trim(),
+        clinic: document.getElementById('demoClinic').value.trim(),
+        email: document.getElementById('demoEmail').value.trim(),
+        phone: document.getElementById('demoPhone').value.trim(),
+        lang: 'tr',
+        createdAt: serverTimestamp()
+      });
+      msg.style.color = '#00c896';
+      msg.textContent = 'Talebiniz alındı! Ekibimiz 24 saat içinde sizinle iletişime geçecek.';
+      document.getElementById('demoForm').reset();
+    } catch (err) {
+      msg.style.color = '#f87171';
+      msg.textContent = 'Bir hata oluştu, lütfen tekrar deneyin.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Demo Talep Et';
+    }
+  };
 </script>
 </body>
 </html>
