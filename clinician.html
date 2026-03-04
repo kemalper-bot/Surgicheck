@@ -436,7 +436,7 @@
       }
 
       if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne", title: "İlaç Etkileşimi: İzotretinoin", desc: "Gecikmiş yara iyileşmesi ve skar riski." });
-      if (r.medPsych || r.psych) flags.push({ type: "SOFT", key: "med_psych", title: "Psikiyatrik Öykü", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali." });
+      if (r.medPsych) flags.push({ type: "SOFT", key: "med_psych", title: "Psikiyatrik Öykü", desc: "Beden Dismorfik Bozukluğu (BDD) ihtimali." });
       if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid", title: "İlaç: Steroid", desc: "Adrenal süpresyon riski." });
       if (r.medSglt2) flags.push({ type: "HARD", key: "med_sglt2", title: "İlaç Etkileşimi: SGLT2", desc: "Perioperatif öglisemik ketoasidoz riski nedeniyle preop ara verilmelidir." });
       if (r.medNsaid) flags.push({ type: "SOFT", key: "med_nsaid", title: "İlaç: Düzenli NSAID", desc: "Perioperatif kanama ve renal etkiler açısından ilaç planı netleşmeli." });
@@ -472,7 +472,7 @@
       if (r.anemia) flags.push({ type: "VERIFY", key: "anemia", title: "Anemi", desc: "Preoperatif hemoglobin/hematokrit gerekli; elektif cerrahi öncesi optimizasyon gerekebilir." });
       if (r.asthma) flags.push({ type: "SOFT", key: "asthma", title: "Astım", desc: "Havayolu hiperreaktivite riski; optimal kontrol ve bronkodilatör planı gözden geçirilmeli." });
       if (r.thyroid) flags.push({ type: "SOFT", key: "thyroid", title: "Tiroid Hastalığı", desc: "Ötiroid durum doğrulanmalı; tiroid disfonksiyonu anestezik ilaç metabolizmasını etkiler." });
-      if (r.psychiatricDisorder || r.medPsych) flags.push({ type: "SOFT", key: "psych_disorder", title: "Psikiyatrik Bozukluk", desc: "BDD (Beden Dismorfik Bozukluğu) taraması yapılmalı; gerekirse psikiyatri konsültasyonu." });
+      if (r.psychiatricDisorder) flags.push({ type: "SOFT", key: "psych_disorder", title: "Psikiyatrik Bozukluk", desc: "BDD (Beden Dismorfik Bozukluğu) taraması yapılmalı; gerekirse psikiyatri konsültasyonu." });
       if (r.sickleCellTrait) flags.push({ type: "SOFT", key: "sickle_cell_trait", title: "Orak Hücre Taşıyıcılığı", desc: "Bazal risk düşük ancak perioperatif hipoksi, hipotermi ve dehidrasyondan kaçınılmalı." });
       if (r.bloodTransfusion) flags.push({ type: "SOFT", key: "blood_transfusion", title: "Kan Transfüzyonu Öyküsü", desc: "Aloantikorlar riski; majör cerrahi öncesi çapraz karşılaştırma yapılmalı." });
       if (r.medAllergy) flags.push({ type: "VERIFY", key: "med_allergy", title: "İlaç Alerjisi Bildirildi", desc: `Hasta ilaç alerjisi bildirdi: "${r.medAllergy}". Anestezi ekibi ile doğrulanmalı.` });
