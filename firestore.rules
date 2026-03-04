@@ -19,5 +19,12 @@ service cloud.firestore {
       // Silme: hiçbir zaman izin verilmez
       allow delete: if false;
     }
+
+    // Rıza formları — sadece giriş yapmış klinisyenler oluşturabilir ve okuyabilir
+    match /consents/{consentId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
   }
 }

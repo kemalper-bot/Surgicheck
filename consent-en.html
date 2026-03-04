@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informed Consent Form — SurgiCheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; padding: 0 !important; }
+      #consentDocument { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      #consentDocument > div { box-shadow: none !important; border-radius: 0 !important; }
+      .signature-canvas { border: 1px solid #374151 !important; background: white !important; }
+      textarea { border: 1px solid #e2e8f0 !important; }
+    }
+    @page { margin: 1.2cm; }
+    .signature-canvas {
+      cursor: crosshair;
+      touch-action: none;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 6px;
+      display: block;
+    }
+    .signature-canvas.has-sig {
+      background: white;
+      border: 2px solid #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+<!-- AUTH OVERLAY -->
+<div id="authOverlay" class="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm mx-4">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-bold text-slate-900">SurgiCheck</h1>
+        <p class="text-xs text-slate-500">Consent Form System</p>
+      </div>
+    </div>
+    <h2 class="text-base font-bold text-slate-800 mb-4">Clinician Login Required</h2>
+    <div id="authError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm mb-4"></div>
+    <input type="email" id="authEmail" placeholder="Email" autocomplete="username"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-black">
+    <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-black">
+    <button id="loginBtn" class="w-full bg-black text-white rounded-lg py-2.5 text-sm font-bold hover:bg-slate-800 transition-colors">
+      Sign In
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+
+  <!-- TOP NAV -->
+  <nav class="no-print bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+    <div class="flex items-center gap-3">
+      <a href="clinician-en.html" class="text-slate-400 hover:text-slate-700 transition-colors" title="Back to Clinician Panel">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="font-bold text-slate-800 text-sm">Informed Consent Form</span>
+    </div>
+    <div id="navButtons" class="hidden flex gap-2 items-center">
+      <button id="saveConsentBtn" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-emerald-700 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+        Save Consent
+      </button>
+      <button id="printBtn" class="flex items-center gap-2 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m8-4V3H6v10m6 3v10a2 2 0 01-2 2H6a2 2 0 01-2-2V17"/>
+        </svg>
+        PDF / Print
+      </button>
+    </div>
+  </nav>
+
+  <!-- CASE LOOKUP -->
+  <div id="lookupSection" class="no-print max-w-md mx-auto mt-16 px-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+      <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-bold text-slate-800 mb-2">Generate Consent Form</h2>
+      <p class="text-sm text-slate-500 mb-5">Enter the Case ID for which you want to generate a consent form.</p>
+      <input type="text" id="caseIdInput" placeholder="Case ID (e.g. AbCdEfGh...)"
+        class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-3 font-mono focus:outline-none focus:ring-2 focus:ring-black">
+      <button id="loadCaseBtn" class="w-full bg-black text-white rounded-lg py-2.5 text-sm font-bold hover:bg-slate-800 transition-colors">
+        Generate Form
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingSection" class="hidden no-print flex items-center justify-center py-24">
+    <div class="text-center">
+      <div class="w-10 h-10 border-4 border-slate-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-slate-500 text-sm">Loading case...</p>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errorSection" class="hidden no-print max-w-md mx-auto mt-16 px-4">
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+      <svg class="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <h3 class="font-bold text-red-800 mb-2">Case Not Found</h3>
+      <p id="errorMsg" class="text-red-600 text-sm mb-4"></p>
+      <button id="retryBtn" class="text-sm text-red-700 underline hover:text-red-900">Try Again</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS TOAST -->
+  <div id="successToast" class="hidden no-print fixed bottom-5 right-5 bg-emerald-600 text-white rounded-xl px-5 py-3 shadow-xl text-sm font-medium z-20 flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+    </svg>
+    Consent form saved successfully
+  </div>
+
+  <!-- CONSENT DOCUMENT -->
+  <div id="consentDocument" class="hidden max-w-3xl mx-auto my-8 px-4 pb-16"></div>
+
+</div><!-- /mainApp -->
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, getDoc, addDoc, collection, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
+    authDomain: "surgicheck-c137e.firebaseapp.com",
+    projectId: "surgicheck-c137e",
+    storageBucket: "surgicheck-c137e.firebasestorage.app",
+    messagingSenderId: "96665183235",
+    appId: "1:96665183235:web:f89a52324cf1583cf19a36"
+  });
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ─── CONSTANTS ────────────────────────────────────────────────────────────────
+
+  const GENERAL_RISKS = [
+    "Anesthesia-related reactions",
+    "Infection",
+    "Bleeding and hematoma",
+    "Wound healing complications",
+    "Scar tissue formation",
+    "Deep vein thrombosis (DVT)",
+    "Pulmonary embolism"
+  ];
+
+  const PATIENT_RIGHTS = "The patient has the right to refuse or withdraw consent for this procedure at any time. This decision will not affect the quality of their medical care.";
+  const LEGAL_FOOTER = "This form has been prepared in accordance with applicable medical consent regulations and patient rights legislation.";
+
+  const PROCEDURE_TEMPLATES = {
+    "Rinoplasti": {
+      name: "Rhinoplasty (Nose Reshaping)",
+      definition: "Rhinoplasty is a surgical procedure aimed at improving the shape and/or function of the nose. It may include reshaping the bone and cartilage structures, correcting the nostrils, and/or septal correction.",
+      purpose: "The purpose of this surgery is to achieve the aesthetic and/or functional corrections requested by the patient. Results may vary between individuals; perfect symmetry cannot be guaranteed.",
+      specificRisks: [
+        "Septal perforation",
+        "Prolonged swelling (6–12 months)",
+        "Changes in sense of smell",
+        "Need for revision surgery (5–15%)",
+        "Asymmetry",
+        "Nasal obstruction (temporary or permanent)"
+      ],
+      alternatives: [
+        "Non-surgical filler injection (non-surgical rhinoplasty)",
+        "Maintaining current appearance (no treatment)"
+      ]
+    },
+    "Blefaroplasti": {
+      name: "Blepharoplasty (Eyelid Surgery)",
+      definition: "Blepharoplasty is a surgical procedure performed to remove excess skin, muscle, and/or fat from the upper and/or lower eyelids.",
+      purpose: "The purpose of this surgery is to achieve a more youthful, refreshed appearance and/or to relieve visual field restriction caused by drooping upper eyelid tissue. Results may change with the ageing process.",
+      specificRisks: [
+        "Dry eye syndrome",
+        "Temporary double vision",
+        "Lagophthalmos (inability to fully close eyelids)",
+        "Ectropion (lower eyelid turning outward)",
+        "Vision changes (rare)",
+        "Asymmetry"
+      ],
+      alternatives: [
+        "Botulinum toxin or filler injections",
+        "Laser skin resurfacing",
+        "Maintaining current appearance"
+      ]
+    },
+    "Meme Büyütme": {
+      name: "Breast Augmentation (Augmentation Mammaplasty)",
+      definition: "Breast augmentation surgery is a surgical procedure performed to increase breast volume and improve shape using silicone or saline-filled implants.",
+      purpose: "The purpose of this surgery is to achieve the desired aesthetic breast size and shape. Implant size and type are determined in consultation with the clinician; perfect symmetry cannot be guaranteed.",
+      specificRisks: [
+        "Capsular contracture (hardening around the implant)",
+        "Implant displacement or rotation",
+        "Implant rupture",
+        "BIA-ALCL risk (rare, associated with textured implants)",
+        "Changes in breastfeeding capacity",
+        "Permanent sensory changes",
+        "Need for revision surgery or implant removal"
+      ],
+      alternatives: [
+        "Fat grafting breast augmentation (lipomodelling)",
+        "Maintaining current appearance"
+      ]
+    },
+    "Meme Küçültme": {
+      name: "Breast Reduction (Reduction Mammaplasty)",
+      definition: "Breast reduction surgery is a surgical procedure to reduce the size and reshape excessively large breasts. It involves removing skin, fat, and glandular tissue.",
+      purpose: "The purpose of this surgery is to relieve symptoms such as back/neck pain, posture problems, and aesthetic concerns. While symmetry is targeted, it cannot be guaranteed.",
+      specificRisks: [
+        "Nipple/areola loss (rare)",
+        "Reduced breastfeeding capacity",
+        "Extensive and permanent scarring",
+        "Asymmetry",
+        "Fat necrosis",
+        "Need for revision surgery"
+      ],
+      alternatives: [
+        "Supportive bra fitting",
+        "Physiotherapy and exercise",
+        "Maintaining current appearance"
+      ]
+    },
+    "Liposuction": {
+      name: "Liposuction (Fat Removal)",
+      definition: "Liposuction is an aesthetic surgical procedure in which fat tissue accumulated in specific areas of the body is surgically removed using thin tubes (cannulas).",
+      purpose: "The purpose of this procedure is to improve body contour and address disproportionate fat deposits. It is not a weight loss method; a healthy lifestyle is essential for lasting results.",
+      specificRisks: [
+        "Seroma (fluid accumulation)",
+        "Irregular contour or asymmetry",
+        "Skin discoloration or hardening",
+        "Scars at cannula entry points",
+        "Skin laxity",
+        "Fat embolism (rare)"
+      ],
+      alternatives: [
+        "Diet and exercise programme",
+        "Non-invasive fat reduction methods (cryolipolysis, HIFU)",
+        "Maintaining current appearance"
+      ]
+    },
+    "Tummy Tuck": {
+      name: "Abdominoplasty (Tummy Tuck)",
+      definition: "Abdominoplasty is a comprehensive surgical procedure involving removal of excess skin and fat from the abdominal area, tightening of abdominal muscles, and repositioning of the belly button.",
+      purpose: "The purpose of this surgery is to improve the contour and appearance of the abdominal area. Lasting results may not be achieved without weight control; appropriate timing is recommended for patients planning a pregnancy.",
+      specificRisks: [
+        "Deep vein thrombosis (DVT) and pulmonary embolism",
+        "Seroma",
+        "Extensive and permanent scarring",
+        "Lower abdominal wall numbness",
+        "Belly button shape irregularities",
+        "Fat necrosis"
+      ],
+      alternatives: [
+        "Mini abdominoplasty (limited correction)",
+        "Liposuction (if no excess skin)",
+        "Maintaining current appearance"
+      ]
+    },
+    "BBL": {
+      name: "Brazilian Butt Lift (BBL)",
+      definition: "A BBL (Brazilian Butt Lift) is a combined aesthetic surgical procedure in which fat harvested from the body is injected into the buttock area to improve its volume and contour. It combines liposuction and fat transfer.",
+      purpose: "The purpose of this surgery is to enhance the aesthetic appearance of the buttock area. Some of the injected fat may be reabsorbed over time; final results can be assessed after 6 months.",
+      specificRisks: [
+        "Fat embolism (rare but potentially life-threatening complication)",
+        "Fat necrosis and firmness",
+        "Asymmetry",
+        "Seroma",
+        "DVT/pulmonary embolism risk",
+        "Sensory changes in the buttock area"
+      ],
+      alternatives: [
+        "Buttock implants (silicone prosthetics)",
+        "Maintaining current appearance"
+      ]
+    }
+  };
+
+  const FLAG_RISK_CLAUSES = {
+    anticoag_active: {
+      label: "Active Anticoagulant Use",
+      clause: "The patient's use of active anticoagulants significantly increases intraoperative and postoperative bleeding risk compared to the standard population. This has been evaluated by the clinician and a bridging protocol has been applied to proceed with the procedure.",
+      requiresAcknowledgment: true
+    },
+    malignancy: {
+      label: "Active Malignancy",
+      clause: "Active malignancy increases surgical risk. Oncology consultation has been completed and the procedure has been deemed appropriate.",
+      requiresAcknowledgment: true
+    },
+    dvt: {
+      label: "DVT / PE History",
+      clause: "A history of DVT/PE increases the risk of recurrent thromboembolic events. A thromboprophylaxis plan will be implemented and this risk must be understood by the patient.",
+      requiresAcknowledgment: true
+    },
+    med_glp1: {
+      label: "GLP-1 Agonist Use",
+      clause: "GLP-1 agonist use delays gastric emptying and may increase aspiration risk during general anaesthesia. A medication cessation protocol has been applied.",
+      requiresAcknowledgment: true
+    },
+    med_sglt2: {
+      label: "SGLT2 Inhibitor Use",
+      clause: "SGLT2 inhibitor use increases the risk of perioperative euglycaemic ketoacidosis. A pre-operative medication cessation protocol has been applied.",
+      requiresAcknowledgment: true
+    },
+    sickle_cell: {
+      label: "Sickle Cell Disease",
+      clause: "Sickle cell disease increases the risk of perioperative crisis. Haematology consultation has been completed and necessary precautions have been planned.",
+      requiresAcknowledgment: true
+    },
+    anesthetic_reaction: {
+      label: "Previous Anaesthetic Reaction",
+      clause: "A previous anaesthetic reaction requires specific planning of the anaesthesia protocol. The anaesthesia team has evaluated this condition and a safe protocol has been established.",
+      requiresAcknowledgment: true
+    },
+    bmi40: {
+      label: "High BMI (≥ 40)",
+      clause: "BMI ≥ 40 poses a high operational risk. Increased complication risk has been evaluated by the clinician.",
+      requiresAcknowledgment: true
+    },
+    asa4: {
+      label: "ASA IV Risk Class",
+      clause: "ASA IV classification indicates the presence of severe systemic disease. Surgical risk is significantly elevated and has been evaluated by the clinician.",
+      requiresAcknowledgment: true
+    },
+    anticoag_verify: {
+      label: "Anticoagulant Declaration Verified",
+      clause: "Anticoagulant/antiplatelet medication declaration has been verified and a treatment management plan has been established by the clinician.",
+      requiresAcknowledgment: true
+    },
+    hiv: {
+      label: "HIV Positive",
+      clause: "HIV-positive status has been evaluated by the clinician; viral load and ARV regimen have been confirmed.",
+      requiresAcknowledgment: true
+    },
+    hepatitis: {
+      label: "Hepatitis",
+      clause: "Hepatitis status has been assessed with liver function tests and the patient has been cleared for surgery.",
+      requiresAcknowledgment: true
+    },
+    med_allergy: {
+      label: "Reported Drug Allergy",
+      clause: "The reported drug allergy has been documented by the anaesthesia and surgical team and safe alternatives have been identified.",
+      requiresAcknowledgment: true
+    },
+    smoking_active: {
+      label: "Active Smoking",
+      clause: "Active smoking impairs tissue perfusion, increasing the risk of wound complications, necrosis, and scarring. Cessation before surgery is strongly recommended.",
+      requiresAcknowledgment: false
+    },
+    med_ocp_dvt: {
+      label: "Oestrogen Medication + Major Surgery",
+      clause: "The combination of oestrogen-containing medication and major surgery increases venous thromboembolism risk. DVT prophylaxis has been incorporated into the surgical plan.",
+      requiresAcknowledgment: false
+    },
+    med_ocp: {
+      label: "Hormonal Treatment",
+      clause: "Hormonal treatment may affect thrombosis risk profile and has been taken into account in the surgical plan.",
+      requiresAcknowledgment: false
+    },
+    keloid: {
+      label: "Poor Scarring History",
+      clause: "A history of poor scarring increases the risk of hypertrophic scarring or keloid formation.",
+      requiresAcknowledgment: false
+    },
+    med_acne: {
+      label: "Isotretinoin Use",
+      clause: "Isotretinoin use may adversely affect wound healing and scar quality.",
+      requiresAcknowledgment: false
+    },
+    asthma: {
+      label: "Asthma",
+      clause: "Asthma increases the risk of airway hyperreactivity. Optimal control has been achieved and a bronchodilator plan has been prepared.",
+      requiresAcknowledgment: false
+    },
+    thyroid: {
+      label: "Thyroid Disease",
+      clause: "Thyroid disease may affect anaesthetic drug metabolism. Euthyroid status has been confirmed.",
+      requiresAcknowledgment: false
+    },
+    bmi35: {
+      label: "High BMI (35–39)",
+      clause: "BMI 35–39 poses a high operational risk. Risk of DVT, wound healing difficulties, and anaesthetic complications is increased.",
+      requiresAcknowledgment: false
+    },
+    csection: {
+      label: "Previous Abdominal Surgery",
+      clause: "Previous abdominal surgery may alter scar tissue anatomy and affect the dissection plan.",
+      requiresAcknowledgment: false
+    },
+    revision: {
+      label: "Revision Surgery",
+      clause: "Revision surgery carries increased difficulty in anatomical planning and additional complication risk.",
+      requiresAcknowledgment: false
+    },
+    blood_transfusion: {
+      label: "Blood Transfusion History",
+      clause: "A history of blood transfusion warrants attention due to potential alloantibodies. The blood bank has been notified.",
+      requiresAcknowledgment: false
+    },
+    sickle_cell_trait: {
+      label: "Sickle Cell Trait",
+      clause: "Sickle cell trait may pose a risk in perioperative hypoxia situations. A hypoxia prevention protocol will be applied.",
+      requiresAcknowledgment: false
+    },
+    psych_disorder: {
+      label: "Psychiatric Disorder",
+      clause: "Psychiatric disorder has been assessed with regard to BDD screening and perioperative compliance.",
+      requiresAcknowledgment: false
+    },
+    med_psych: {
+      label: "Psychotropic Medication Use",
+      clause: "Psychotropic medication use may affect perioperative management and has been incorporated into the anaesthetic plan.",
+      requiresAcknowledgment: false
+    },
+    med_nsaid: {
+      label: "Regular NSAID Use",
+      clause: "Regular NSAID use may increase perioperative bleeding risk. A medication cessation plan has been prepared.",
+      requiresAcknowledgment: false
+    },
+    med_steroid: {
+      label: "Steroid Use",
+      clause: "Chronic steroid use may lead to adrenal suppression and wound healing problems. A perioperative protocol has been planned.",
+      requiresAcknowledgment: false
+    },
+    med_supplements: {
+      label: "Herbal / Supplement Products",
+      clause: "Use of herbal/supplement products has been confirmed and a cessation protocol has been applied.",
+      requiresAcknowledgment: false
+    },
+    heart_murmur: {
+      label: "Heart Murmur",
+      clause: "Heart murmur has been evaluated by cardiology consultation and clearance for surgery has been obtained.",
+      requiresAcknowledgment: false
+    },
+    shortness_of_breath: {
+      label: "Shortness of Breath",
+      clause: "Shortness of breath has been investigated with cardiopulmonary evaluation and the patient has been cleared for surgery.",
+      requiresAcknowledgment: false
+    },
+    thalassemia: {
+      label: "Thalassaemia",
+      clause: "Thalassaemia status has been assessed preoperatively and optimised.",
+      requiresAcknowledgment: false
+    },
+    anemia: {
+      label: "Anaemia",
+      clause: "Anaemia has been evaluated preoperatively and haemoglobin level has been optimised for surgery.",
+      requiresAcknowledgment: false
+    }
+  };
+
+  // ─── STATE ────────────────────────────────────────────────────────────────────
+  let currentCase = null;
+  let currentFlags = [];
+
+  // ─── AUTH ─────────────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById("authOverlay").classList.add("hidden");
+      document.getElementById("mainApp").classList.remove("hidden");
+      const params = new URLSearchParams(window.location.search);
+      const caseId = params.get("caseId");
+      if (caseId) {
+        loadCase(caseId);
+      } else {
+        document.getElementById("lookupSection").classList.remove("hidden");
+      }
+    }
+  });
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const btn = document.getElementById("loginBtn");
+    const errEl = document.getElementById("authError");
+    btn.textContent = "Signing in...";
+    btn.disabled = true;
+    errEl.classList.add("hidden");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      errEl.textContent = e.code === "auth/invalid-credential" ? "Incorrect email or password." : e.message;
+      errEl.classList.remove("hidden");
+      btn.textContent = "Sign In";
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("authPassword").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loginBtn").click();
+  });
+
+  // ─── CASE LOADING ─────────────────────────────────────────────────────────────
+  document.getElementById("loadCaseBtn").addEventListener("click", () => {
+    const id = document.getElementById("caseIdInput").value.trim();
+    if (id) loadCase(id);
+  });
+  document.getElementById("caseIdInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loadCaseBtn").click();
+  });
+  document.getElementById("retryBtn").addEventListener("click", () => {
+    document.getElementById("errorSection").classList.add("hidden");
+    document.getElementById("lookupSection").classList.remove("hidden");
+  });
+
+  async function loadCase(caseId) {
+    document.getElementById("lookupSection").classList.add("hidden");
+    document.getElementById("errorSection").classList.add("hidden");
+    document.getElementById("consentDocument").classList.add("hidden");
+    document.getElementById("navButtons").classList.add("hidden");
+    document.getElementById("loadingSection").classList.remove("hidden");
+    try {
+      const snap = await getDoc(doc(db, "cases", caseId));
+      if (!snap.exists()) throw new Error("No case found with the given ID.");
+      currentCase = { id: caseId, ...snap.data() };
+      currentFlags = computeFlags(currentCase);
+      document.getElementById("loadingSection").classList.add("hidden");
+      renderConsentForm();
+      document.getElementById("consentDocument").classList.remove("hidden");
+      document.getElementById("navButtons").classList.remove("hidden");
+    } catch (e) {
+      document.getElementById("loadingSection").classList.add("hidden");
+      document.getElementById("errorMsg").textContent = e.message || "An error occurred while loading the case.";
+      document.getElementById("errorSection").classList.remove("hidden");
+    }
+  }
+
+  // ─── FLAG COMPUTATION (in sync with clinician-en.html) ───────────────────────
+  function computeFlags(caseData, overrides = {}) {
+    const flags = [];
+    try {
+      const r = caseData?.risks ?? {};
+      const bmi = overrides.bmi ?? caseData?.anthropometrics?.bmi ?? null;
+      const proc = caseData?.procedure?.name ?? "";
+      const asa = overrides.asa ?? caseData?.clinician?.asa ?? null;
+      const smokingCV = overrides.smokingVerified ?? caseData?.clinician?.smokingVerified ?? null;
+      const anticoagCV = overrides.anticoagVerified ?? caseData?.clinician?.anticoagVerified ?? null;
+
+      if (asa === "4") flags.push({ type: "HARD", key: "asa4" });
+      if (r.activeMalignancy) flags.push({ type: "HARD", key: "malignancy" });
+      if (r.dvt) flags.push({ type: "HARD", key: "dvt" });
+      if (anticoagCV === "active") {
+        flags.push({ type: "HARD", key: "anticoag_active" });
+      } else if (!anticoagCV && (r.medBloodThinners || r.anticoagulant)) {
+        flags.push({ type: "VERIFY", key: "anticoag_verify" });
+      }
+      if (r.medGlp1) flags.push({ type: "HARD", key: "med_glp1" });
+      if (r.medSglt2) flags.push({ type: "HARD", key: "med_sglt2" });
+      if (r.sickleCell) flags.push({ type: "HARD", key: "sickle_cell" });
+      if (r.anestheticReaction) flags.push({ type: "HARD", key: "anesthetic_reaction" });
+
+      const highBmiProcs = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
+      const isHBP = highBmiProcs.some(p => proc.includes(p));
+      if (bmi !== null) {
+        if (bmi >= 40 && isHBP) flags.push({ type: "HARD", key: "bmi40" });
+        else if (bmi >= 35 && isHBP) flags.push({ type: "SOFT", key: "bmi35" });
+      }
+
+      if (r.medOcp) {
+        const highDvtProcs = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
+        if (highDvtProcs.some(p => proc.includes(p))) {
+          flags.push({ type: "SOFT", key: "med_ocp_dvt" });
+        } else {
+          flags.push({ type: "SOFT", key: "med_ocp" });
+        }
+      }
+
+      if (smokingCV === "active") {
+        flags.push({ type: "SOFT", key: "smoking_active" });
+      } else if (!smokingCV && r.smoking === "active") {
+        flags.push({ type: "SOFT", key: "smoking_active" });
+      }
+
+      if (r.medAcne) flags.push({ type: "SOFT", key: "med_acne" });
+      if (r.medPsych) flags.push({ type: "SOFT", key: "med_psych" });
+      if (r.medSteroid) flags.push({ type: "VERIFY", key: "med_steroid" });
+      if (r.medNsaid) flags.push({ type: "SOFT", key: "med_nsaid" });
+      if (r.medSupplements) flags.push({ type: "VERIFY", key: "med_supplements" });
+      if (r.keloid) flags.push({ type: "SOFT", key: "keloid" });
+      if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection" });
+      if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision" });
+      if (r.hiv) flags.push({ type: "VERIFY", key: "hiv" });
+      if (r.hepatitis) flags.push({ type: "VERIFY", key: "hepatitis" });
+      if (r.heartMurmur) flags.push({ type: "VERIFY", key: "heart_murmur" });
+      if (r.shortnessOfBreath) flags.push({ type: "VERIFY", key: "shortness_of_breath" });
+      if (r.thalassemia) flags.push({ type: "VERIFY", key: "thalassemia" });
+      if (r.anemia) flags.push({ type: "VERIFY", key: "anemia" });
+      if (r.asthma) flags.push({ type: "SOFT", key: "asthma" });
+      if (r.thyroid) flags.push({ type: "SOFT", key: "thyroid" });
+      if (r.psychiatricDisorder) flags.push({ type: "SOFT", key: "psych_disorder" });
+      if (r.sickleCellTrait) flags.push({ type: "SOFT", key: "sickle_cell_trait" });
+      if (r.bloodTransfusion) flags.push({ type: "SOFT", key: "blood_transfusion" });
+      if (r.medAllergy) flags.push({ type: "VERIFY", key: "med_allergy" });
+    } catch (e) {}
+    return flags;
+  }
+
+  // ─── RENDER CONSENT FORM ──────────────────────────────────────────────────────
+  function renderConsentForm() {
+    const c = currentCase;
+    const procName = c.procedure?.name ?? "Surgical Procedure";
+    const template = PROCEDURE_TEMPLATES[procName] || {
+      name: procName,
+      definition: "Information regarding this procedure is being prepared.",
+      purpose: "The purpose of the procedure has been explained by the clinician.",
+      specificRisks: [],
+      alternatives: ["Maintaining current appearance"]
+    };
+
+    const flagClauses = currentFlags
+      .map(f => FLAG_RISK_CLAUSES[f.key])
+      .filter(Boolean)
+      .filter((m, i, arr) => arr.findIndex(x => x.label === m.label) === i);
+
+    const acknowledgmentItems = flagClauses.filter(m => m.requiresAcknowledgment);
+    const infoItems = flagClauses.filter(m => !m.requiresAcknowledgment);
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const timeStr = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    const bmi = c.anthropometrics?.bmi ?? c.clinician?.bmiMeasured ?? null;
+
+    document.getElementById("consentDocument").innerHTML = `
+      <div class="bg-white shadow-lg rounded-2xl overflow-hidden">
+
+        <!-- HEADER -->
+        <div class="bg-slate-900 text-white px-8 py-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">SurgiCheck — Consent Document</div>
+              <h1 class="text-xl font-bold">${esc(template.name)}</h1>
+              <p class="text-slate-300 text-sm mt-0.5">INFORMED CONSENT FORM</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <div class="font-mono text-xs text-slate-400 mb-1">${esc(c.id)}</div>
+              <div class="text-slate-300 text-sm">${dateStr} &bull; ${timeStr}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PATIENT INFO BAR -->
+        <div class="bg-slate-50 border-b border-slate-200 px-8 py-3 flex flex-wrap gap-x-6 gap-y-1.5 text-sm">
+          <span><span class="text-slate-500">Patient:</span> <strong class="text-slate-800">${esc(c.patient?.fullName ?? "—")}</strong></span>
+          <span><span class="text-slate-500">Procedure:</span> <strong class="text-slate-800">${esc(procName)}${c.procedure?.revision ? " (Revision)" : ""}</strong></span>
+          ${bmi ? `<span><span class="text-slate-500">BMI:</span> <strong class="text-slate-800">${Number(bmi).toFixed(1)}</strong></span>` : ""}
+          ${c.clinician?.asa ? `<span><span class="text-slate-500">ASA:</span> <strong class="text-slate-800">ASA ${esc(c.clinician.asa)}</strong></span>` : ""}
+          ${c.clinician?.decision ? `<span><span class="text-slate-500">Decision:</span> <strong class="text-slate-800">${esc(c.clinician.decision)}</strong></span>` : ""}
+        </div>
+
+        <!-- FORM BODY -->
+        <div class="px-8 py-6 space-y-7">
+
+          <!-- 1 -->
+          <section>
+            <h2 class="sec-title">1. Procedure Definition</h2>
+            <p class="body-text">${esc(template.definition)}</p>
+          </section>
+
+          <!-- 2 -->
+          <section>
+            <h2 class="sec-title">2. Purpose and Expectation Management</h2>
+            <p class="body-text">${esc(template.purpose)}</p>
+          </section>
+
+          <!-- 3 -->
+          <section>
+            <h2 class="sec-title">3. General Surgical Risks</h2>
+            <ul class="body-text list-items">
+              ${GENERAL_RISKS.map(r => `<li>${esc(r)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 4 -->
+          <section>
+            <h2 class="sec-title">4. ${esc(template.name)} — Procedure-Specific Risks</h2>
+            <ul class="body-text list-items">
+              ${template.specificRisks.map(r => `<li>${esc(r)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 5 — dynamic flag clauses -->
+          ${flagClauses.length > 0 ? `
+          <section class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <h2 class="text-xs font-bold text-amber-900 uppercase tracking-wider pb-2 mb-3 border-b border-amber-200">
+              5. Personalised Risk Disclosure
+              <span class="normal-case text-amber-600 font-normal ml-1">— specific to this patient's risk profile</span>
+            </h2>
+            <div class="space-y-3">
+              ${flagClauses.map(m => `
+                <div class="flex gap-2.5">
+                  <span class="text-amber-500 font-bold text-sm flex-shrink-0 mt-0.5">⚠</span>
+                  <p class="text-sm text-slate-700"><strong class="text-amber-800">${esc(m.label)}:</strong> ${esc(m.clause)}</p>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+          ` : ""}
+
+          <!-- 6 -->
+          <section>
+            <h2 class="sec-title">6. Alternative Treatment Options</h2>
+            <ul class="body-text list-items">
+              ${template.alternatives.map(a => `<li>${esc(a)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 7 -->
+          <section>
+            <h2 class="sec-title">7. Patient Rights</h2>
+            <p class="body-text">${esc(PATIENT_RIGHTS)}</p>
+          </section>
+
+          <!-- 8 -->
+          <section>
+            <h2 class="sec-title">8. Questions and Clarification</h2>
+            <p class="body-text mb-3">All of the patient's questions regarding the procedure, risks, and alternatives have been answered by the clinician.</p>
+            <div class="border border-slate-200 rounded-lg bg-slate-50 p-3">
+              <textarea id="patientNotes" rows="3" placeholder="Patient's additional questions or notes (if any)..."
+                class="w-full bg-transparent text-sm text-slate-700 resize-none focus:outline-none no-print"></textarea>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ACKNOWLEDGMENT SECTION -->
+        ${acknowledgmentItems.length > 0 ? `
+        <div class="bg-rose-50 border-y border-rose-200 px-8 py-6">
+          <h2 class="text-xs font-bold text-rose-900 uppercase tracking-wider mb-1">Items Requiring Individual Acknowledgement</h2>
+          <p class="text-xs text-rose-600 mb-4">Each of the following items is specific to this patient's risk profile and must be read and acknowledged individually.</p>
+          <div class="space-y-3.5" id="acknowledgmentList">
+            ${acknowledgmentItems.map((m, i) => `
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" id="ack_${i}" data-label="${esc(m.label)}"
+                  class="mt-0.5 h-4 w-4 rounded border-rose-300 text-rose-600 focus:ring-rose-500 flex-shrink-0 no-print">
+                <span class="text-sm text-slate-700"><strong class="text-rose-800">${esc(m.label)}:</strong> ${esc(m.clause)}</span>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+        ` : ""}
+
+        <!-- SIGNATURE BLOCK -->
+        <div class="px-8 py-6 space-y-6">
+          <h2 class="sec-title !mt-0">9. Signature Block</h2>
+
+          <!-- Patient Declaration -->
+          <div class="border border-slate-200 rounded-xl p-5 bg-slate-50">
+            <p class="text-sm text-slate-600 italic mb-5 leading-relaxed">
+              "I declare that I have read and understood the above information, that my questions have been answered, and that I give my free and informed consent to this procedure."
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="field-label">Full Name</label>
+                <input type="text" id="patientNameSig" value="${esc(c.patient?.fullName ?? "")}"
+                  class="field-input">
+              </div>
+              <div>
+                <label class="field-label">National ID / Passport No.</label>
+                <input type="text" id="patientIdNo" placeholder="ID number"
+                  class="field-input font-mono">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="field-label">Witness Full Name <span class="font-normal text-slate-400">(optional)</span></label>
+                <input type="text" id="witnessName" placeholder="Witness name"
+                  class="field-input">
+              </div>
+            </div>
+            <div>
+              <label class="field-label mb-2">Patient Signature</label>
+              <canvas id="patientSigCanvas" class="signature-canvas w-full" height="110"></canvas>
+              <div class="flex justify-between items-center mt-1.5">
+                <span class="text-xs text-slate-400">Draw your signature in the box</span>
+                <button class="no-print text-xs text-slate-400 hover:text-rose-600 underline" data-clear="patientSigCanvas">Clear</button>
+              </div>
+            </div>
+            <div class="mt-3 text-xs text-slate-500">
+              <span class="font-semibold">Date / Time:</span> <span id="signedAt">${dateStr} ${timeStr}</span>
+            </div>
+          </div>
+
+          <!-- Clinician Declaration -->
+          <div class="border border-blue-200 rounded-xl p-5 bg-blue-50">
+            <h3 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">10. Clinician Declaration</h3>
+            <p class="text-sm text-slate-600 italic mb-5 leading-relaxed">
+              "I declare that adequate information regarding the procedure, risks, and alternatives has been provided to the patient."
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="field-label">Clinician Full Name</label>
+                <input type="text" id="clinicianNameSig" value="${esc(c.clinician?.name ?? "")}"
+                  class="field-input">
+              </div>
+              <div>
+                <label class="field-label">Medical Licence / Diploma No.</label>
+                <input type="text" id="diplomaNo" placeholder="Licence number"
+                  class="field-input font-mono">
+              </div>
+            </div>
+            <div>
+              <label class="field-label mb-2">Clinician Signature</label>
+              <canvas id="clinicianSigCanvas" class="signature-canvas w-full" height="110"></canvas>
+              <div class="flex justify-between items-center mt-1.5">
+                <span class="text-xs text-slate-400">Draw your signature in the box</span>
+                <button class="no-print text-xs text-slate-400 hover:text-rose-600 underline" data-clear="clinicianSigCanvas">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="bg-slate-50 border-t border-slate-200 px-8 py-4">
+          <p class="text-xs text-slate-500">${esc(LEGAL_FOOTER)}</p>
+          <p class="text-xs text-slate-400 mt-1">SurgiCheck v1.0 — surgicheck.net &bull; Case ID: ${esc(c.id)}</p>
+        </div>
+
+      </div>
+    `;
+
+    // Apply utility classes
+    document.querySelectorAll(".sec-title").forEach(el => {
+      el.className = "text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2 mb-3";
+    });
+    document.querySelectorAll(".body-text").forEach(el => {
+      el.classList.add("text-sm", "text-slate-700", "leading-relaxed");
+    });
+    document.querySelectorAll(".body-text.list-items").forEach(el => {
+      el.classList.add("space-y-1");
+      el.querySelectorAll("li").forEach(li => {
+        li.className = "flex items-start gap-2 before:content-['•'] before:text-slate-400 before:flex-shrink-0 before:mt-0.5";
+      });
+    });
+    document.querySelectorAll(".field-label").forEach(el => {
+      el.className = "block text-xs font-semibold text-slate-600 mb-1";
+    });
+    document.querySelectorAll(".field-input").forEach(el => {
+      el.className = (el.className || "") + " w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black bg-white";
+    });
+
+    setTimeout(() => {
+      initCanvas("patientSigCanvas");
+      initCanvas("clinicianSigCanvas");
+    }, 50);
+
+    document.querySelectorAll("[data-clear]").forEach(btn => {
+      btn.addEventListener("click", () => clearCanvas(btn.dataset.clear));
+    });
+  }
+
+  // ─── SIGNATURE CANVAS ─────────────────────────────────────────────────────────
+  function initCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth || 600;
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    let drawing = false, lastX = 0, lastY = 0;
+
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      const sx = canvas.width / r.width, sy = canvas.height / r.height;
+      const src = e.touches ? e.touches[0] : e;
+      return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
+    }
+
+    canvas.addEventListener("mousedown", e => {
+      drawing = true; const p = getPos(e); lastX = p.x; lastY = p.y;
+      canvas.classList.add("has-sig");
+    });
+    canvas.addEventListener("mousemove", e => {
+      if (!drawing) return;
+      const p = getPos(e);
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke();
+      lastX = p.x; lastY = p.y;
+    });
+    canvas.addEventListener("mouseup", () => { drawing = false; });
+    canvas.addEventListener("mouseleave", () => { drawing = false; });
+
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault(); drawing = true;
+      const p = getPos(e); lastX = p.x; lastY = p.y;
+      canvas.classList.add("has-sig");
+    }, { passive: false });
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      if (!drawing) return;
+      const p = getPos(e);
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke();
+      lastX = p.x; lastY = p.y;
+    }, { passive: false });
+    canvas.addEventListener("touchend", () => { drawing = false; });
+  }
+
+  function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    canvas.classList.remove("has-sig");
+  }
+
+  // ─── SAVE CONSENT ─────────────────────────────────────────────────────────────
+  document.getElementById("saveConsentBtn").addEventListener("click", async () => {
+    if (!currentCase) return;
+    const btn = document.getElementById("saveConsentBtn");
+
+    const patientName = document.getElementById("patientNameSig")?.value.trim();
+    const clinicianName = document.getElementById("clinicianNameSig")?.value.trim();
+    if (!patientName) { alert("Please enter the patient's full name."); return; }
+    if (!clinicianName) { alert("Please enter the clinician's full name."); return; }
+
+    const ackItems = document.querySelectorAll("#acknowledgmentList input[type=checkbox]");
+    const unchecked = Array.from(ackItems).filter(cb => !cb.checked);
+    if (unchecked.length > 0) {
+      alert("Please acknowledge all items requiring individual consent.");
+      return;
+    }
+
+    const acknowledgedLabels = Array.from(ackItems).map(cb => cb.dataset.label);
+    const patientSig = document.getElementById("patientSigCanvas")?.toDataURL("image/png") ?? null;
+    const clinicianSig = document.getElementById("clinicianSigCanvas")?.toDataURL("image/png") ?? null;
+    const notes = document.getElementById("patientNotes")?.value.trim() ?? "";
+
+    const origHTML = btn.innerHTML;
+    btn.textContent = "Saving...";
+    btn.disabled = true;
+
+    try {
+      const consentRef = await addDoc(collection(db, "consents"), {
+        caseId: currentCase.id,
+        procedureName: currentCase.procedure?.name ?? "",
+        patientName,
+        patientNationalId: document.getElementById("patientIdNo")?.value.trim() ?? "",
+        witnessName: document.getElementById("witnessName")?.value.trim() ?? "",
+        clinicianName,
+        diplomaNo: document.getElementById("diplomaNo")?.value.trim() ?? "",
+        patientSignature: patientSig,
+        clinicianSignature: clinicianSig,
+        acknowledgedItems: acknowledgedLabels,
+        patientNotes: notes,
+        flagKeys: currentFlags.map(f => f.key),
+        signedAt: serverTimestamp(),
+        createdAt: serverTimestamp()
+      });
+
+      await updateDoc(doc(db, "cases", currentCase.id), {
+        consentSigned: true,
+        consentId: consentRef.id,
+        updatedAt: serverTimestamp()
+      });
+
+      const toast = document.getElementById("successToast");
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 4000);
+
+      btn.textContent = "✓ Saved";
+      btn.classList.remove("bg-emerald-600", "hover:bg-emerald-700");
+      btn.classList.add("bg-slate-400", "cursor-default");
+    } catch (e) {
+      alert("Save error: " + e.message);
+      btn.innerHTML = origHTML;
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+  // ─── UTILITY ──────────────────────────────────────────────────────────────────
+  function esc(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+</script>
+
+</body>
+</html>
