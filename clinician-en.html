@@ -424,6 +424,22 @@
       if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Poor Scarring", desc: "Scar consent must be obtained." });
       if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Past Abdominal Surgery", desc: "Fascial defect consideration." });
       if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revision Surgery", desc: "Anatomical plane difficulty." });
+
+      // New extended conditions
+      if (r.sickleCell) flags.push({ type: "HARD", key: "sickle_cell", title: "Sickle Cell Disease", desc: "High perioperative crisis risk; hematology consult mandatory before any elective surgery." });
+      if (r.anestheticReaction) flags.push({ type: "HARD", key: "anesthetic_reaction", title: "Prior Adverse Anesthetic Reaction", desc: "Anesthesia team must review and document reaction type before proceeding." });
+      if (r.hiv) flags.push({ type: "VERIFY", key: "hiv", title: "HIV Positive", desc: "Confirm viral load/CD4 count and current ARV regimen; infection risk and drug interactions." });
+      if (r.hepatitis) flags.push({ type: "VERIFY", key: "hepatitis", title: "Hepatitis (A/B/C)", desc: "Active hepatitis may impair drug metabolism and wound healing; verify current status and liver function." });
+      if (r.heartMurmur) flags.push({ type: "VERIFY", key: "heart_murmur", title: "Heart Murmur", desc: "Requires cardiology clearance to rule out structural/valvular disease before GA." });
+      if (r.shortnessOfBreath) flags.push({ type: "VERIFY", key: "shortness_of_breath", title: "Shortness of Breath", desc: "Unexplained dyspnea requires cardiopulmonary evaluation prior to anesthesia." });
+      if (r.thalassemia) flags.push({ type: "VERIFY", key: "thalassemia", title: "Thalassemia", desc: "Assess current hemoglobin, transfusion history and anemia severity." });
+      if (r.anemia) flags.push({ type: "VERIFY", key: "anemia", title: "Anemia", desc: "Pre-op hemoglobin/hematocrit required; may need optimization before elective surgery." });
+      if (r.asthma) flags.push({ type: "SOFT", key: "asthma", title: "Asthma", desc: "Airway hyperreactivity risk; ensure optimized control and review bronchodilator plan." });
+      if (r.thyroid) flags.push({ type: "SOFT", key: "thyroid", title: "Thyroid Disease", desc: "Confirm euthyroid state; thyroid dysfunction affects anesthetic drug metabolism." });
+      if (r.psychiatricDisorder || r.medPsych) flags.push({ type: "SOFT", key: "psych_disorder", title: "Psychiatric Disorder", desc: "Screen for BDD; coordinate with psychiatry if indicated." });
+      if (r.sickleCellTrait) flags.push({ type: "SOFT", key: "sickle_cell_trait", title: "Sickle Cell Trait", desc: "Low baseline risk but avoid hypoxia, hypothermia, and dehydration perioperatively." });
+      if (r.bloodTransfusion) flags.push({ type: "SOFT", key: "blood_transfusion", title: "Prior Blood Transfusion", desc: "Note blood type, alloantibodies risk; ensure cross-match available if major surgery." });
+      if (r.medAllergy) flags.push({ type: "VERIFY", key: "med_allergy", title: "Medication Allergy", desc: `Patient reported allergy: "${r.medAllergy}". Confirm with anesthesia team.` });
     } catch (e) {}
     return flags;
   }
@@ -544,6 +560,145 @@
       action_protocol: [
         "Capture exact product name, dose, and frequency.",
         "For elective surgery, many supplements are held about 7 days pre-op."
+      ]
+    },
+    sickle_cell: {
+      severity: "HARD_STOP",
+      title: "Sickle Cell Disease & Perioperative Crisis",
+      mechanism: "Hypoxia, hypothermia, dehydration, and acidosis can precipitate vaso-occlusive crisis or acute chest syndrome.",
+      action_protocol: [
+        "Mandatory hematology consultation before elective surgery.",
+        "Pre-op exchange transfusion if Hb S% is high; target HbS <30% for major cases.",
+        "Ensure optimized hydration, oxygenation, and temperature control perioperatively."
+      ]
+    },
+    anesthetic_reaction: {
+      severity: "HARD_STOP",
+      title: "Prior Adverse/Allergic Anesthetic Reaction",
+      mechanism: "Previous anaphylaxis or malignant hyperthermia requires specific anesthetic protocol modification.",
+      action_protocol: [
+        "Document reaction type (anaphylaxis vs. MH vs. drug-specific allergy).",
+        "Anesthesia team must review and approve plan before scheduling.",
+        "Malignant hyperthermia: avoid triggering agents; dantrolene must be available."
+      ]
+    },
+    hiv: {
+      severity: "VERIFY",
+      title: "HIV Infection & Immunocompromise",
+      mechanism: "Immunosuppression, ARV drug interactions, and infection risk require careful perioperative planning.",
+      action_protocol: [
+        "Confirm current CD4 count, viral load, and ARV regimen.",
+        "Review ARV interactions with anesthetic and analgesic drugs.",
+        "Optimize nutritional status; consider enhanced prophylaxis for wound infection."
+      ]
+    },
+    hepatitis: {
+      severity: "VERIFY",
+      title: "Hepatitis & Liver Function",
+      mechanism: "Active or chronic hepatitis can impair drug metabolism, coagulation, and wound healing.",
+      action_protocol: [
+        "Check LFTs, coagulation profile (PT/INR), and hepatitis serology.",
+        "If active infection: delay elective surgery until controlled.",
+        "Review drug dosing for hepatically metabolized agents."
+      ]
+    },
+    heart_murmur: {
+      severity: "VERIFY",
+      title: "Heart Murmur — Structural Evaluation Required",
+      mechanism: "Undiagnosed valvular or structural defect may pose significant risk under general anesthesia.",
+      action_protocol: [
+        "Obtain echocardiogram if not performed in last 12 months.",
+        "Cardiology clearance required before elective GA.",
+        "Assess for infective endocarditis prophylaxis need."
+      ]
+    },
+    shortness_of_breath: {
+      severity: "VERIFY",
+      title: "Unexplained Dyspnea — Cardiopulmonary Evaluation",
+      mechanism: "Dyspnea at rest or mild exertion may indicate heart failure, PE, COPD, or pulmonary hypertension.",
+      action_protocol: [
+        "Cardiopulmonary work-up: ECG, CXR, spirometry, echocardiography as indicated.",
+        "Do not proceed with elective surgery until cause is identified and optimized."
+      ]
+    },
+    thalassemia: {
+      severity: "VERIFY",
+      title: "Thalassemia — Anemia & Transfusion Risk",
+      mechanism: "Baseline anemia, iron overload, and hemolytic tendency increase perioperative transfusion risk.",
+      action_protocol: [
+        "Check baseline CBC, reticulocyte count, and iron studies.",
+        "Aim for Hb ≥8-10 g/dL before elective surgery; consider pre-op transfusion.",
+        "Coordinate with hematology for major cases."
+      ]
+    },
+    anemia: {
+      severity: "VERIFY",
+      title: "Anemia — Pre-op Optimization Required",
+      mechanism: "Perioperative anemia increases transfusion risk, tissue hypoxia, and prolonged recovery.",
+      action_protocol: [
+        "Obtain CBC; determine etiology (iron deficiency, B12, chronic disease).",
+        "Iron supplementation or EPO therapy if time allows.",
+        "Target Hb ≥10 g/dL before elective surgery."
+      ]
+    },
+    asthma: {
+      severity: "WARNING",
+      title: "Asthma — Airway Hyperreactivity",
+      mechanism: "Bronchospasm risk during intubation and extubation; may require modified anesthetic technique.",
+      action_protocol: [
+        "Ensure optimal asthma control pre-op (no wheeze, no recent exacerbation).",
+        "Continue inhaled bronchodilators up to day of surgery.",
+        "Anesthesia team to prepare for possible bronchospasm management."
+      ]
+    },
+    thyroid: {
+      severity: "WARNING",
+      title: "Thyroid Disorder — Metabolic Optimization",
+      mechanism: "Hypothyroidism and hyperthyroidism both affect anesthetic drug metabolism and cardiovascular stability.",
+      action_protocol: [
+        "Confirm euthyroid state with recent TSH.",
+        "Delay elective surgery if significantly hypo/hyperthyroid.",
+        "Review any thyroid medications and interactions."
+      ]
+    },
+    psych_disorder: {
+      severity: "WARNING",
+      title: "Psychiatric Disorder — BDD & Perioperative Coordination",
+      mechanism: "Underlying psychiatric conditions including BDD can affect surgical outcome satisfaction and recovery compliance.",
+      action_protocol: [
+        "Screen for Body Dysmorphic Disorder (BDD) with validated tool if indicated.",
+        "Do not abruptly stop psychiatric medications; coordinate with psychiatry/anesthesia.",
+        "Ensure realistic expectations are documented."
+      ]
+    },
+    sickle_cell_trait: {
+      severity: "WARNING",
+      title: "Sickle Cell Trait — Perioperative Precautions",
+      mechanism: "While trait carriers rarely crisis, extreme hypoxia or hypothermia can cause localized sickling.",
+      action_protocol: [
+        "Avoid hypoxia, hypothermia, hypovolemia, and acidosis.",
+        "Ensure adequate oxygenation and hydration perioperatively.",
+        "No routine pre-op exchange transfusion needed."
+      ]
+    },
+    blood_transfusion: {
+      severity: "WARNING",
+      title: "Prior Blood Transfusion — Alloantibodies Risk",
+      mechanism: "Previous transfusions may have produced alloantibodies, complicating cross-matching.",
+      action_protocol: [
+        "Notify blood bank of transfusion history.",
+        "Perform extended cross-match if surgery with significant blood loss expected.",
+        "Document blood type and alloantibody screen."
+      ]
+    },
+    med_allergy: {
+      severity: "VERIFY",
+      title: "Reported Medication Allergy",
+      mechanism: "Allergic reactions to medications can be life-threatening in surgical settings.",
+      action_protocol: [
+        "Document specific allergen, reaction type, and severity.",
+        "Communicate to anesthesia team before surgery.",
+        "Ensure safe alternative medications are identified."
       ]
     }
   };
@@ -677,15 +832,17 @@
 
     const genderLabelEN = { female: "Female", male: "Male", other: "Other" };
     const genderTextEN = genderLabelEN[selectedCase.patient?.gender] ?? "—";
+    const countryText = selectedCase.patient?.country ? ` · ${selectedCase.patient.country}` : "";
+    const birthdayText = selectedCase.patient?.birthday ? ` · DOB: ${selectedCase.patient.birthday}` : "";
     document.getElementById("patientMeta").textContent =
-      `${selectedCase.patient?.age ?? "?"} yo · ${genderTextEN} · Tel: ${selectedCase.patient?.phone ?? ""}`;
+      `${selectedCase.patient?.age ?? "?"} yo · ${genderTextEN} · Tel: ${selectedCase.patient?.phone ?? ""}${countryText}${birthdayText}`;
 
     const a = selectedCase.anthropometrics ?? {};
     const r = selectedCase.risks ?? {};
 
     const medsList = [];
     if (r.medBloodThinners) medsList.push("Blood Thinner");
-    if (r.medOcp) medsList.push("Birth Control");
+    if (r.medOcp) medsList.push("Birth Control/HRT");
     if (r.medGlp1) medsList.push("Weight Loss (GLP-1)");
     if (r.medAcne) medsList.push("Acne Meds");
     if (r.medPsych) medsList.push("Psychiatric");
@@ -716,6 +873,8 @@
 
     grid.appendChild(field("Procedure", selectedCase.procedure?.name ?? "—", "text-lg"));
     grid.appendChild(field("Gender", genderLabelEN[selectedCase.patient?.gender] ?? "—"));
+    grid.appendChild(field("Country", selectedCase.patient?.country ?? "—"));
+    grid.appendChild(field("Date of Birth", selectedCase.patient?.birthday ?? "—"));
     grid.appendChild(field("Height/Weight/BMI", `${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / ${a.bmi ?? "?"}`));
     grid.appendChild(field("Smoking", r.smoking ?? "—", r.smoking === "active" ? "text-rose-600 font-black" : ""));
     grid.appendChild(field("Major Meds", medsList.length > 0 ? medsList.join(", ") : "None"));
@@ -742,6 +901,31 @@
     medTimingDiv.appendChild(medTimingVal);
     grid.appendChild(medTimingDiv);
 
+    const allergyDiv = document.createElement("div");
+    allergyDiv.className = "col-span-2";
+    const allergyLbl = document.createElement("span");
+    allergyLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+    allergyLbl.textContent = "Medication Allergy";
+    const allergyVal = document.createElement("i");
+    allergyVal.className = r.medAllergy ? "text-rose-700 font-bold not-italic" : "";
+    allergyVal.textContent = r.medAllergy || "None reported";
+    allergyDiv.appendChild(allergyLbl);
+    allergyDiv.appendChild(allergyVal);
+    grid.appendChild(allergyDiv);
+
+    if (r.herbDetail) {
+      const herbDiv = document.createElement("div");
+      herbDiv.className = "col-span-2";
+      const herbLbl = document.createElement("span");
+      herbLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+      herbLbl.textContent = "Herbal Supplements / Vitamins";
+      const herbVal = document.createElement("i");
+      herbVal.textContent = r.herbDetail;
+      herbDiv.appendChild(herbLbl);
+      herbDiv.appendChild(herbVal);
+      grid.appendChild(herbDiv);
+    }
+
     const hasCardiac = r.cardiac || r.ht || r.diabetes;
     const cardiacDiv = document.createElement("div");
     const cardiacLbl = document.createElement("span");
@@ -766,6 +950,51 @@
     dvtDiv.appendChild(dvtVal);
     grid.appendChild(dvtDiv);
 
+    // New extended conditions
+    const newConds = [
+      { label: "Anemia", key: "anemia", warn: true },
+      { label: "Asthma", key: "asthma", warn: true },
+      { label: "Thyroid", key: "thyroid", warn: true },
+      { label: "Anesthetic Rxn", key: "anestheticReaction", warn: true },
+      { label: "Blood Transfusion", key: "bloodTransfusion", warn: false },
+      { label: "Psychiatric Disorder", key: "psychiatricDisorder", warn: true },
+      { label: "Hepatitis", key: "hepatitis", warn: true },
+      { label: "HIV", key: "hiv", warn: true },
+      { label: "Heart Murmur", key: "heartMurmur", warn: true },
+      { label: "Thalassemia", key: "thalassemia", warn: true },
+      { label: "Shortness of Breath", key: "shortnessOfBreath", warn: true },
+      { label: "Sickle Cell Trait", key: "sickleCellTrait", warn: true },
+      { label: "Sickle Cell Disease", key: "sickleCell", warn: true },
+    ];
+    newConds.forEach(({ label, key, warn }) => {
+      const val = r[key];
+      if (!val) return;
+      const d = document.createElement("div");
+      const lbl = document.createElement("span");
+      lbl.className = "text-slate-400 block text-xs uppercase font-bold";
+      lbl.textContent = label;
+      const v = document.createElement("span");
+      v.className = warn ? "text-amber-600 font-bold" : "font-bold";
+      v.textContent = "YES";
+      d.appendChild(lbl);
+      d.appendChild(v);
+      grid.appendChild(d);
+    });
+
+    // Prev surgeries
+    if (r.prevSurgeriesYes) {
+      const psDiv = document.createElement("div");
+      psDiv.className = "col-span-2";
+      const psLbl = document.createElement("span");
+      psLbl.className = "text-slate-400 block text-xs uppercase font-bold";
+      psLbl.textContent = "Previous Surgeries";
+      const psVal = document.createElement("i");
+      psVal.textContent = r.prevSurgeriesDetail || "Yes (no details)";
+      psDiv.appendChild(psLbl);
+      psDiv.appendChild(psVal);
+      grid.appendChild(psDiv);
+    }
+
     decl.appendChild(grid);
 
     const notes = document.createElement("div");
@@ -779,6 +1008,14 @@
     historyP.appendChild(historyB);
     historyP.appendChild(historyText);
 
+    const addlP = document.createElement("div");
+    addlP.className = "mb-2";
+    const addlB = document.createElement("b");
+    addlB.textContent = "Additional Notes: ";
+    const addlText = document.createTextNode(selectedCase.additionalHistory || "—");
+    addlP.appendChild(addlB);
+    addlP.appendChild(addlText);
+
     const expectP = document.createElement("div");
     const expectB = document.createElement("b");
     expectB.textContent = "Expectation: ";
@@ -791,6 +1028,7 @@
     consentP.textContent = selectedCase.legalConsentVerified ? "✓ Legal consent confirmed." : "⚠ Missing legal consent.";
 
     notes.appendChild(historyP);
+    notes.appendChild(addlP);
     notes.appendChild(expectP);
     notes.appendChild(consentP);
     decl.appendChild(notes);

@@ -452,6 +452,22 @@
       if (r.keloid) flags.push({ type: "SOFT", key: "keloid", title: "Kötü Skar", desc: "Revizyon/Skar onamı alınmalı." });
       if (r.csection && proc === "Tummy Tuck") flags.push({ type: "SOFT", key: "csection", title: "Geçirilmiş Batın Cerrahisi", desc: "Fasyal anatomi defekti." });
       if (caseData?.procedure?.revision) flags.push({ type: "SOFT", key: "revision", title: "Revizyon Cerrahisi", desc: "Anatomik plan zorluğu." });
+
+      // Yeni genişletilmiş hastalık bayrakları
+      if (r.sickleCell) flags.push({ type: "HARD", key: "sickle_cell", title: "Orak Hücre Hastalığı", desc: "Perioperatif kriz riski yüksek; elektif cerrahiden önce hematoloji konsültasyonu zorunlu." });
+      if (r.anestheticReaction) flags.push({ type: "HARD", key: "anesthetic_reaction", title: "Önceki Anestezi Reaksiyonu", desc: "Anestezi ekibi reaksiyon türünü belgelemeli ve onay vermeli." });
+      if (r.hiv) flags.push({ type: "VERIFY", key: "hiv", title: "HIV Pozitif", desc: "Viral yük/CD4 sayısı ve ARV rejimi doğrulanmalı; ilaç etkileşimleri gözden geçirilmeli." });
+      if (r.hepatitis) flags.push({ type: "VERIFY", key: "hepatitis", title: "Hepatit (A/B/C)", desc: "Aktif hepatit ilaç metabolizmasını ve yara iyileşmesini bozabilir; mevcut durum ve karaciğer fonksiyonu doğrulanmalı." });
+      if (r.heartMurmur) flags.push({ type: "VERIFY", key: "heart_murmur", title: "Kalp Üfürümü", desc: "Genel anestezi öncesinde yapısal/kapak hastalığını dışlamak için kardiyoloji onayı gerekli." });
+      if (r.shortnessOfBreath) flags.push({ type: "VERIFY", key: "shortness_of_breath", title: "Nefes Darlığı", desc: "Açıklanamayan dispne kardiyopulmoner değerlendirme gerektirir." });
+      if (r.thalassemia) flags.push({ type: "VERIFY", key: "thalassemia", title: "Talasemi", desc: "Güncel hemoglobin, transfüzyon geçmişi ve anemi şiddeti değerlendirilmeli." });
+      if (r.anemia) flags.push({ type: "VERIFY", key: "anemia", title: "Anemi", desc: "Preoperatif hemoglobin/hematokrit gerekli; elektif cerrahi öncesi optimizasyon gerekebilir." });
+      if (r.asthma) flags.push({ type: "SOFT", key: "asthma", title: "Astım", desc: "Havayolu hiperreaktivite riski; optimal kontrol ve bronkodilatör planı gözden geçirilmeli." });
+      if (r.thyroid) flags.push({ type: "SOFT", key: "thyroid", title: "Tiroid Hastalığı", desc: "Ötiroid durum doğrulanmalı; tiroid disfonksiyonu anestezik ilaç metabolizmasını etkiler." });
+      if (r.psychiatricDisorder || r.medPsych) flags.push({ type: "SOFT", key: "psych_disorder", title: "Psikiyatrik Bozukluk", desc: "BDD (Beden Dismorfik Bozukluğu) taraması yapılmalı; gerekirse psikiyatri konsültasyonu." });
+      if (r.sickleCellTrait) flags.push({ type: "SOFT", key: "sickle_cell_trait", title: "Orak Hücre Taşıyıcılığı", desc: "Bazal risk düşük ancak perioperatif hipoksi, hipotermi ve dehidrasyondan kaçınılmalı." });
+      if (r.bloodTransfusion) flags.push({ type: "SOFT", key: "blood_transfusion", title: "Kan Transfüzyonu Öyküsü", desc: "Aloantikorlar riski; majör cerrahi öncesi çapraz karşılaştırma yapılmalı." });
+      if (r.medAllergy) flags.push({ type: "VERIFY", key: "med_allergy", title: "İlaç Alerjisi Bildirildi", desc: `Hasta ilaç alerjisi bildirdi: "${r.medAllergy}". Anestezi ekibi ile doğrulanmalı.` });
     } catch (e) {}
     return flags;
   }
@@ -572,7 +588,21 @@
         "Ürün adı/dozu/sıklığı net liste halinde alınmalıdır.",
         "Elektif cerrahi öncesi çoğu ürün için yaklaşık 7 gün kesim planı tercih edilir."
       ]
-    }
+    },
+    sickle_cell: { severity: "HARD_STOP", title: "Orak Hücre Hastalığı", mechanism: "Hipoksi/hipotermi/dehidrasyon kriz tetikleyebilir.", action_protocol: ["Hematoloji konsültasyonu zorunlu.", "HbS <%30 hedeflenmeli.", "Perioperatif hidrasyon ve oksijenasyon."] },
+    anesthetic_reaction: { severity: "HARD_STOP", title: "Önceki Anestezi Reaksiyonu", mechanism: "Anafilaksi veya MH öyküsü anestezi protokolünü değiştirir.", action_protocol: ["Reaksiyon türü belgelenmeli.", "Anestezi ekibi planlama aşamasında onaylamalı.", "MH: dantrolen hazır bulundurulmalı."] },
+    hiv: { severity: "VERIFY", title: "HIV Pozitif", mechanism: "İmmünsüpresyon ve ARV etkileşimleri.", action_protocol: ["CD4/viral yük ve ARV doğrulanmalı.", "İlaç etkileşimleri gözden geçirilmeli."] },
+    hepatitis: { severity: "VERIFY", title: "Hepatit", mechanism: "Karaciğer disfonksiyonu ilaç metabolizmasını bozar.", action_protocol: ["KC enzimleri ve koagülasyon kontrol edilmeli.", "Aktifse cerrahi ertelenmeli."] },
+    heart_murmur: { severity: "VERIFY", title: "Kalp Üfürümü", mechanism: "Yapısal/kapak hastalığı riski.", action_protocol: ["Ekokardiyografi yapılmalı.", "Kardiyoloji onayı alınmalı."] },
+    shortness_of_breath: { severity: "VERIFY", title: "Nefes Darlığı", mechanism: "Kardiyopulmoner neden araştırılmalı.", action_protocol: ["EKG, CXR, spirometri, ekokardiyografi.", "Neden çözülmeden cerrahi yapılmamalı."] },
+    thalassemia: { severity: "VERIFY", title: "Talasemi", mechanism: "Bazal anemi ve transfüzyon riski.", action_protocol: ["CBC ve demir çalışmaları.", "Hb ≥8-10 g/dL hedeflenmeli."] },
+    anemia: { severity: "VERIFY", title: "Anemi", mechanism: "Perioperatif hipoksi ve transfüzyon riski.", action_protocol: ["CBC ve etiyoloji belirlenmeli.", "Hb ≥10 g/dL hedeflenmeli."] },
+    asthma: { severity: "WARNING", title: "Astım", mechanism: "Bronkospazm riski.", action_protocol: ["Optimal kontrol sağlanmalı.", "Bronkodilatörler sürdürülmeli."] },
+    thyroid: { severity: "WARNING", title: "Tiroid Hastalığı", mechanism: "Metabolizma ve kardiyovasküler etki.", action_protocol: ["TSH ile ötiroid durum doğrulanmalı.", "Ağır disfonksiyon varsa cerrahi ertelenmeli."] },
+    psych_disorder: { severity: "WARNING", title: "Psikiyatrik Bozukluk", mechanism: "BDD ve perioperatif uyum riski.", action_protocol: ["BDD taraması yapılmalı.", "Psikiyatrik ilaçlar aniden kesilmemeli."] },
+    sickle_cell_trait: { severity: "WARNING", title: "Orak Hücre Taşıyıcılığı", mechanism: "Aşırı hipoksi lokal oraklanmaya yol açabilir.", action_protocol: ["Hipoksi/hipotermi/hipovolemi önlenmeli.", "Rutin transfüzyon gerekmez."] },
+    blood_transfusion: { severity: "WARNING", title: "Kan Transfüzyonu Öyküsü", mechanism: "Aloantikorlar çapraz karşılaştırmayı güçleştirir.", action_protocol: ["Kan bankasına geçmiş bildirilmeli.", "Genişletilmiş çapraz karşılaştırma yapılmalı."] },
+    med_allergy: { severity: "VERIFY", title: "İlaç Alerjisi Bildirildi", mechanism: "Alerjik reaksiyon cerrahi ortamda hayatı tehdit edebilir.", action_protocol: ["Alerjen ve reaksiyon türü kayıt altına alınmalı.", "Anestezi ekibine bildirilmeli.", "Güvenli alternatifler belirlenmeli."] }
   };
 
   function getClinicalRuleForFlag(flag) {
@@ -704,15 +734,17 @@
 
     const genderLabelTR = { female: "Kadın", male: "Erkek", other: "Diğer" };
     const genderTextTR = genderLabelTR[selectedCase.patient?.gender] ?? "—";
+    const countryTextTR = selectedCase.patient?.country ? ` · ${selectedCase.patient.country}` : "";
+    const birthdayTextTR = selectedCase.patient?.birthday ? ` · D.T.: ${selectedCase.patient.birthday}` : "";
     document.getElementById("patientMeta").textContent =
-      `${selectedCase.patient?.age ?? "?"} yaş · ${genderTextTR} · Tel: ${selectedCase.patient?.phone ?? ""}`;
+      `${selectedCase.patient?.age ?? "?"} yaş · ${genderTextTR} · Tel: ${selectedCase.patient?.phone ?? ""}${countryTextTR}${birthdayTextTR}`;
 
     const a = selectedCase.anthropometrics ?? {};
     const r = selectedCase.risks ?? {};
 
     const medsList = [];
     if (r.medBloodThinners) medsList.push("Kan Sulandırıcı");
-    if (r.medOcp) medsList.push("Doğum Kontrol");
+    if (r.medOcp) medsList.push("Doğum Kontrol/HRT");
     if (r.medGlp1) medsList.push("Zayıflama (GLP-1)");
     if (r.medAcne) medsList.push("Akne (İzotretinoin)");
     if (r.medPsych) medsList.push("Psikiyatrik");
@@ -743,6 +775,8 @@
 
     grid.appendChild(field("Prosedür", selectedCase.procedure?.name ?? "—", "text-lg"));
     grid.appendChild(field("Cinsiyet", genderLabelTR[selectedCase.patient?.gender] ?? "—"));
+    grid.appendChild(field("Ülke", selectedCase.patient?.country ?? "—"));
+    grid.appendChild(field("Doğum Tarihi", selectedCase.patient?.birthday ?? "—"));
     grid.appendChild(field("Boy/Kilo/BMI", `${a.heightCm ?? "?"}cm / ${a.weightKg ?? "?"}kg / ${a.bmi ?? "?"}`));
     grid.appendChild(field("Sigara", r.smoking ?? "—", r.smoking === "active" ? "text-rose-600 font-black" : ""));
     grid.appendChild(field("Majör İlaçlar", medsList.length > 0 ? medsList.join(", ") : "Yok"));
@@ -769,6 +803,31 @@
     medTimingDiv.appendChild(medTimingVal);
     grid.appendChild(medTimingDiv);
 
+    const allergyDivTR = document.createElement("div");
+    allergyDivTR.className = "col-span-2";
+    const allergyLblTR = document.createElement("span");
+    allergyLblTR.className = "text-slate-400 block text-xs uppercase font-bold";
+    allergyLblTR.textContent = "İlaç Alerjisi";
+    const allergyValTR = document.createElement("i");
+    allergyValTR.className = r.medAllergy ? "text-rose-700 font-bold not-italic" : "";
+    allergyValTR.textContent = r.medAllergy || "Yok";
+    allergyDivTR.appendChild(allergyLblTR);
+    allergyDivTR.appendChild(allergyValTR);
+    grid.appendChild(allergyDivTR);
+
+    if (r.herbDetail) {
+      const herbDivTR = document.createElement("div");
+      herbDivTR.className = "col-span-2";
+      const herbLblTR = document.createElement("span");
+      herbLblTR.className = "text-slate-400 block text-xs uppercase font-bold";
+      herbLblTR.textContent = "Bitkisel Takviye / Vitamin";
+      const herbValTR = document.createElement("i");
+      herbValTR.textContent = r.herbDetail;
+      herbDivTR.appendChild(herbLblTR);
+      herbDivTR.appendChild(herbValTR);
+      grid.appendChild(herbDivTR);
+    }
+
     const hasCardiac = r.cardiac || r.ht || r.diabetes;
     const cardiacDiv = document.createElement("div");
     const cardiacLbl = document.createElement("span");
@@ -793,6 +852,51 @@
     dvtDiv.appendChild(dvtVal);
     grid.appendChild(dvtDiv);
 
+    // Genişletilmiş yeni hastalık alanları
+    const newCondsTR = [
+      { label: "Anemi", key: "anemia", warn: true },
+      { label: "Astım", key: "asthma", warn: true },
+      { label: "Tiroid", key: "thyroid", warn: true },
+      { label: "Anestezi Reaksiyonu", key: "anestheticReaction", warn: true },
+      { label: "Kan Transfüzyonu", key: "bloodTransfusion", warn: false },
+      { label: "Psikiyatrik Bozukluk", key: "psychiatricDisorder", warn: true },
+      { label: "Hepatit", key: "hepatitis", warn: true },
+      { label: "HIV", key: "hiv", warn: true },
+      { label: "Kalp Üfürümü", key: "heartMurmur", warn: true },
+      { label: "Talasemi", key: "thalassemia", warn: true },
+      { label: "Nefes Darlığı", key: "shortnessOfBreath", warn: true },
+      { label: "Orak Hücre Taşıyıcılığı", key: "sickleCellTrait", warn: true },
+      { label: "Orak Hücre Hastalığı", key: "sickleCell", warn: true },
+    ];
+    newCondsTR.forEach(({ label, key, warn }) => {
+      const val = r[key];
+      if (!val) return;
+      const d = document.createElement("div");
+      const lbl = document.createElement("span");
+      lbl.className = "text-slate-400 block text-xs uppercase font-bold";
+      lbl.textContent = label;
+      const v = document.createElement("span");
+      v.className = warn ? "text-amber-600 font-bold" : "font-bold";
+      v.textContent = "EVET";
+      d.appendChild(lbl);
+      d.appendChild(v);
+      grid.appendChild(d);
+    });
+
+    // Geçmiş ameliyatlar
+    if (r.prevSurgeriesYes) {
+      const psDivTR = document.createElement("div");
+      psDivTR.className = "col-span-2";
+      const psLblTR = document.createElement("span");
+      psLblTR.className = "text-slate-400 block text-xs uppercase font-bold";
+      psLblTR.textContent = "Geçmiş Ameliyatlar";
+      const psValTR = document.createElement("i");
+      psValTR.textContent = r.prevSurgeriesDetail || "Evet (detay yok)";
+      psDivTR.appendChild(psLblTR);
+      psDivTR.appendChild(psValTR);
+      grid.appendChild(psDivTR);
+    }
+
     decl.appendChild(grid);
 
     const notes = document.createElement("div");
@@ -806,6 +910,14 @@
     historyP.appendChild(historyB);
     historyP.appendChild(historyText);
 
+    const addlPTR = document.createElement("div");
+    addlPTR.className = "mb-2";
+    const addlBTR = document.createElement("b");
+    addlBTR.textContent = "Ek Notlar: ";
+    const addlTextTR = document.createTextNode(selectedCase.additionalHistory || "—");
+    addlPTR.appendChild(addlBTR);
+    addlPTR.appendChild(addlTextTR);
+
     const expectP = document.createElement("div");
     const expectB = document.createElement("b");
     expectB.textContent = "Beklenti: ";
@@ -818,6 +930,7 @@
     consentP.textContent = selectedCase.legalConsentVerified ? "✓ Hukuki onay alındı." : "⚠ Hukuki onay eksik.";
 
     notes.appendChild(historyP);
+    notes.appendChild(addlPTR);
     notes.appendChild(expectP);
     notes.appendChild(consentP);
     decl.appendChild(notes);
