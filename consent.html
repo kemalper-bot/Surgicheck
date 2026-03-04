@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aydınlatılmış Rıza Formu — SurgiCheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; padding: 0 !important; }
+      #consentDocument { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      #consentDocument > div { box-shadow: none !important; border-radius: 0 !important; }
+      .signature-canvas { border: 1px solid #374151 !important; background: white !important; }
+      textarea { border: 1px solid #e2e8f0 !important; }
+    }
+    @page { margin: 1.2cm; }
+    .signature-canvas {
+      cursor: crosshair;
+      touch-action: none;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 6px;
+      display: block;
+    }
+    .signature-canvas.has-sig {
+      background: white;
+      border: 2px solid #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+<!-- AUTH OVERLAY -->
+<div id="authOverlay" class="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm mx-4">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-bold text-slate-900">SurgiCheck</h1>
+        <p class="text-xs text-slate-500">Rıza Formu Sistemi</p>
+      </div>
+    </div>
+    <h2 class="text-base font-bold text-slate-800 mb-4">Klinisyen Girişi Gerekli</h2>
+    <div id="authError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm mb-4"></div>
+    <input type="email" id="authEmail" placeholder="E-posta" autocomplete="username"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-black">
+    <input type="password" id="authPassword" placeholder="Şifre" autocomplete="current-password"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-black">
+    <button id="loginBtn" class="w-full bg-black text-white rounded-lg py-2.5 text-sm font-bold hover:bg-slate-800 transition-colors">
+      Giriş Yap
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+
+  <!-- TOP NAV -->
+  <nav class="no-print bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+    <div class="flex items-center gap-3">
+      <a href="clinician.html" class="text-slate-400 hover:text-slate-700 transition-colors" title="Kliniyen Paneline Dön">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="font-bold text-slate-800 text-sm">Aydınlatılmış Rıza Formu</span>
+    </div>
+    <div id="navButtons" class="hidden flex gap-2 items-center">
+      <button id="saveConsentBtn" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-emerald-700 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+        Onamı Kaydet
+      </button>
+      <button id="printBtn" class="flex items-center gap-2 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m8-4V3H6v10m6 3v10a2 2 0 01-2 2H6a2 2 0 01-2-2V17"/>
+        </svg>
+        PDF / Yazdır
+      </button>
+    </div>
+  </nav>
+
+  <!-- CASE LOOKUP -->
+  <div id="lookupSection" class="no-print max-w-md mx-auto mt-16 px-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+      <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-bold text-slate-800 mb-2">Rıza Formu Oluştur</h2>
+      <p class="text-sm text-slate-500 mb-5">Rıza formu hazırlamak istediğiniz vakaya ait ID'yi giriniz.</p>
+      <input type="text" id="caseIdInput" placeholder="Vaka ID (örn: AbCdEfGh...)"
+        class="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm mb-3 font-mono focus:outline-none focus:ring-2 focus:ring-black">
+      <button id="loadCaseBtn" class="w-full bg-black text-white rounded-lg py-2.5 text-sm font-bold hover:bg-slate-800 transition-colors">
+        Formu Oluştur
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingSection" class="hidden no-print flex items-center justify-center py-24">
+    <div class="text-center">
+      <div class="w-10 h-10 border-4 border-slate-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-slate-500 text-sm">Vaka yükleniyor...</p>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errorSection" class="hidden no-print max-w-md mx-auto mt-16 px-4">
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+      <svg class="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <h3 class="font-bold text-red-800 mb-2">Vaka Bulunamadı</h3>
+      <p id="errorMsg" class="text-red-600 text-sm mb-4"></p>
+      <button id="retryBtn" class="text-sm text-red-700 underline hover:text-red-900">Tekrar Dene</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS TOAST -->
+  <div id="successToast" class="hidden no-print fixed bottom-5 right-5 bg-emerald-600 text-white rounded-xl px-5 py-3 shadow-xl text-sm font-medium z-20 flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+    </svg>
+    Rıza formu başarıyla kaydedildi
+  </div>
+
+  <!-- CONSENT DOCUMENT -->
+  <div id="consentDocument" class="hidden max-w-3xl mx-auto my-8 px-4 pb-16"></div>
+
+</div><!-- /mainApp -->
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, getDoc, addDoc, collection, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
+    authDomain: "surgicheck-c137e.firebaseapp.com",
+    projectId: "surgicheck-c137e",
+    storageBucket: "surgicheck-c137e.firebasestorage.app",
+    messagingSenderId: "96665183235",
+    appId: "1:96665183235:web:f89a52324cf1583cf19a36"
+  });
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ─── SABIT VERİLER ────────────────────────────────────────────────────────────
+
+  const GENEL_RISKLER = [
+    "Anesteziye bağlı reaksiyonlar",
+    "Enfeksiyon",
+    "Kanama ve hematom",
+    "Yara iyileşme sorunları",
+    "Skar dokusu oluşumu",
+    "Derin ven trombozu (DVT)",
+    "Pulmoner emboli"
+  ];
+
+  const HASTA_HAKLARI = "Hastanın bu girişime onay vermeme veya başlamış olan girişimi durdurma hakkı saklıdır. Bu karar tıbbi bakım kalitesini etkilemeyecektir.";
+  const HUKUKI_NOT = "Bu form, 6698 sayılı KVKK ve Hasta Hakları Yönetmeliği kapsamında hazırlanmıştır.";
+
+  const PROSEDUR_SABLONLARI = {
+    "Rinoplasti": {
+      ad: "Rinoplasti (Burun Estetiği)",
+      tanim: "Rinoplasti, burunun şekil ve/veya fonksiyonunu iyileştirmeye yönelik cerrahi bir girişimdir. Kemik ve kıkırdak yapıların yeniden şekillendirilmesini, burun deliklerinin düzeltilmesini ve/veya septal düzeltme işlemini kapsayabilir.",
+      amac: "Bu ameliyatın amacı hastanın talep ettiği estetik ve/veya fonksiyonel düzeltmeleri sağlamaktır. Sonuçlar kişiden kişiye farklılık gösterebilir; mükemmel simetri garanti edilemez.",
+      spesifikRiskler: [
+        "Septal perforasyon",
+        "Uzun süreli ödem (6–12 ay)",
+        "Koku alma değişiklikleri",
+        "Revizyon ihtiyacı (%5–15)",
+        "Asimetri",
+        "Burun tıkanıklığı (geçici veya kalıcı)"
+      ],
+      alternatifler: [
+        "Cerrahi dışı dolgu enjeksiyonu (non-cerrahi rinoplasti)",
+        "Mevcut durumun korunması (tedavisiz kalma)"
+      ]
+    },
+    "Blefaroplasti": {
+      ad: "Blefaroplasti (Göz Kapağı Estetiği)",
+      tanim: "Blefaroplasti, üst ve/veya alt göz kapaklarındaki fazla deri, kas ve/veya yağ dokusunun alınması amacıyla gerçekleştirilen cerrahi bir girişimdir.",
+      amac: "Bu ameliyatın amacı görünümü genç ve dinç göstermek ve/veya sarkan üst kapak dokusunun görme alanını kısıtlamasını gidermektir. Sonuçlar yaşlanma sürecine bağlı olarak değişim gösterebilir.",
+      spesifikRiskler: [
+        "Kuru göz sendromu",
+        "Geçici çift görme",
+        "Lagoftalmi (göz kapamada yetersizlik)",
+        "Ektropion (alt kapak dışa dönmesi)",
+        "Görme değişikliği (nadir)",
+        "Asimetri"
+      ],
+      alternatifler: [
+        "Botulinum toksin veya dolgu enjeksiyonu",
+        "Lazer cilt yenileme",
+        "Mevcut durumun korunması"
+      ]
+    },
+    "Meme Büyütme": {
+      ad: "Meme Büyütme (Augmentation Mammaplasty)",
+      tanim: "Meme büyütme ameliyatı, silikon veya serum fizyolojik dolu implant kullanılarak meme hacminin ve şeklinin artırılması amacıyla gerçekleştirilen cerrahi bir girişimdir.",
+      amac: "Bu ameliyatın amacı estetik meme büyüklüğü ve şekli hedeflerine ulaşmaktır. İmplant boyutu ve tipi klinisyen ile birlikte belirlenir; mükemmel simetri garanti edilemez.",
+      spesifikRiskler: [
+        "Kapsüler kontraktür (implant etrafında sertleşme)",
+        "İmplant kayması veya rotasyonu",
+        "İmplant rüptürü",
+        "BIA-ALCL riski (nadir, tekstüre implantlarda)",
+        "Emzirme kapasitesinde değişiklik",
+        "Kalıcı duyu değişikliği",
+        "Revizyon veya implant çıkarma ihtiyacı"
+      ],
+      alternatifler: [
+        "Yağ enjeksiyonu ile meme büyütme (lipomodelling)",
+        "Mevcut durumun korunması"
+      ]
+    },
+    "Meme Küçültme": {
+      ad: "Meme Küçültme (Reduction Mammaplasty)",
+      tanim: "Meme küçültme ameliyatı, aşırı büyük memelerin boyutunun azaltılması ve yeniden şekillendirilmesi amacıyla gerçekleştirilen cerrahi bir girişimdir. Deri, yağ ve bez dokusu çıkarılmasını içerir.",
+      amac: "Bu ameliyatın amacı sırt/boyun ağrısı, postür sorunları ve estetik kaygılar gibi semptomların giderilmesidir. Simetri hedeflenmekle birlikte garanti edilemez.",
+      spesifikRiskler: [
+        "Meme başı/areola kaybı (nadir)",
+        "Emzirme kapasitesinde azalma",
+        "Geniş ve kalıcı skar dokusu",
+        "Asimetri",
+        "Yağ nekrozu",
+        "Revizyon ihtiyacı"
+      ],
+      alternatifler: [
+        "Özel destekleyici sutyen kullanımı",
+        "Fizyoterapi ve egzersiz",
+        "Mevcut durumun korunması"
+      ]
+    },
+    "Liposuction": {
+      ad: "Liposuction (Yağ Aldırma)",
+      tanim: "Liposuction, vücudun belirli bölgelerinde biriken yağ dokusunun ince tüpler (kanül) yardımıyla cerrahi olarak uzaklaştırılmasına dayanan estetik bir girişimdir.",
+      amac: "Bu işlemin amacı vücut konturunu iyileştirmek ve orantısız yağ birikintilerini gidermektir. Kilo kaybı için bir yöntem değildir; kalıcı sonuç için sağlıklı yaşam tarzı sürdürülmelidir.",
+      spesifikRiskler: [
+        "Seroma (sıvı birikmesi)",
+        "Düzensiz kontur veya asimetri",
+        "Deri renk değişimi veya sertleşme",
+        "Kanül giriş bölgelerinde iz",
+        "Deri sarkması",
+        "Yağ embolisi (nadir)"
+      ],
+      alternatifler: [
+        "Diyet ve egzersiz programı",
+        "Non-invazif yağ azaltma yöntemleri (kriyolipoliz, HIFU)",
+        "Mevcut durumun korunması"
+      ]
+    },
+    "Tummy Tuck": {
+      ad: "Abdominoplasti (Karın Germe)",
+      tanim: "Abdominoplasti, karın bölgesindeki fazla deri ve yağ dokusunun alınması, karın kaslarının sıkılaştırılması ve göbek deliğinin yeniden konumlandırılmasını içeren kapsamlı bir cerrahi girişimdir.",
+      amac: "Bu ameliyatın amacı karın bölgesinin konturunu ve görünümünü iyileştirmektir. Kilo kontrolü sağlanmadan kalıcı sonuç elde edilemeyebilir; gebelik planlaması olan hastalar için uygun zaman seçimi önerilir.",
+      spesifikRiskler: [
+        "Derin Ven Trombozu (DVT) ve pulmoner emboli",
+        "Seroma",
+        "Geniş ve kalıcı skar dokusu",
+        "Karın alt duvarı hissizliği",
+        "Göbek deliği şekil sorunları",
+        "Yağ nekrozu"
+      ],
+      alternatifler: [
+        "Mini abdominoplasti (sınırlı düzeltme)",
+        "Liposuction (deri fazlalığı yoksa)",
+        "Mevcut durumun korunması"
+      ]
+    },
+    "BBL": {
+      ad: "Brezilya Kalça Estetiği (BBL)",
+      tanim: "BBL (Brazilian Butt Lift), vücuttan alınan yağın kalça bölgesine enjekte edilerek kalça hacim ve konturunun iyileştirildiği kombine bir estetik cerrahi girişimdir. Liposuction ve yağ transferini birlikte içerir.",
+      amac: "Bu ameliyatın amacı kalça bölgesinin estetik görünümünü artırmaktır. Enjekte edilen yağın bir kısmı zamanla eriyor olabilir; final sonuç 6 ay sonra değerlendirilebilir.",
+      spesifikRiskler: [
+        "Yağ embolisi (hayatı tehdit edebilen nadir komplikasyon)",
+        "Yağ nekrozu ve sertlik",
+        "Asimetri",
+        "Seroma",
+        "DVT/pulmoner emboli riski",
+        "Kalça bölgesinde his değişikliği"
+      ],
+      alternatifler: [
+        "Kalça implantı (silikon prostetik)",
+        "Mevcut durumun korunması"
+      ]
+    }
+  };
+
+  const FLAG_RISK_MADDELER = {
+    anticoag_active: {
+      etiket: "Aktif Antikoagülan Kullanımı",
+      metin: "Hastanın aktif antikoagülan kullanımı nedeniyle intraoperatif ve postoperatif kanama riski standart popülasyona kıyasla anlamlı düzeyde artmıştır. Bu durum klinisyen tarafından değerlendirilmiş olup bridging protokolü uygulanarak girişim sürdürülmesine karar verilmiştir.",
+      onayGerekli: true
+    },
+    malignancy: {
+      etiket: "Aktif Malignite",
+      metin: "Aktif malignite öyküsü nedeniyle cerrahi riski artmakta olup onkoloji konsültasyonu tamamlanmış ve girişim uygun bulunmuştur.",
+      onayGerekli: true
+    },
+    dvt: {
+      etiket: "DVT / PE Geçmişi",
+      metin: "DVT/PE geçmişi nedeniyle tromboembolik olay tekrarlama riski artmıştır. Tromboprofilaksi planı uygulanacak olup bu risk hasta tarafından anlaşılmalıdır.",
+      onayGerekli: true
+    },
+    med_glp1: {
+      etiket: "GLP-1 Agonisti Kullanımı",
+      metin: "GLP-1 agonisti kullanımı gastrik boşalmayı geciktirerek genel anestezide aspirasyon riskini artırabilir. İlaç kesme protokolü uygulanmıştır.",
+      onayGerekli: true
+    },
+    med_sglt2: {
+      etiket: "SGLT2 İnhibitörü Kullanımı",
+      metin: "SGLT2 inhibitörü kullanımı perioperatif öglisemik ketoasidoz riskini artırmaktadır. Cerrahi öncesi ilaç kesilmesi protokolü uygulanmıştır.",
+      onayGerekli: true
+    },
+    sickle_cell: {
+      etiket: "Orak Hücre Hastalığı",
+      metin: "Orak hücre hastalığı perioperatif kriz riskini artırmaktadır. Hematoloji konsültasyonu tamamlanmış ve gerekli önlemler planlanmıştır.",
+      onayGerekli: true
+    },
+    anesthetic_reaction: {
+      etiket: "Önceki Anestezi Reaksiyonu",
+      metin: "Önceki anestezi reaksiyonu anestezi protokolünün özel olarak planlanmasını gerektirmektedir. Anestezi ekibi bu durumu değerlendirmiş ve güvenli protokol belirlenmiştir.",
+      onayGerekli: true
+    },
+    bmi40: {
+      etiket: "Yüksek BMI (≥ 40)",
+      metin: "BMI ≥ 40 yüksek operasyonel risk oluşturmaktadır. Artmış komplikasyon riski klinisyen tarafından değerlendirilmiştir.",
+      onayGerekli: true
+    },
+    asa4: {
+      etiket: "ASA IV Risk Sınıfı",
+      metin: "ASA IV risk sınıflaması ciddi sistemik hastalık varlığını göstermektedir. Cerrahi risk anlamlı düzeyde artmış olup klinisyen tarafından değerlendirilmiştir.",
+      onayGerekli: true
+    },
+    anticoag_verify: {
+      etiket: "Antikoagülan Beyanı Doğrulandı",
+      metin: "Antikoagülan/antitrombosit ilaç beyanı doğrulanmış olup tedavi yönetim planı klinisyen tarafından belirlenmiştir.",
+      onayGerekli: true
+    },
+    hiv: {
+      etiket: "HIV Pozitif",
+      metin: "HIV pozitif durum klinisyen tarafından değerlendirilmiş; viral yük ve ARV rejimi doğrulanmıştır.",
+      onayGerekli: true
+    },
+    hepatitis: {
+      etiket: "Hepatit",
+      metin: "Hepatit durumu karaciğer fonksiyon testleri ile değerlendirilmiş ve cerrahi için uygun bulunmuştur.",
+      onayGerekli: true
+    },
+    med_allergy: {
+      etiket: "İlaç Alerjisi Bildirildi",
+      metin: "Bildirilen ilaç alerjisi anestezi ekibi ve cerrahi ekip tarafından kayıt altına alınmış ve güvenli alternatifler belirlenmiştir.",
+      onayGerekli: true
+    },
+    smoking_active: {
+      etiket: "Aktif Sigara Kullanımı",
+      metin: "Aktif sigara kullanımı doku perfüzyonunu bozarak yara komplikasyonu, nekroz ve skar riskini artırır. Cerrahi öncesi bırakma güçlü biçimde önerilmektedir.",
+      onayGerekli: false
+    },
+    med_ocp_dvt: {
+      etiket: "Östrojen İlaç + Majör Cerrahi",
+      metin: "Östrojen içeren ilaç kullanımı ile majör cerrahi kombinasyonu venöz tromboemboli riskini artırmaktadır. DVT profilaksisi cerrahi planına eklenmiştir.",
+      onayGerekli: false
+    },
+    med_ocp: {
+      etiket: "Hormonal Tedavi",
+      metin: "Hormonal tedavi tromboz risk profilini etkileyebilir ve cerrahi planında göz önünde bulundurulmuştur.",
+      onayGerekli: false
+    },
+    keloid: {
+      etiket: "Kötü Skar Geçmişi",
+      metin: "Kötü skar geçmişi hipertrofik skar veya keloid oluşum riskini artırmaktadır.",
+      onayGerekli: false
+    },
+    med_acne: {
+      etiket: "İzotretinoin Kullanımı",
+      metin: "İzotretinoin kullanımı gecikmiş yara iyileşmesi ve skar kalitesini olumsuz etkileyebilir.",
+      onayGerekli: false
+    },
+    asthma: {
+      etiket: "Astım",
+      metin: "Astım havayolu hiperreaktivite riskini artırmaktadır. Optimal kontrol sağlanmış ve bronkodilatör planı hazırlanmıştır.",
+      onayGerekli: false
+    },
+    thyroid: {
+      etiket: "Tiroid Hastalığı",
+      metin: "Tiroid hastalığı anestezik ilaç metabolizmasını etkileyebilir. Ötiroid durum doğrulanmıştır.",
+      onayGerekli: false
+    },
+    bmi35: {
+      etiket: "Yüksek BMI (35–39)",
+      metin: "BMI 35-39 yüksek operasyonel risk oluşturmaktadır. DVT, yara iyileşme güçlüğü ve anestezi komplikasyonu riski artmıştır.",
+      onayGerekli: false
+    },
+    csection: {
+      etiket: "Geçirilmiş Batın Cerrahisi",
+      metin: "Geçirilmiş batın cerrahisi skar dokusu anatomisini değiştirebilir; diseksiyon planına etki edebilir.",
+      onayGerekli: false
+    },
+    revision: {
+      etiket: "Revizyon Cerrahisi",
+      metin: "Revizyon cerrahisi anatomik plan güçlüğü ve ek komplikasyon riski taşıyabilir.",
+      onayGerekli: false
+    },
+    blood_transfusion: {
+      etiket: "Kan Transfüzyonu Öyküsü",
+      metin: "Kan transfüzyonu geçmişi alloantikor varlığı nedeniyle dikkat gerektirmektedir. Kan bankası bilgilendirilmiştir.",
+      onayGerekli: false
+    },
+    sickle_cell_trait: {
+      etiket: "Orak Hücre Taşıyıcılığı",
+      metin: "Orak hücre taşıyıcılığı perioperatif hipoksi durumlarında risk oluşturabilir. Hipoksi önleme protokolü uygulanacaktır.",
+      onayGerekli: false
+    },
+    psych_disorder: {
+      etiket: "Psikiyatrik Bozukluk",
+      metin: "Psikiyatrik bozukluk BDD değerlendirmesi ve perioperatif uyum açısından değerlendirilmiştir.",
+      onayGerekli: false
+    },
+    med_psych: {
+      etiket: "Psikotrop İlaç Kullanımı",
+      metin: "Psikotrop ilaç kullanımı perioperatif yönetimi etkileyebilir. Anestezi planına dahil edilmiştir.",
+      onayGerekli: false
+    },
+    med_nsaid: {
+      etiket: "Düzenli NSAID Kullanımı",
+      metin: "Düzenli NSAID kullanımı perioperatif kanama riskini artırabilir. İlaç kesme planı hazırlanmıştır.",
+      onayGerekli: false
+    },
+    med_steroid: {
+      etiket: "Steroid Kullanımı",
+      metin: "Kronik steroid kullanımı adrenal süpresyon ve yara iyileşme sorunlarına yol açabilir. Perioperatif protokol planlanmıştır.",
+      onayGerekli: false
+    },
+    med_supplements: {
+      etiket: "Bitkisel/Takviye Ürün",
+      metin: "Bitkisel/takviye ürün kullanımı doğrulanmış ve kesme protokolü uygulanmıştır.",
+      onayGerekli: false
+    },
+    heart_murmur: {
+      etiket: "Kalp Üfürümü",
+      metin: "Kalp üfürümü kardiyoloji konsültasyonu ile değerlendirilmiş ve cerrahi için onay alınmıştır.",
+      onayGerekli: false
+    },
+    shortness_of_breath: {
+      etiket: "Nefes Darlığı",
+      metin: "Nefes darlığı şikayeti kardiyopulmoner değerlendirme ile incelenmiş ve cerrahi için uygun bulunmuştur.",
+      onayGerekli: false
+    },
+    thalassemia: {
+      etiket: "Talasemi",
+      metin: "Talasemi durumu preoperatif olarak değerlendirilmiş ve optimize edilmiştir.",
+      onayGerekli: false
+    },
+    anemia: {
+      etiket: "Anemi",
+      metin: "Anemi preoperatif olarak değerlendirilmiş ve hemoglobin düzeyi cerrahi için optimize edilmiştir.",
+      onayGerekli: false
+    }
+  };
+
+  // ─── DURUM ────────────────────────────────────────────────────────────────────
+  let mevcutVaka = null;
+  let mevcutFlaglar = [];
+
+  // ─── AUTH ─────────────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById("authOverlay").classList.add("hidden");
+      document.getElementById("mainApp").classList.remove("hidden");
+      const params = new URLSearchParams(window.location.search);
+      const caseId = params.get("caseId");
+      if (caseId) {
+        vakaYukle(caseId);
+      } else {
+        document.getElementById("lookupSection").classList.remove("hidden");
+      }
+    }
+  });
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const btn = document.getElementById("loginBtn");
+    const errEl = document.getElementById("authError");
+    btn.textContent = "Giriş yapılıyor...";
+    btn.disabled = true;
+    errEl.classList.add("hidden");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      errEl.textContent = e.code === "auth/invalid-credential" ? "E-posta veya şifre hatalı." : e.message;
+      errEl.classList.remove("hidden");
+      btn.textContent = "Giriş Yap";
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("authPassword").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loginBtn").click();
+  });
+
+  // ─── VAKA YÜKLEME ─────────────────────────────────────────────────────────────
+  document.getElementById("loadCaseBtn").addEventListener("click", () => {
+    const id = document.getElementById("caseIdInput").value.trim();
+    if (id) vakaYukle(id);
+  });
+  document.getElementById("caseIdInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loadCaseBtn").click();
+  });
+  document.getElementById("retryBtn").addEventListener("click", () => {
+    document.getElementById("errorSection").classList.add("hidden");
+    document.getElementById("lookupSection").classList.remove("hidden");
+  });
+
+  async function vakaYukle(caseId) {
+    document.getElementById("lookupSection").classList.add("hidden");
+    document.getElementById("errorSection").classList.add("hidden");
+    document.getElementById("consentDocument").classList.add("hidden");
+    document.getElementById("navButtons").classList.add("hidden");
+    document.getElementById("loadingSection").classList.remove("hidden");
+    try {
+      const snap = await getDoc(doc(db, "cases", caseId));
+      if (!snap.exists()) throw new Error("Girilen ID'ye ait vaka bulunamadı.");
+      mevcutVaka = { id: caseId, ...snap.data() };
+      mevcutFlaglar = flagHesapla(mevcutVaka);
+      document.getElementById("loadingSection").classList.add("hidden");
+      formuOlustur();
+      document.getElementById("consentDocument").classList.remove("hidden");
+      document.getElementById("navButtons").classList.remove("hidden");
+    } catch (e) {
+      document.getElementById("loadingSection").classList.add("hidden");
+      document.getElementById("errorMsg").textContent = e.message || "Vaka yüklenirken hata oluştu.";
+      document.getElementById("errorSection").classList.remove("hidden");
+    }
+  }
+
+  // ─── FLAG HESAPLAMA (clinician.html ile senkron) ──────────────────────────────
+  function flagHesapla(vaka, ezgecmeler = {}) {
+    const flaglar = [];
+    try {
+      const r = vaka?.risks ?? {};
+      const bmi = ezgecmeler.bmi ?? vaka?.anthropometrics?.bmi ?? null;
+      const proc = vaka?.procedure?.name ?? "";
+      const asa = ezgecmeler.asa ?? vaka?.clinician?.asa ?? null;
+      const sigara = ezgecmeler.smokingVerified ?? vaka?.clinician?.smokingVerified ?? null;
+      const antikoag = ezgecmeler.anticoagVerified ?? vaka?.clinician?.anticoagVerified ?? null;
+
+      if (asa === "4") flaglar.push({ type: "HARD", key: "asa4" });
+      if (r.activeMalignancy) flaglar.push({ type: "HARD", key: "malignancy" });
+      if (r.dvt) flaglar.push({ type: "HARD", key: "dvt" });
+      if (antikoag === "active") {
+        flaglar.push({ type: "HARD", key: "anticoag_active" });
+      } else if (!antikoag && (r.medBloodThinners || r.anticoagulant)) {
+        flaglar.push({ type: "VERIFY", key: "anticoag_verify" });
+      }
+      if (r.medGlp1) flaglar.push({ type: "HARD", key: "med_glp1" });
+      if (r.medSglt2) flaglar.push({ type: "HARD", key: "med_sglt2" });
+      if (r.sickleCell) flaglar.push({ type: "HARD", key: "sickle_cell" });
+      if (r.anestheticReaction) flaglar.push({ type: "HARD", key: "anesthetic_reaction" });
+
+      const yuksekBmiProsedurler = ["Tummy Tuck", "BBL", "Liposuction", "Meme Küçültme"];
+      const bmiProsedur = yuksekBmiProsedurler.some(p => proc.includes(p));
+      if (bmi !== null) {
+        if (bmi >= 40 && bmiProsedur) flaglar.push({ type: "HARD", key: "bmi40" });
+        else if (bmi >= 35 && bmiProsedur) flaglar.push({ type: "SOFT", key: "bmi35" });
+      }
+
+      if (r.medOcp) {
+        const dvtProsedurler = ["Tummy Tuck", "BBL", "Liposuction", "Breast Lift", "Meme Küçültme"];
+        if (dvtProsedurler.some(p => proc.includes(p))) {
+          flaglar.push({ type: "SOFT", key: "med_ocp_dvt" });
+        } else {
+          flaglar.push({ type: "SOFT", key: "med_ocp" });
+        }
+      }
+
+      if (sigara === "active") {
+        flaglar.push({ type: "SOFT", key: "smoking_active" });
+      } else if (!sigara && r.smoking === "active") {
+        flaglar.push({ type: "SOFT", key: "smoking_active" });
+      }
+
+      if (r.medAcne) flaglar.push({ type: "SOFT", key: "med_acne" });
+      if (r.medPsych) flaglar.push({ type: "SOFT", key: "med_psych" });
+      if (r.medSteroid) flaglar.push({ type: "VERIFY", key: "med_steroid" });
+      if (r.medSglt2) { /* already handled */ }
+      if (r.medNsaid) flaglar.push({ type: "SOFT", key: "med_nsaid" });
+      if (r.medSupplements) flaglar.push({ type: "VERIFY", key: "med_supplements" });
+      if (r.keloid) flaglar.push({ type: "SOFT", key: "keloid" });
+      if (r.csection && proc === "Tummy Tuck") flaglar.push({ type: "SOFT", key: "csection" });
+      if (vaka?.procedure?.revision) flaglar.push({ type: "SOFT", key: "revision" });
+      if (r.hiv) flaglar.push({ type: "VERIFY", key: "hiv" });
+      if (r.hepatitis) flaglar.push({ type: "VERIFY", key: "hepatitis" });
+      if (r.heartMurmur) flaglar.push({ type: "VERIFY", key: "heart_murmur" });
+      if (r.shortnessOfBreath) flaglar.push({ type: "VERIFY", key: "shortness_of_breath" });
+      if (r.thalassemia) flaglar.push({ type: "VERIFY", key: "thalassemia" });
+      if (r.anemia) flaglar.push({ type: "VERIFY", key: "anemia" });
+      if (r.asthma) flaglar.push({ type: "SOFT", key: "asthma" });
+      if (r.thyroid) flaglar.push({ type: "SOFT", key: "thyroid" });
+      if (r.psychiatricDisorder) flaglar.push({ type: "SOFT", key: "psych_disorder" });
+      if (r.sickleCellTrait) flaglar.push({ type: "SOFT", key: "sickle_cell_trait" });
+      if (r.bloodTransfusion) flaglar.push({ type: "SOFT", key: "blood_transfusion" });
+      if (r.medAllergy) flaglar.push({ type: "VERIFY", key: "med_allergy" });
+    } catch (e) {}
+    return flaglar;
+  }
+
+  // ─── FORM OLUŞTURMA ───────────────────────────────────────────────────────────
+  function formuOlustur() {
+    const v = mevcutVaka;
+    const prosAd = v.procedure?.name ?? "Cerrahi Prosedür";
+    const sablon = PROSEDUR_SABLONLARI[prosAd] || {
+      ad: prosAd,
+      tanim: "Bu prosedür hakkında bilgi formu hazırlanmaktadır.",
+      amac: "Prosedürün amacı klinisyen tarafından açıklanmıştır.",
+      spesifikRiskler: [],
+      alternatifler: ["Mevcut durumun korunması"]
+    };
+
+    const flagMaddeler = mevcutFlaglar
+      .map(f => FLAG_RISK_MADDELER[f.key])
+      .filter(Boolean)
+      .filter((m, idx, arr) => arr.findIndex(x => x.etiket === m.etiket) === idx);
+
+    const onayGerekenler = flagMaddeler.filter(m => m.onayGerekli);
+    const bilgiMaddeler = flagMaddeler.filter(m => !m.onayGerekli);
+
+    const simdi = new Date();
+    const tarih = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const saat = simdi.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+    const bmi = v.anthropometrics?.bmi ?? v.clinician?.bmiMeasured ?? null;
+
+    document.getElementById("consentDocument").innerHTML = `
+      <div class="bg-white shadow-lg rounded-2xl overflow-hidden">
+
+        <!-- BAŞLIK -->
+        <div class="bg-slate-900 text-white px-8 py-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">SurgiCheck — Onay Belgesi</div>
+              <h1 class="text-xl font-bold">${esc(sablon.ad)}</h1>
+              <p class="text-slate-300 text-sm mt-0.5">AYDINLATILMIŞ RIZA FORMU</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <div class="font-mono text-xs text-slate-400 mb-1">${esc(v.id)}</div>
+              <div class="text-slate-300 text-sm">${tarih} &bull; ${saat}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HASTA BİLGİ BANDI -->
+        <div class="bg-slate-50 border-b border-slate-200 px-8 py-3 flex flex-wrap gap-x-6 gap-y-1.5 text-sm">
+          <span><span class="text-slate-500">Hasta:</span> <strong class="text-slate-800">${esc(v.patient?.fullName ?? "—")}</strong></span>
+          <span><span class="text-slate-500">Prosedür:</span> <strong class="text-slate-800">${esc(prosAd)}${v.procedure?.revision ? " (Revizyon)" : ""}</strong></span>
+          ${bmi ? `<span><span class="text-slate-500">BMI:</span> <strong class="text-slate-800">${Number(bmi).toFixed(1)}</strong></span>` : ""}
+          ${v.clinician?.asa ? `<span><span class="text-slate-500">ASA:</span> <strong class="text-slate-800">ASA ${esc(v.clinician.asa)}</strong></span>` : ""}
+          ${v.clinician?.decision ? `<span><span class="text-slate-500">Karar:</span> <strong class="text-slate-800">${esc(v.clinician.decision)}</strong></span>` : ""}
+        </div>
+
+        <!-- FORM GÖVDE -->
+        <div class="px-8 py-6 space-y-7">
+
+          <!-- 1 -->
+          <section>
+            <h2 class="seksiyon-baslik">1. Prosedür Tanımı</h2>
+            <p class="metin">${esc(sablon.tanim)}</p>
+          </section>
+
+          <!-- 2 -->
+          <section>
+            <h2 class="seksiyon-baslik">2. Amaç ve Beklenti Yönetimi</h2>
+            <p class="metin">${esc(sablon.amac)}</p>
+          </section>
+
+          <!-- 3 -->
+          <section>
+            <h2 class="seksiyon-baslik">3. Genel Cerrahi Riskleri</h2>
+            <ul class="metin liste">
+              ${GENEL_RISKLER.map(r => `<li>${esc(r)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 4 -->
+          <section>
+            <h2 class="seksiyon-baslik">4. ${esc(sablon.ad)} — Spesifik Riskler</h2>
+            <ul class="metin liste">
+              ${sablon.spesifikRiskler.map(r => `<li>${esc(r)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 5 — dinamik flag maddeleri -->
+          ${flagMaddeler.length > 0 ? `
+          <section class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <h2 class="text-xs font-bold text-amber-900 uppercase tracking-wider pb-2 mb-3 border-b border-amber-200">
+              5. Kişiselleştirilmiş Risk Bildirimi
+              <span class="normal-case text-amber-600 font-normal ml-1">— hastanın mevcut durumuna özgü</span>
+            </h2>
+            <div class="space-y-3">
+              ${flagMaddeler.map(m => `
+                <div class="flex gap-2.5">
+                  <span class="text-amber-500 font-bold text-sm flex-shrink-0 mt-0.5">⚠</span>
+                  <p class="text-sm text-slate-700"><strong class="text-amber-800">${esc(m.etiket)}:</strong> ${esc(m.metin)}</p>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+          ` : ""}
+
+          <!-- 6 -->
+          <section>
+            <h2 class="seksiyon-baslik">6. Alternatif Tedavi Seçenekleri</h2>
+            <ul class="metin liste">
+              ${sablon.alternatifler.map(a => `<li>${esc(a)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <!-- 7 -->
+          <section>
+            <h2 class="seksiyon-baslik">7. Hasta Hakları</h2>
+            <p class="metin">${esc(HASTA_HAKLARI)}</p>
+          </section>
+
+          <!-- 8 -->
+          <section>
+            <h2 class="seksiyon-baslik">8. Soru ve Açıklama</h2>
+            <p class="metin mb-3">Hastanın prosedür, riskler ve alternatifler hakkındaki tüm soruları klinisyen tarafından yanıtlanmıştır.</p>
+            <div class="border border-slate-200 rounded-lg bg-slate-50 p-3">
+              <textarea id="hastaNotlari" rows="3" placeholder="Varsa hastanın ek soruları veya notlar..."
+                class="w-full bg-transparent text-sm text-slate-700 resize-none focus:outline-none no-print"></textarea>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- ONAY GEREKTİREN MADDELER -->
+        ${onayGerekenler.length > 0 ? `
+        <div class="bg-rose-50 border-y border-rose-200 px-8 py-6">
+          <h2 class="text-xs font-bold text-rose-900 uppercase tracking-wider mb-1">Bireysel Onay Gerektiren Maddeler</h2>
+          <p class="text-xs text-rose-600 mb-4">Hastanın risk profiline özgü aşağıdaki maddelerin her biri ayrıca okunup işaretlenmelidir.</p>
+          <div class="space-y-3.5" id="onayListesi">
+            ${onayGerekenler.map((m, i) => `
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" id="onay_${i}" data-etiket="${esc(m.etiket)}"
+                  class="mt-0.5 h-4 w-4 rounded border-rose-300 text-rose-600 focus:ring-rose-500 flex-shrink-0 no-print">
+                <span class="text-sm text-slate-700"><strong class="text-rose-800">${esc(m.etiket)}:</strong> ${esc(m.metin)}</span>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+        ` : ""}
+
+        <!-- İMZA BLOĞU -->
+        <div class="px-8 py-6 space-y-6">
+          <h2 class="seksiyon-baslik !mt-0">9. İmza Bloğu</h2>
+
+          <!-- Hasta Beyanı -->
+          <div class="border border-slate-200 rounded-xl p-5 bg-slate-50">
+            <p class="text-sm text-slate-600 italic mb-5 leading-relaxed">
+              "Yukarıdaki bilgileri okuduğumu, anladığımı, sorularımın yanıtlandığını ve bu girişime özgür iradem ile onay verdiğimi beyan ederim."
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="etiket">Ad Soyad</label>
+                <input type="text" id="hastaAd" value="${esc(v.patient?.fullName ?? "")}"
+                  class="alan">
+              </div>
+              <div>
+                <label class="etiket">TC Kimlik No</label>
+                <input type="text" id="hastaTc" maxlength="11" placeholder="xxxxxxxxxxx"
+                  class="alan font-mono">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="etiket">Tanık Ad Soyad <span class="font-normal text-slate-400">(isteğe bağlı)</span></label>
+                <input type="text" id="tanikAd" placeholder="Tanık adı soyadı"
+                  class="alan">
+              </div>
+            </div>
+            <div>
+              <label class="etiket mb-2">Hasta İmzası</label>
+              <canvas id="hastaImzaCanvas" class="signature-canvas w-full" height="110"></canvas>
+              <div class="flex justify-between items-center mt-1.5">
+                <span class="text-xs text-slate-400">İmzanızı alan içine çiziniz</span>
+                <button class="no-print text-xs text-slate-400 hover:text-rose-600 underline" data-temizle="hastaImzaCanvas">Temizle</button>
+              </div>
+            </div>
+            <div class="mt-3 text-xs text-slate-500">
+              <span class="font-semibold">Tarih / Saat:</span> <span id="imzaTarihi">${tarih} ${saat}</span>
+            </div>
+          </div>
+
+          <!-- Klinisyen Beyanı -->
+          <div class="border border-blue-200 rounded-xl p-5 bg-blue-50">
+            <h3 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">10. Klinisyen Beyanı</h3>
+            <p class="text-sm text-slate-600 italic mb-5 leading-relaxed">
+              "Hastaya prosedür, riskler ve alternatifler hakkında yeterli açıklama yapıldığını beyan ederim."
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="etiket">Hekim Ad Soyad</label>
+                <input type="text" id="hekimAd" value="${esc(v.clinician?.name ?? "")}"
+                  class="alan">
+              </div>
+              <div>
+                <label class="etiket">Diploma No</label>
+                <input type="text" id="diplomaNo" placeholder="xxxx-xxxxx"
+                  class="alan font-mono">
+              </div>
+            </div>
+            <div>
+              <label class="etiket mb-2">Hekim İmzası</label>
+              <canvas id="hekimImzaCanvas" class="signature-canvas w-full" height="110"></canvas>
+              <div class="flex justify-between items-center mt-1.5">
+                <span class="text-xs text-slate-400">İmzanızı alan içine çiziniz</span>
+                <button class="no-print text-xs text-slate-400 hover:text-rose-600 underline" data-temizle="hekimImzaCanvas">Temizle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALT BİLGİ -->
+        <div class="bg-slate-50 border-t border-slate-200 px-8 py-4">
+          <p class="text-xs text-slate-500">${esc(HUKUKI_NOT)}</p>
+          <p class="text-xs text-slate-400 mt-1">SurgiCheck v1.0 — surgicheck.net &bull; Vaka ID: ${esc(v.id)}</p>
+        </div>
+
+      </div>
+    `;
+
+    // Tailwind shorthand classes via inline style (since Tailwind CDN can't pick up dynamic strings)
+    document.querySelectorAll(".seksiyon-baslik").forEach(el => {
+      el.className = "text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2 mb-3";
+    });
+    document.querySelectorAll(".metin").forEach(el => {
+      el.classList.add("text-sm", "text-slate-700", "leading-relaxed");
+    });
+    document.querySelectorAll(".metin.liste").forEach(el => {
+      el.classList.add("space-y-1");
+      el.querySelectorAll("li").forEach(li => {
+        li.className = "flex items-start gap-2 before:content-['•'] before:text-slate-400 before:flex-shrink-0 before:mt-0.5";
+      });
+    });
+    document.querySelectorAll(".etiket").forEach(el => {
+      el.className = "block text-xs font-semibold text-slate-600 mb-1";
+    });
+    document.querySelectorAll(".alan").forEach(el => {
+      el.className = (el.className || "") + " w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black bg-white";
+    });
+
+    // İmza canvas'larını başlat
+    setTimeout(() => {
+      imzaCanvasBaslat("hastaImzaCanvas");
+      imzaCanvasBaslat("hekimImzaCanvas");
+    }, 50);
+
+    // Temizle butonları
+    document.querySelectorAll("[data-temizle]").forEach(btn => {
+      btn.addEventListener("click", () => imzaTemizle(btn.dataset.temizle));
+    });
+  }
+
+  // ─── İMZA CANVAS ─────────────────────────────────────────────────────────────
+  function imzaCanvasBaslat(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth || 600;
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    let ciziyorum = false, sonX = 0, sonY = 0;
+
+    function konum(e) {
+      const r = canvas.getBoundingClientRect();
+      const sx = canvas.width / r.width, sy = canvas.height / r.height;
+      const src = e.touches ? e.touches[0] : e;
+      return { x: (src.clientX - r.left) * sx, y: (src.clientY - r.top) * sy };
+    }
+
+    canvas.addEventListener("mousedown", e => {
+      ciziyorum = true;
+      const p = konum(e); sonX = p.x; sonY = p.y;
+      canvas.classList.add("has-sig");
+    });
+    canvas.addEventListener("mousemove", e => {
+      if (!ciziyorum) return;
+      const p = konum(e);
+      ctx.beginPath(); ctx.moveTo(sonX, sonY); ctx.lineTo(p.x, p.y); ctx.stroke();
+      sonX = p.x; sonY = p.y;
+    });
+    canvas.addEventListener("mouseup", () => { ciziyorum = false; });
+    canvas.addEventListener("mouseleave", () => { ciziyorum = false; });
+
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault(); ciziyorum = true;
+      const p = konum(e); sonX = p.x; sonY = p.y;
+      canvas.classList.add("has-sig");
+    }, { passive: false });
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      if (!ciziyorum) return;
+      const p = konum(e);
+      ctx.beginPath(); ctx.moveTo(sonX, sonY); ctx.lineTo(p.x, p.y); ctx.stroke();
+      sonX = p.x; sonY = p.y;
+    }, { passive: false });
+    canvas.addEventListener("touchend", () => { ciziyorum = false; });
+  }
+
+  function imzaTemizle(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    canvas.classList.remove("has-sig");
+  }
+
+  // ─── ONAM KAYDET ─────────────────────────────────────────────────────────────
+  document.getElementById("saveConsentBtn").addEventListener("click", async () => {
+    if (!mevcutVaka) return;
+    const btn = document.getElementById("saveConsentBtn");
+
+    const hastaAd = document.getElementById("hastaAd")?.value.trim();
+    const hekimAd = document.getElementById("hekimAd")?.value.trim();
+    if (!hastaAd) { alert("Lütfen hasta adını giriniz."); return; }
+    if (!hekimAd) { alert("Lütfen hekim adını giriniz."); return; }
+
+    const onaylar = document.querySelectorAll("#onayListesi input[type=checkbox]");
+    const isaretlenmemis = Array.from(onaylar).filter(cb => !cb.checked);
+    if (isaretlenmemis.length > 0) {
+      alert("Lütfen tüm onay gerektiren maddeleri işaretleyiniz.");
+      return;
+    }
+
+    const onayliMaddeler = Array.from(onaylar).map(cb => cb.dataset.etiket);
+    const hastaImza = document.getElementById("hastaImzaCanvas")?.toDataURL("image/png") ?? null;
+    const hekimImza = document.getElementById("hekimImzaCanvas")?.toDataURL("image/png") ?? null;
+    const notlar = document.getElementById("hastaNotlari")?.value.trim() ?? "";
+
+    const orijinalMetin = btn.innerHTML;
+    btn.textContent = "Kaydediliyor...";
+    btn.disabled = true;
+
+    try {
+      const onamRef = await addDoc(collection(db, "consents"), {
+        caseId: mevcutVaka.id,
+        procedureName: mevcutVaka.procedure?.name ?? "",
+        patientName: hastaAd,
+        patientNationalId: document.getElementById("hastaTc")?.value.trim() ?? "",
+        witnessName: document.getElementById("tanikAd")?.value.trim() ?? "",
+        clinicianName: hekimAd,
+        diplomaNo: document.getElementById("diplomaNo")?.value.trim() ?? "",
+        patientSignature: hastaImza,
+        clinicianSignature: hekimImza,
+        acknowledgedItems: onayliMaddeler,
+        patientNotes: notlar,
+        flagKeys: mevcutFlaglar.map(f => f.key),
+        signedAt: serverTimestamp(),
+        createdAt: serverTimestamp()
+      });
+
+      await updateDoc(doc(db, "cases", mevcutVaka.id), {
+        consentSigned: true,
+        consentId: onamRef.id,
+        updatedAt: serverTimestamp()
+      });
+
+      const toast = document.getElementById("successToast");
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 4000);
+
+      btn.textContent = "✓ Kaydedildi";
+      btn.classList.remove("bg-emerald-600", "hover:bg-emerald-700");
+      btn.classList.add("bg-slate-400", "cursor-default");
+    } catch (e) {
+      alert("Kaydetme hatası: " + e.message);
+      btn.innerHTML = orijinalMetin;
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+  // ─── YARDIMCI ─────────────────────────────────────────────────────────────────
+  function esc(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+</script>
+
+</body>
+</html>
