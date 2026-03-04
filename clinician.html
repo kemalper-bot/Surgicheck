@@ -792,17 +792,6 @@
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
 
-    const medTimingDiv = document.createElement("div");
-    medTimingDiv.className = "col-span-2";
-    const medTimingLbl = document.createElement("span");
-    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
-    medTimingLbl.textContent = "İlaç Son Doz / Plan Notu";
-    const medTimingVal = document.createElement("i");
-    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Belirtilmemiş";
-    medTimingDiv.appendChild(medTimingLbl);
-    medTimingDiv.appendChild(medTimingVal);
-    grid.appendChild(medTimingDiv);
-
     const allergyDivTR = document.createElement("div");
     allergyDivTR.className = "col-span-2";
     const allergyLblTR = document.createElement("span");

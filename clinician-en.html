@@ -890,17 +890,6 @@
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
 
-    const medTimingDiv = document.createElement("div");
-    medTimingDiv.className = "col-span-2";
-    const medTimingLbl = document.createElement("span");
-    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
-    medTimingLbl.textContent = "Medication Last Dose / Hold Note";
-    const medTimingVal = document.createElement("i");
-    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Not specified";
-    medTimingDiv.appendChild(medTimingLbl);
-    medTimingDiv.appendChild(medTimingVal);
-    grid.appendChild(medTimingDiv);
-
     const allergyDiv = document.createElement("div");
     allergyDiv.className = "col-span-2";
     const allergyLbl = document.createElement("span");
