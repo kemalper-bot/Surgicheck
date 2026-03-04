@@ -116,6 +116,14 @@
             <option value="other">Other / Prefer not to say</option>
           </select>
         </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Country *</label>
+          <input id="country" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="e.g. United Kingdom" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-slate-700 mb-1 block">Date of Birth *</label>
+          <input id="birthday" type="date" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" />
+        </div>
       </div>
 
       <div class="mt-5 pt-5 border-t border-slate-100">
@@ -172,7 +180,6 @@
           <p class="text-sm text-blue-700/80 mb-4 leading-relaxed">Check any of the following if you are currently using them or have used them recently:</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_bloodThinners" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Blood Thinners (Aspirin, Plavix, Eliquis, etc.)</span></label>
-            <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_ocp" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Birth Control Pills / HRT (Hormones)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_glp1" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Weight Loss Injections (Ozempic, Wegovy, etc.)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_acne" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Severe Acne Meds (Accutane, Isotretinoin)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_psych" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Psychiatric Meds (Antidepressants, Xanax)</span></label>
@@ -180,6 +187,14 @@
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_sglt2" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">SGLT2 Diabetes Meds (Jardiance, Forxiga, etc.)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm"><input type="checkbox" id="med_nsaid" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Frequent NSAID Painkillers (ibuprofen, naproxen)</span></label>
             <label class="flex items-center gap-3 cursor-pointer bg-white p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors shadow-sm sm:col-span-2"><input type="checkbox" id="med_supplements" class="accent-blue-600 w-5 h-5" /> <span class="text-sm font-medium text-slate-700">Herbal/Supplements (ginkgo, garlic, ginseng, omega-3)</span></label>
+          </div>
+          <div class="mt-4">
+            <label class="text-sm font-medium text-slate-700 mb-1 block">Please specify any herbal supplements or vitamins you use</label>
+            <input id="herb_detail" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="e.g. Fish oil 1000mg, Vitamin D 2000IU, Ginkgo biloba 60mg..." />
+          </div>
+          <div class="mt-4">
+            <label class="text-sm font-medium text-slate-700 mb-1 block">Are you allergic to any medication?</label>
+            <input id="med_allergy" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="e.g. Penicillin, Aspirin, Codeine, or None..." />
           </div>
           <div class="mt-5">
             <label class="text-sm font-medium text-slate-700 mb-1 block">Other Regular Medications / Supplements</label>
@@ -193,6 +208,17 @@
             <div>
               <label class="text-sm font-medium text-slate-700 mb-1 block">Hold plan / dose note</label>
               <input id="med_stop_note" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white" placeholder="e.g. Ozempic weekly, last dose 5 days ago" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <div class="rounded-xl border border-indigo-200 bg-indigo-50/40 p-4 hover:bg-indigo-50 transition-colors sm:col-span-2">
+            <label class="text-sm font-bold text-slate-800">Birth Control / Hormonal Therapy</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Birth control pills, hormonal IUD, contraceptive patch, hormone replacement therapy (HRT), or any hormonal treatment.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-indigo-200 hover:border-indigo-400"><input type="radio" name="birth_control" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-indigo-200 hover:border-indigo-400"><input type="radio" name="birth_control" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
             </div>
           </div>
         </div>
@@ -251,6 +277,123 @@
               <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="keloid" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
             </div>
           </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Anemia</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Diagnosed low red blood cell count or hemoglobin.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="anemia" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="anemia" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Asthma</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Diagnosed asthma or recurrent bronchospasm.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="asthma" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="asthma" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Thyroid Problems</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Hypothyroidism, hyperthyroidism, or other thyroid condition.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="thyroid" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="thyroid" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Adverse Reaction to Anesthesia</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Previous allergic or adverse reaction during surgery/anesthesia.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="anesthetic_reaction" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="anesthetic_reaction" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Blood Transfusion History</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Have you ever received a blood transfusion?</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="blood_transfusion" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="blood_transfusion" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Psychiatric Disorder</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Depression, anxiety, bipolar disorder, or other diagnosed condition.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="psych_disorder" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="psych_disorder" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Hepatitis</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Hepatitis A, B, or C — current or past diagnosis.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="hepatitis" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="hepatitis" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">HIV / AIDS</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">HIV positive or AIDS diagnosis.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="hiv" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="hiv" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Heart Murmur</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Diagnosed or suspected heart murmur.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="heart_murmur" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="heart_murmur" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Thalassemia</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Thalassemia minor, major, or trait.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="thalassemia" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="thalassemia" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Shortness of Breath</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Persistent or unexplained shortness of breath at rest or with mild exertion.</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="shortness_of_breath" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="shortness_of_breath" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Sickle Cell Trait</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Carrier of one sickle cell gene (trait, not disease).</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="sickle_cell_trait" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="sickle_cell_trait" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 p-4 bg-slate-50/30 hover:bg-slate-50 transition-colors">
+            <label class="text-sm font-bold text-slate-800">Sickle Cell Disease</label>
+            <p class="text-xs text-slate-500 mb-3 leading-snug">Diagnosed sickle cell disease (HbSS or HbSC).</p>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="sickle_cell" value="no" checked class="accent-black w-4 h-4" /> <span class="text-sm font-medium">No</span></label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="sickle_cell" value="yes" class="accent-black w-4 h-4" /> <span class="text-sm font-medium">Yes</span></label>
+            </div>
+          </div>
         </div>
 
         <div id="dynamic-tummy" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
@@ -265,9 +408,21 @@
           </div>
         </div>
 
+        <div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+          <label class="text-sm font-bold text-slate-800 mb-2 block">Have you had any surgeries before?</label>
+          <div class="flex gap-4 mb-3">
+            <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="prev_surgeries" value="no" checked class="accent-black w-4 h-4" onchange="togglePrevSurgeries()" /> <span class="text-sm font-medium">No</span></label>
+            <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-slate-200 hover:border-slate-400"><input type="radio" name="prev_surgeries" value="yes" class="accent-black w-4 h-4" onchange="togglePrevSurgeries()" /> <span class="text-sm font-medium">Yes</span></label>
+          </div>
+          <div id="prev-surgeries-detail" class="hidden">
+            <label class="text-xs text-slate-600 mb-1 block">Please describe your previous surgeries (type, date, clinic, complications if any)</label>
+            <textarea id="prev_surgeries_detail" rows="2" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="e.g. Appendectomy 2018, C-Section 2020 — no complications..."></textarea>
+          </div>
+        </div>
+
         <div>
-          <label class="text-sm font-medium text-slate-700 mb-2 block">Other Medical History or Surgeries (Free Text)</label>
-          <textarea id="medHistory" rows="3" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Please list any other past surgeries, chronic conditions, or important medical details..."></textarea>
+          <label class="text-sm font-medium text-slate-700 mb-2 block">Other Medical History (Free Text)</label>
+          <textarea id="medHistory" rows="3" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Chronic conditions, important medical details, anything else relevant..."></textarea>
         </div>
       </div>
 
@@ -332,6 +487,11 @@
       <p class="text-sm text-slate-500 mb-6">Your goals for the procedure and legal declaration.</p>
 
       <div class="mt-4">
+        <label class="text-sm font-medium text-slate-700 mb-2 block">Do you have anything else to tell us about your medical history?</label>
+        <textarea id="additionalHistory" rows="3" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Any additional information about your health, family history, or anything you think is relevant..."></textarea>
+      </div>
+
+      <div class="mt-6">
         <label class="text-sm font-medium text-slate-700 mb-2 block">Briefly describe your expectations *</label>
         <textarea id="expectations" rows="5" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="What changes are you hoping for? What are your biggest concerns?"></textarea>
       </div>
@@ -341,10 +501,16 @@
            <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
            <h3 class="font-bold text-slate-800">Legal Declaration & Consent</h3>
         </div>
-        <label class="flex items-start gap-4 cursor-pointer">
+        <label class="flex items-start gap-4 cursor-pointer mb-4">
           <input type="checkbox" id="legalConsent" class="accent-black w-6 h-6 mt-0.5 flex-shrink-0" />
           <span class="text-sm text-slate-600 leading-relaxed">
             I hereby declare that all medical history, past surgeries, habits, and medications provided in this digital form are <strong>complete and accurate</strong>. I acknowledge that hiding or failing to disclose any medical condition or medication may lead to severe anesthetic and surgical complications, and I accept full medical and legal responsibility for any such omissions. I agree that this declaration is digitally timestamped and recorded.
+          </span>
+        </label>
+        <label class="flex items-start gap-4 cursor-pointer">
+          <input type="checkbox" id="termsConsent" class="accent-black w-6 h-6 mt-0.5 flex-shrink-0" />
+          <span class="text-sm text-slate-600 leading-relaxed">
+            I have read and agree to the <a href="/terms" target="_blank" class="text-blue-600 underline hover:text-blue-800 font-medium">Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" class="text-blue-600 underline hover:text-blue-800 font-medium">Privacy Policy</a>. I consent to my personal and medical data being processed for pre-operative assessment purposes.
           </span>
         </label>
       </div>
@@ -482,7 +648,7 @@
 
     function validateStep(step) {
       if (step === 1) {
-        const baseFields = ["procedure", "revision", "fullName", "phone", "email", "age", "gender"];
+        const baseFields = ["procedure", "revision", "fullName", "phone", "email", "age", "gender", "country", "birthday"];
         for (const f of baseFields) {
           if (!document.getElementById(f).value.trim()) {
             showAlert("err", "Please fill in all required fields.");
@@ -509,9 +675,18 @@
           showAlert("err", "You must agree to the Legal Declaration to submit the form."); 
           return false;
         }
+        if (!document.getElementById("termsConsent").checked) {
+          showAlert("err", "You must agree to the Terms & Conditions and Privacy Policy."); 
+          return false;
+        }
       }
       return true;
     }
+
+    window.togglePrevSurgeries = function() {
+      const val = document.querySelector('input[name="prev_surgeries"]:checked')?.value;
+      document.getElementById("prev-surgeries-detail").classList.toggle("hidden", val !== "yes");
+    };
 
     window.toggleSmokeDetail = function() {
       const val = document.querySelector('input[name="smoking"]:checked')?.value;
@@ -542,6 +717,8 @@
             email: document.getElementById("email").value.trim(),
             age: Number(document.getElementById("age").value),
             gender: document.getElementById("gender").value,
+            country: document.getElementById("country").value.trim(),
+            birthday: document.getElementById("birthday").value || null,
           },
           procedure: {
             name: procName,
@@ -563,7 +740,7 @@
             csection: procName === "Tummy Tuck" ? (document.querySelector('input[name="csection"]:checked')?.value === "yes") : false,
             
             medBloodThinners: document.getElementById("med_bloodThinners").checked,
-            medOcp: document.getElementById("med_ocp").checked,
+            medOcp: document.querySelector('input[name="birth_control"]:checked')?.value === "yes",
             medGlp1: document.getElementById("med_glp1").checked,
             medAcne: document.getElementById("med_acne").checked,
             medPsych: document.getElementById("med_psych").checked,
@@ -571,9 +748,28 @@
             medSglt2: document.getElementById("med_sglt2").checked,
             medNsaid: document.getElementById("med_nsaid").checked,
             medSupplements: document.getElementById("med_supplements").checked,
+            herbDetail: document.getElementById("herb_detail").value.trim() || null,
+            medAllergy: document.getElementById("med_allergy").value.trim() || null,
             medOther: document.getElementById("med_other").value.trim() || null,
             medLastDoseDate: document.getElementById("med_last_dose").value || null,
             medStopPlanNote: document.getElementById("med_stop_note").value.trim() || null,
+
+            anemia: document.querySelector('input[name="anemia"]:checked')?.value === "yes",
+            asthma: document.querySelector('input[name="asthma"]:checked')?.value === "yes",
+            thyroid: document.querySelector('input[name="thyroid"]:checked')?.value === "yes",
+            anestheticReaction: document.querySelector('input[name="anesthetic_reaction"]:checked')?.value === "yes",
+            bloodTransfusion: document.querySelector('input[name="blood_transfusion"]:checked')?.value === "yes",
+            psychiatricDisorder: document.querySelector('input[name="psych_disorder"]:checked')?.value === "yes",
+            hepatitis: document.querySelector('input[name="hepatitis"]:checked')?.value === "yes",
+            hiv: document.querySelector('input[name="hiv"]:checked')?.value === "yes",
+            heartMurmur: document.querySelector('input[name="heart_murmur"]:checked')?.value === "yes",
+            thalassemia: document.querySelector('input[name="thalassemia"]:checked')?.value === "yes",
+            shortnessOfBreath: document.querySelector('input[name="shortness_of_breath"]:checked')?.value === "yes",
+            sickleCellTrait: document.querySelector('input[name="sickle_cell_trait"]:checked')?.value === "yes",
+            sickleCell: document.querySelector('input[name="sickle_cell"]:checked')?.value === "yes",
+
+            prevSurgeriesYes: document.querySelector('input[name="prev_surgeries"]:checked')?.value === "yes",
+            prevSurgeriesDetail: document.getElementById("prev_surgeries_detail").value.trim() || null,
 
             smoking: document.querySelector('input[name="smoking"]:checked')?.value ?? "never",
             smokeDetail: document.getElementById("smokeDetail").value.trim() || null,
@@ -581,8 +777,10 @@
             majorWeightLoss: document.querySelector('input[name="majorWeightLoss"]:checked')?.value === "yes",
           },
           medHistory: document.getElementById("medHistory").value.trim() || null,
+          additionalHistory: document.getElementById("additionalHistory").value.trim() || null,
           expectations: document.getElementById("expectations").value.trim(),
           legalConsentVerified: document.getElementById("legalConsent").checked,
+          termsConsentVerified: document.getElementById("termsConsent").checked,
           clinician: {
             asa: null,
             smokingVerified: null,
