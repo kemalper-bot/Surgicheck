@@ -209,6 +209,14 @@
               <div class="text-xs text-transparent mb-1.5 select-none p-1.5 border border-transparent">Boşluk</div>
               <textarea id="examNote" rows="1" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" placeholder="Konsültasyon notu..."></textarea>
             </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Riskli İlaç Son Doz Tarihi</label>
+              <input type="date" id="cv-med-last-dose" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1.5">İlaç Kesme / Doz Notu</label>
+              <input type="text" id="cv-med-stop-note" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-emerald-500 font-medium" placeholder="Örn: Ozempic haftalık, son doz 5 gün önce" />
+            </div>
           </div>
 
           <div class="mt-8 rounded-xl bg-slate-50 border-2 border-slate-200 p-5">
@@ -792,17 +800,6 @@
     medsOtherDiv.appendChild(medsOtherVal);
     grid.appendChild(medsOtherDiv);
 
-    const medTimingDiv = document.createElement("div");
-    medTimingDiv.className = "col-span-2";
-    const medTimingLbl = document.createElement("span");
-    medTimingLbl.className = "text-slate-400 block text-xs uppercase font-bold";
-    medTimingLbl.textContent = "İlaç Son Doz / Plan Notu";
-    const medTimingVal = document.createElement("i");
-    medTimingVal.textContent = [r.medLastDoseDate, r.medStopPlanNote].filter(Boolean).join(" · ") || "Belirtilmemiş";
-    medTimingDiv.appendChild(medTimingLbl);
-    medTimingDiv.appendChild(medTimingVal);
-    grid.appendChild(medTimingDiv);
-
     const allergyDivTR = document.createElement("div");
     allergyDivTR.className = "col-span-2";
     const allergyLblTR = document.createElement("span");
@@ -946,6 +943,8 @@
     document.getElementById("cv-anticoag").value = cl.anticoagVerified ?? "";
     document.getElementById("cv-bmi").value = cl.bmiMeasured ?? "";
     document.getElementById("examNote").value = cl.examNote ?? "";
+    document.getElementById("cv-med-last-dose").value = cl.medLastDoseDate ?? "";
+    document.getElementById("cv-med-stop-note").value = cl.medStopNote ?? "";
 
     const v = cl.validations ?? {};
     document.getElementById("v_smoking").checked = !!v.smoking;
@@ -1141,6 +1140,8 @@
           anticoagVerified: document.getElementById("cv-anticoag").value || null,
           bmiMeasured: parseFloat(document.getElementById("cv-bmi").value) || null,
           examNote: document.getElementById("examNote").value.trim() || null,
+          medLastDoseDate: document.getElementById("cv-med-last-dose").value || null,
+          medStopNote: document.getElementById("cv-med-stop-note").value.trim() || null,
           decision,
           rationale,
           validations: {
