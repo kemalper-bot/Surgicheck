@@ -499,6 +499,42 @@
       </div>
     </div>
 
+
+    <!-- Postop Takip Formu -->
+    <div id="sec-followup" class="hidden bg-white rounded-xl shadow p-8 mb-6">
+      <div class="mb-6 pb-5 border-b border-slate-100">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Ameliyat Sonrası Takip</h2>
+            <p id="followup-sublabel" class="text-sm text-slate-500 mt-0.5">Yanıtlarınız kliniğimize iletilecektir.</p>
+          </div>
+        </div>
+      </div>
+      <div id="followup-questions" class="space-y-5"></div>
+      <div id="followup-alert" class="hidden mt-4 rounded-xl p-4 text-sm font-medium shadow-sm"></div>
+      <div class="mt-8">
+        <button onclick="submitFollowup()" id="followupSubmitBtn"
+          class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-6 rounded-xl text-base transition-colors shadow-sm">
+          Yanıtları Gönder
+        </button>
+      </div>
+    </div>
+
+    <div id="sec-followup-success" class="hidden bg-white rounded-xl shadow-lg p-12 mb-6 text-center">
+      <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Yanıtlarınız İletildi</h2>
+      <p class="text-slate-500 mt-2 text-base max-w-md mx-auto">Takip formunuz başarıyla kliniğimize ulaşmıştır. Ekibimiz gerekirse sizinle iletişime geçecektir.</p>
+    </div>
+
     <div class="text-xs text-slate-400 text-center pb-8 leading-relaxed max-w-lg mx-auto">
       © 2024 SurgiCheck. Tüm kayıtlar HIPAA/KVKK uyumlu sunucularda saklanır ve sadece ilgili klinisyen tarafından incelenir. Yanlış beyan ameliyat kararını etkileyebilir.
     </div>
@@ -507,7 +543,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
@@ -520,6 +556,172 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // ─── POSTOP TAKİP: URL param check ──────────────────────────────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    const followupCaseId = urlParams.get("followup");
+    const followupDay = parseInt(urlParams.get("day") ?? "0", 10);
+
+    if (followupCaseId) {
+      // Hide the regular pre-op form steps, show followup section
+      ["sec-1","sec-2","sec-3","sec-4"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+      const dotsBar = document.querySelector(".flex.items-center.gap-2");
+      if (dotsBar) dotsBar.style.display = "none";
+      initFollowup(followupCaseId, followupDay);
+    }
+
+    async function initFollowup(caseId, day) {
+      const section = document.getElementById("sec-followup");
+      section.classList.remove("hidden");
+
+      const bucketId = day <= 3 ? "day_1_3" : day <= 14 ? "day_7_14" : "day_30_plus";
+
+      try {
+        const [caseSnap, qSnap] = await Promise.all([
+          getDoc(doc(db, "cases", caseId)),
+          getDoc(doc(db, "followupQuestions", bucketId))
+        ]);
+
+        const patientName = caseSnap.exists() ? (caseSnap.data()?.patient?.fullName ?? "") : "";
+        const labelEl = document.getElementById("followup-sublabel");
+        if (patientName) labelEl.textContent = patientName + " — Gün " + (day || 1) + " takip formu";
+
+        if (!qSnap.exists()) {
+          document.getElementById("followup-questions").innerHTML =
+            `<div class="text-sm text-slate-500">Soru seti bulunamadı.</div>`;
+          return;
+        }
+
+        const qData = qSnap.data();
+        window._followupMeta = { caseId, bucketId, label: qData.label, questions: qData.questions, day };
+        renderFollowupQuestions(qData.questions);
+      } catch (err) {
+        document.getElementById("followup-questions").innerHTML =
+          `<div class="text-sm text-rose-500">Sorular yüklenemedi: ${err.message}</div>`;
+      }
+    }
+
+    function renderFollowupQuestions(questions) {
+      const container = document.getElementById("followup-questions");
+      container.innerHTML = questions.map((q, i) => {
+        if (q.type === "scale") {
+          return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-slate-400">0</span>
+              <input type="range" id="fq_${q.id}" name="fq_${q.id}" min="0" max="${q.alertIfBelow !== undefined ? 10 : 10}" value="0"
+                class="flex-1 accent-teal-600" oninput="document.getElementById('fq_${q.id}_val').textContent=this.value">
+              <span class="text-xs text-slate-400">10</span>
+              <span id="fq_${q.id}_val" class="w-8 text-center font-bold text-teal-700 text-lg">0</span>
+            </div>
+          </div>`;
+        }
+        if (q.type === "boolean") {
+          return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-teal-400">
+                <input type="radio" name="fq_${q.id}" value="yes" class="accent-teal-600 w-4 h-4"> <span class="text-sm font-medium">Evet</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-teal-400">
+                <input type="radio" name="fq_${q.id}" value="no" class="accent-teal-600 w-4 h-4"> <span class="text-sm font-medium">Hayır</span>
+              </label>
+            </div>
+          </div>`;
+        }
+        if (q.type === "select") {
+          const opts = (q.options ?? []).map(o =>
+            `<option value="${o}">${o}</option>`
+          ).join("");
+          return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
+            <select id="fq_${q.id}" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-teal-500 bg-white">
+              <option value="">Seçiniz...</option>
+              ${opts}
+            </select>
+          </div>`;
+        }
+        if (q.type === "text" || q.type === "photo") {
+          return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
+            <textarea id="fq_${q.id}" rows="3" placeholder="Yanıtınızı yazın..."
+              class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-teal-500 resize-none"></textarea>
+          </div>`;
+        }
+        return "";
+      }).join("");
+    }
+
+    window.submitFollowup = async function() {
+      const meta = window._followupMeta;
+      if (!meta) return;
+      const { caseId, bucketId, label, questions, day } = meta;
+
+      const answers = {};
+      const alerts = [];
+      const freeTextParts = [];
+
+      for (const q of questions) {
+        let val;
+        if (q.type === "scale") {
+          val = parseInt(document.getElementById("fq_" + q.id)?.value ?? "0", 10);
+          if (q.alertIfAbove !== undefined && val > q.alertIfAbove) alerts.push({ id: q.id, value: val });
+          if (q.alertIfBelow !== undefined && val < q.alertIfBelow) alerts.push({ id: q.id, value: val });
+        } else if (q.type === "boolean") {
+          const checked = document.querySelector(`input[name="fq_${q.id}"]:checked`);
+          if (!checked) { showFollowupAlert("err", "Lütfen tüm soruları yanıtlayın."); return; }
+          val = checked.value;
+          if (q.alertIfTrue && val === "yes") alerts.push({ id: q.id, value: val });
+          if (q.alertIfFalse && val === "no") alerts.push({ id: q.id, value: val });
+        } else if (q.type === "select") {
+          val = document.getElementById("fq_" + q.id)?.value ?? "";
+          if (!val) { showFollowupAlert("err", "Lütfen tüm soruları yanıtlayın."); return; }
+          if ((q.alertIfSelected ?? []).includes(val)) alerts.push({ id: q.id, value: val });
+        } else if (q.type === "text" || q.type === "photo") {
+          val = document.getElementById("fq_" + q.id)?.value?.trim() ?? "";
+          if (val) freeTextParts.push(val);
+          continue;
+        }
+        answers[q.id] = val;
+      }
+
+      const btn = document.getElementById("followupSubmitBtn");
+      btn.disabled = true;
+      btn.textContent = "Gönderiliyor...";
+
+      try {
+        await addDoc(collection(db, "followupResponses"), {
+          caseId,
+          dayBucket: bucketId,
+          label,
+          day,
+          answers,
+          alerts,
+          freeText: freeTextParts.join(" | ") || null,
+          submittedAt: serverTimestamp()
+        });
+        document.getElementById("sec-followup").classList.add("hidden");
+        document.getElementById("sec-followup-success").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        showFollowupAlert("err", "Gönderilemedi: " + err.message);
+        btn.disabled = false;
+        btn.textContent = "Yanıtları Gönder";
+      }
+    };
+
+    function showFollowupAlert(type, msg) {
+      const el = document.getElementById("followup-alert");
+      el.classList.remove("hidden");
+      el.className = "mt-4 rounded-xl p-4 text-sm font-medium shadow-sm " +
+        (type === "ok" ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                       : "bg-rose-50 text-rose-900 border border-rose-200");
+      el.textContent = msg;
+      setTimeout(() => el.classList.add("hidden"), 5000);
+    }
 
     document.getElementById("procedure").addEventListener("change", (e) => {
       const proc = e.target.value;
