@@ -106,10 +106,15 @@
     /* ── Workflow ───────────────────────────────────────────────── */
     .workflow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
     .workflow-grid::before { content: ''; position: absolute; top: 36px; left: 12.5%; right: 12.5%; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 0; }
+    .workflow-single::before { display: none; }
     .workflow-step { text-align: center; padding: 1.5rem 1rem; position: relative; z-index: 1; }
     .step-num { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--navy); font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 16px rgba(0,200,150,.35); }
     .workflow-step h3 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: .35rem; }
     .workflow-step p { font-size: .82rem; color: var(--muted); }
+    .phase-label { text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); padding: 1.75rem 0 .25rem; position: relative; }
+    .phase-label::before { content: ''; display: block; height: 2px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin-bottom: 1rem; }
+    .workflow-phases > .phase-label:first-child { padding-top: 0; }
+    .workflow-phases > .phase-label:first-child::before { display: none; }
 
     /* ── Badges ─────────────────────────────────────────────────── */
     .badge { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .9rem; border-radius: 20px; font-size: .8rem; font-weight: 700; }
@@ -307,8 +312,8 @@
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-tag">Platform Hakkında</div>
-      <h2 class="section-title">SurgiCheck Nedir?</h2>
-      <p class="section-sub">Hasta kabulünden taburculuk sonrası takibe kadar cerrahi sürecin tamamını kapsayan, kurala dayalı perioperatif risk yönetim platformu.</p>
+      <h2 class="section-title">Perioperatif Risk Yönetimi Nedir?</h2>
+      <p class="section-sub">Cerrahi risk sadece operasyon masasında başlamaz. Hasta kabulünden taburculuğa — ve sonrasına — uzanan sürecin her adımında belgelenmemiş bir karar, hukuki ve klinik risk demektir. SurgiCheck bu sürecin tamamını tek bir kurala dayalı, izlenebilir platformda yönetir: preoperatif risk değerlendirmesi, prosedüre özgü aydınlatılmış rıza dokümantasyonu ve postoperatif komplikasyon takibi.</p>
     </div>
     <div class="grid-2 fade-in">
       <div class="card">
@@ -336,45 +341,38 @@
     <div class="section-header fade-in">
       <div class="section-tag">Temel Özellikler</div>
       <h2 class="section-title">Kurala dayalı, izlenebilir, klinik iş akışları için inşa edilmiş.</h2>
-      <p class="section-sub">Cerrahi risk yönetimini dönüştüren beş entegre özellik.</p>
+      <p class="section-sub">Preop'tan postop'a — her adımda belgelenmiş risk yönetimi.</p>
     </div>
     <div class="grid-3 fade-in" style="margin-bottom:1.5rem;">
       <div class="feature-card">
         <div class="feature-icon" style="background:#dcfce7;">⚡</div>
-        <h3>Hızlı Triyaj ve Standardizasyon</h3>
-        <p>Onaylandı / Koşullu / Reddedildi sınıflandırması, tüm ekibin aynı kriterleri kullanmasını sağlar. Karar belirsizliği ve tekrarlayan manuel incelemeler ortadan kalkar.</p>
-        <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
-          <span class="badge badge-cleared"><span class="badge-dot dot-cleared"></span>Onaylandı</span>
-          <span class="badge badge-conditional"><span class="badge-dot dot-conditional"></span>Koşullu</span>
-          <span class="badge badge-denied"><span class="badge-dot dot-denied"></span>Reddedildi</span>
-        </div>
+        <h3>Preoperatif Risk Değerlendirmesi</h3>
+        <p>Standartlaştırılmış kural motoru ile hasta kabulünde anında Onaylandı / Koşullu / Reddedildi sınıflandırması. Her karar adlandırılmış kural referansına bağlı — açıklanabilir, denetlenebilir, hukuki olarak savunulabilir.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7;">📄</div>
+        <h3>Aydınlatılmış Rıza Dokümantasyonu</h3>
+        <p>Prosedüre ve hastanın risk profiline özgü rıza formu otomatik üretimi. Flag'lerden dinamik risk maddeleri, dijital imza ve zaman damgalı arşiv — mahkemede tutunabilen belge.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fee2e2;">🔔</div>
+        <h3>Postoperatif Komplikasyon Takibi</h3>
+        <p>Taburculuk sonrası otomatik mesajlaşma ile hasta takip formları. Anormal yanıtlar klinisyen dashboard'una anlık alert olarak iletilir. Erken müdahale, azalan malpraktis riski.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="background:#dbeafe;">🛡️</div>
         <h3>Denetim İzi ve Versiyonlama</h3>
-        <p>Kural seti versiyonları, onay zaman damgaları ve her kararın arkasındaki veriler sistematik olarak kaydedilir. Uyumluluk ve yasal koruma için tam izlenebilirlik.</p>
-        <div style="margin-top:1rem; font-size:.8rem; color:var(--muted); background:#f8fafc; padding:.6rem .8rem; border-radius:6px; font-family:monospace;">Kural Seti: RS-2026-Q1 r7</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fef3c7;">📄</div>
-        <h3>Onay PDF Raporu</h3>
-        <p>Risk gerekçesi, klinik öneriler, laboratuvar listeleri ve imza alanları içeren standart rapor şablonu — her karar için otomatik olarak oluşturulur.</p>
+        <p>Kural seti versiyonları, onay zaman damgaları ve her kararın arkasındaki veriler otomatik olarak kaydedilir. Uyumluluk ve yasal koruma için tam izlenebilirlik.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="background:#f3e8ff;">👥</div>
-        <h3>Çok Kullanıcılı Erişim</h3>
-        <p>Rol tabanlı erişim kontrolleri ekip üyeleri için farklı izin seviyeleri tanımlar — cerrahlar, hemşireler, yöneticiler ve klinik direktörler her biri ihtiyaç duydukları bilgileri görür.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fce7f3;">📊</div>
-        <h3>Klinik Analitik Panosu</h3>
-        <p>Risk dağılımını, karar oranlarını ve operasyonel KPI'leri tek bir panodan izleyin. Triyaj verimliliğini ve onay modellerini zaman içinde takip edin.</p>
+        <h3>Çok Kullanıcılı Rol Yönetimi</h3>
+        <p>Cerrah, hemşire, yönetici ve klinik direktör için ayrı yetki katmanları. Ekip genelinde tutarlı kriter uygulaması.</p>
       </div>
       <div class="feature-card" style="background:var(--navy); border-color:rgba(0,200,150,.2);">
         <div class="feature-icon" style="background:rgba(0,200,150,.15); color:var(--accent);">🔒</div>
-        <h3 style="color:white;">GDPR ve Güvenlik</h3>
-        <p style="color:rgba(255,255,255,.7);">AB sunucuları, uçtan uca şifreleme, GDPR uyumlu işleme. Klinik veriler hiçbir koşulda üçüncü taraflarla paylaşılmaz.</p>
-        <div style="margin-top:1rem; font-size:.78rem; color:rgba(255,255,255,.5);">AB Veri Merkezleri • GDPR Uyumlu</div>
+        <h3 style="color:white;">GDPR Uyumlu Altyapı</h3>
+        <p style="color:rgba(255,255,255,.7);">AB sunucuları, uçtan uca şifreleme. Klinik veriler hiçbir koşulda üçüncül taraflarla paylaşılmaz.</p>
       </div>
     </div>
   </div>
@@ -387,29 +385,52 @@
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-tag">Nasıl Çalışır?</div>
-      <h2 class="section-title">Hasta verisinden onay raporuna 4 adımda.</h2>
+      <h2 class="section-title">Hasta kabulünden taburculuk sonrasına — kesintisiz perioperatif iş akışı.</h2>
     </div>
-    <div class="workflow-grid fade-in">
-      <div class="workflow-step">
-        <div class="step-num">01</div>
-        <h3>Hasta Kaydı</h3>
-        <p>Standartlaştırılmış veri toplama ve prosedür bağlamı kaydı.</p>
-        <a href="patient.html" style="display:inline-block;margin-top:.75rem;font-size:.78rem;color:var(--accent);font-weight:600;text-decoration:none;border:1px solid rgba(0,200,150,.35);padding:.25rem .7rem;border-radius:20px;">Hasta formunu gör →</a>
+    <div class="workflow-phases fade-in">
+      <div class="phase-label">PREOPERATİF</div>
+      <div class="workflow-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="workflow-step">
+          <div class="step-num">01</div>
+          <h3>Hasta Kaydı</h3>
+          <p>Standartlaştırılmış veri toplama ve prosedür bağlamı kaydı.</p>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">02</div>
+          <h3>Risk Değerlendirmesi</h3>
+          <p>Kural motoru risk sinyallerini işler, Onaylandı / Koşullu / Reddedildi kararı üretir.</p>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">03</div>
+          <h3>Klinisyen İncelemesi</h3>
+          <p>Klinisyen kontrolündeki öneriler ve nihai onay kararı.</p>
+        </div>
       </div>
-      <div class="workflow-step">
-        <div class="step-num">02</div>
-        <h3>Kural Algoritması</h3>
-        <p>Deterministik kurallar veriyi işler ve risk sinyalleri üretir.</p>
+      <div class="phase-label">PERİOPERATİF</div>
+      <div class="workflow-grid workflow-single" style="grid-template-columns: 1fr; max-width: 280px; margin-left: auto; margin-right: auto;">
+        <div class="workflow-step">
+          <div class="step-num">04</div>
+          <h3>Rıza Dokümantasyonu</h3>
+          <p>Hastanın risk profiline özgü aydınlatılmış rıza formu otomatik üretilir, dijital imzalanır ve arşivlenir.</p>
+        </div>
       </div>
-      <div class="workflow-step">
-        <div class="step-num">03</div>
-        <h3>Klinisyen İncelemesi</h3>
-        <p>Klinisyen kontrolündeki öneriler ve nihai karar.</p>
-      </div>
-      <div class="workflow-step">
-        <div class="step-num">04</div>
-        <h3>Onay PDF'i</h3>
-        <p>Denetime hazır çıktı ve arşivlenebilir rapor oluşturulur.</p>
+      <div class="phase-label">POSTOPERATİF</div>
+      <div class="workflow-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="workflow-step">
+          <div class="step-num">05</div>
+          <h3>Taburculuk Kaydı</h3>
+          <p>Taburculuk tarihi sisteme işlenir, otomatik takip protokolü başlar.</p>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">06</div>
+          <h3>Hasta Takip Formları</h3>
+          <p>Gün 1 / 3 / 7 / 14 / 30'da otomatik takip formu gönderilir.</p>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">07</div>
+          <h3>Komplikasyon Alarmı</h3>
+          <p>Anormal yanıtlar klinisyen dashboard'una anlık alert olarak iletilir.</p>
+        </div>
       </div>
     </div>
 
