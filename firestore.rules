@@ -26,5 +26,27 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow update, delete: if false;
     }
+
+    // Postop takip soru setleri — herkes okuyabilir (hasta formu için), yazma yasak
+    match /followupQuestions/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Postop takip programları — herkes okuyabilir, yazma yasak
+    match /followupSchedules/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Postop takip yanıtları — hasta kimlik doğrulamasız oluşturabilir, okuma sadece klinisyen
+    match /followupResponses/{responseId} {
+      allow create: if
+        request.resource.data.keys().hasAll(["caseId", "dayBucket", "answers", "submittedAt"]) &&
+        request.resource.data.caseId is string &&
+        request.resource.data.caseId.size() > 0;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
   }
 }

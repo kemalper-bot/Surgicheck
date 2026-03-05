@@ -578,23 +578,16 @@
       section.classList.remove("hidden");
 
       const bucketId = day <= 3 ? "day_1_3" : day <= 14 ? "day_7_14" : "day_30_plus";
+      const labelEl = document.getElementById("followup-sublabel");
+      if (day) labelEl.textContent = "Gün " + day + " takip formu — lütfen soruları yanıtlayın.";
 
       try {
-        const [caseSnap, qSnap] = await Promise.all([
-          getDoc(doc(db, "cases", caseId)),
-          getDoc(doc(db, "followupQuestions", bucketId))
-        ]);
-
-        const patientName = caseSnap.exists() ? (caseSnap.data()?.patient?.fullName ?? "") : "";
-        const labelEl = document.getElementById("followup-sublabel");
-        if (patientName) labelEl.textContent = patientName + " — Gün " + (day || 1) + " takip formu";
-
+        const qSnap = await getDoc(doc(db, "followupQuestions", bucketId));
         if (!qSnap.exists()) {
           document.getElementById("followup-questions").innerHTML =
             `<div class="text-sm text-slate-500">Soru seti bulunamadı.</div>`;
           return;
         }
-
         const qData = qSnap.data();
         window._followupMeta = { caseId, bucketId, label: qData.label, questions: qData.questions, day };
         renderFollowupQuestions(qData.questions);
