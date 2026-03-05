@@ -283,6 +283,25 @@
           </div>
         </div>
 
+        <div id="followupPanel" class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+              <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+              Postop Follow-up Responses
+            </h3>
+            <div class="flex items-center gap-3">
+              <span id="followupAlertBadge" class="hidden text-xs font-bold text-rose-700 bg-rose-100 border border-rose-200 rounded-full px-2.5 py-0.5"></span>
+              <button onclick="loadFollowupResponses()" class="text-xs text-teal-600 hover:text-teal-800 font-medium border border-teal-200 rounded-lg px-3 py-1.5">Refresh</button>
+              <button onclick="copyFollowupLink()" id="copyLinkBtn" class="text-xs text-slate-500 hover:text-slate-800 font-medium border border-slate-200 rounded-lg px-3 py-1.5">🔗 Follow-up Link</button>
+            </div>
+          </div>
+          <div id="followupList" class="space-y-4">
+            <div class="text-sm text-slate-400 text-center py-6">Select a case to load follow-up responses.</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -294,7 +313,7 @@
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import {
     getFirestore, collection, getDocs, doc, getDoc,
-    updateDoc, serverTimestamp
+    updateDoc, serverTimestamp, query, where, orderBy
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -838,6 +857,7 @@
 
     document.getElementById("emptyState").classList.add("hidden");
     document.getElementById("detail").classList.remove("hidden");
+    loadFollowupResponses();
 
     document.getElementById("caseId").textContent = selectedCase.id;
     document.getElementById("patientName").textContent = selectedCase.patient?.fullName ?? "—";
@@ -1279,6 +1299,78 @@
 
   document.getElementById("refreshBtn").addEventListener("click", fetchCases);
   document.getElementById("searchBox").addEventListener("input", applySearch);
+
+  // ─── POSTOP FOLLOW-UP ──────────────────────────────────────────────────────
+  async function loadFollowupResponses() {
+    if (!selectedCaseId) return;
+    const el = document.getElementById("followupList");
+    const badge = document.getElementById("followupAlertBadge");
+    el.innerHTML = `<div class="text-sm text-slate-400 animate-pulse py-4 text-center">Loading...</div>`;
+    badge.classList.add("hidden");
+    try {
+      const snap = await getDocs(query(
+        collection(db, "followupResponses"),
+        where("caseId", "==", selectedCaseId),
+        orderBy("submittedAt", "asc")
+      ));
+      if (snap.empty) {
+        el.innerHTML = `<div class="text-sm text-slate-400 py-6 text-center">No follow-up responses yet.<br><span class="text-xs">🔗 Use the Follow-up Link button to send the form to the patient.</span></div>`;
+        return;
+      }
+      let totalAlerts = 0;
+      el.innerHTML = snap.docs.map(d => {
+        const data = d.data();
+        totalAlerts += (data.alerts ?? []).length;
+        return renderFollowupCard(data);
+      }).join("");
+      if (totalAlerts > 0) {
+        badge.textContent = totalAlerts + " ALERT";
+        badge.classList.remove("hidden");
+      }
+    } catch (err) {
+      el.innerHTML = `<div class="text-sm text-rose-500 py-4 text-center">Failed to load: ${esc(err.message)}</div>`;
+    }
+  }
+
+  function renderFollowupCard(data) {
+    const date = data.submittedAt?.toDate?.()?.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }) ?? "—";
+    const alerts = data.alerts ?? [];
+    const answers = data.answers ?? {};
+    const hasAlerts = alerts.length > 0;
+
+    const answerRows = Object.entries(answers).map(([id, val]) => {
+      const isAlert = alerts.some(a => a.id === id);
+      const label = id.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const display = Array.isArray(val) ? val.join(", ") : String(val);
+      return `<div class="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0 ${isAlert ? "text-rose-700 font-bold" : "text-slate-700"}">
+        <span class="w-5 text-center flex-shrink-0">${isAlert ? "⚠" : "·"}</span>
+        <span class="flex-1 text-xs">${esc(label)}</span>
+        <span class="text-sm font-semibold">${esc(display)}</span>
+      </div>`;
+    }).join("");
+
+    return `<div class="rounded-xl border-2 ${hasAlerts ? "border-rose-300 bg-rose-50/60" : "border-slate-200 bg-slate-50"} p-4">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="font-bold text-slate-800 text-sm">${esc(data.label ?? data.dayBucket ?? "Follow-up")}</span>
+        <span class="text-xs text-slate-400">${date}</span>
+        ${hasAlerts ? `<span class="ml-auto text-xs font-bold text-rose-700 bg-rose-100 border border-rose-200 rounded-full px-2 py-0.5">${alerts.length} alert(s)</span>` : `<span class="ml-auto text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">Normal</span>`}
+      </div>
+      <div>${answerRows}</div>
+      ${data.freeText ? `<div class="mt-3 text-xs text-slate-500 italic bg-white border border-slate-100 rounded-lg p-2.5">"${esc(data.freeText)}"</div>` : ""}
+    </div>`;
+  }
+
+  window.loadFollowupResponses = loadFollowupResponses;
+
+  window.copyFollowupLink = function() {
+    if (!selectedCaseId) return;
+    const url = window.location.origin + "/patient-en?followup=" + encodeURIComponent(selectedCaseId);
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById("copyLinkBtn");
+      btn.textContent = "✓ Copied";
+      setTimeout(() => { btn.textContent = "🔗 Follow-up Link"; }, 2000);
+    });
+  };
 </script>
 </body>
 </html>
