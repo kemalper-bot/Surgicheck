@@ -311,8 +311,6 @@
           </div>
         </div>
 
-      </div>
-    </div>
         <div id="followupPanel" class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
           <div class="flex items-center justify-between mb-5">
             <h3 class="font-bold text-slate-800 flex items-center gap-2">
@@ -331,6 +329,9 @@
             <div class="text-sm text-slate-400 text-center py-6">Bir vaka seçildiğinde takip yanıtları buraya yüklenir.</div>
           </div>
         </div>
+
+      </div>
+    </div>
 
   </div>
 </div>
@@ -1267,7 +1268,7 @@
 
   window.copyFollowupLink = function() {
     if (!selectedCaseId) return;
-    const url = window.location.origin + window.location.pathname.replace("clinician.html", "patient.html") + "?followup=" + encodeURIComponent(selectedCaseId);
+    const url = window.location.origin + "/patient?followup=" + encodeURIComponent(selectedCaseId);
     navigator.clipboard.writeText(url).then(() => {
       const btn = document.getElementById("copyLinkBtn");
       btn.textContent = "\u2713 Kopyaland\u0131";
