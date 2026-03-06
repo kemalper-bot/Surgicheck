@@ -140,6 +140,15 @@
             </div>
         </div>
 
+        <!-- Hasta Fotoğrafları Galerisi -->
+        <div id="photo-gallery-section" class="hidden bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-400">
+          <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            Hasta Fotoğrafları
+          </h3>
+          <div id="photo-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
             <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2">
@@ -364,6 +373,17 @@
     </div>
 
   </div>
+</div>
+
+<!-- Fotoğraf Lightbox Overlay -->
+<div id="photo-lightbox" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onclick="closeLightboxBg(event)">
+  <button onclick="prevLightboxPhoto(event)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full w-11 h-11 flex items-center justify-center text-xl font-bold transition-colors select-none z-10">&#8592;</button>
+  <div class="relative flex flex-col items-center px-16 max-w-5xl w-full">
+    <img id="lightbox-img" src="" alt="" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl" />
+    <p id="lightbox-label" class="text-white text-center mt-4 text-base font-semibold opacity-90"></p>
+  </div>
+  <button onclick="nextLightboxPhoto(event)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full w-11 h-11 flex items-center justify-center text-xl font-bold transition-colors select-none z-10">&#8594;</button>
+  <button onclick="closeLightbox()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold transition-colors z-10">&#10005;</button>
 </div>
 
 <script type="module">
@@ -1011,7 +1031,100 @@
     applySearch();
     loadFollowupResponses();
     renderDischargePanel();
+    renderPhotoGallery(selectedCase);
   }
+
+  // ─── PHOTO GALLERY ──────────────────────────────────────────────────────────
+  const PHOTO_LABELS_TR = {
+    front: "Önden",
+    right_lateral: "Sağdan",
+    left_lateral: "Soldan",
+    lateral: "Yandan",
+    posterior: "Arkadan",
+    basal: "Alttan (Basal)",
+    close_up: "Yakın Çekim",
+    upward_gaze: "Yukarı Bakış",
+    half_profile: "Yarım Profil",
+    reference: "Referans Fotoğraf",
+  };
+
+  let _lightboxPhotos = [];
+  let _lightboxIndex = 0;
+
+  function renderPhotoGallery(caseData) {
+    const section = document.getElementById("photo-gallery-section");
+    const grid = document.getElementById("photo-gallery-grid");
+    const photos = caseData?.photos;
+    if (!photos || Object.keys(photos).length === 0) {
+      section.classList.add("hidden");
+      return;
+    }
+    section.classList.remove("hidden");
+    grid.innerHTML = "";
+    _lightboxPhotos = Object.entries(photos).map(([type, url]) => ({
+      type,
+      url,
+      label: PHOTO_LABELS_TR[type] || type,
+    }));
+    _lightboxPhotos.forEach((photo, idx) => {
+      const card = document.createElement("div");
+      card.className = "relative rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 group cursor-pointer";
+      card.innerHTML = `
+        <img src="${esc(photo.url)}" alt="${esc(photo.label)}" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-200" loading="lazy" />
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2.5 flex items-end justify-between">
+          <span class="text-white text-xs font-semibold">${esc(photo.label)}</span>
+          <button onclick="openLightbox(${idx})" class="text-xs bg-white/20 hover:bg-white/40 text-white font-bold px-2.5 py-1 rounded-lg transition-colors">Tam Ekran</button>
+        </div>
+      `;
+      card.addEventListener("click", (e) => {
+        if (e.target.tagName !== "BUTTON") openLightbox(idx);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  window.openLightbox = function(idx) {
+    _lightboxIndex = idx;
+    const photo = _lightboxPhotos[_lightboxIndex];
+    document.getElementById("lightbox-img").src = photo.url;
+    document.getElementById("lightbox-label").textContent = photo.label;
+    document.getElementById("photo-lightbox").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+
+  window.closeLightbox = function() {
+    document.getElementById("photo-lightbox").classList.add("hidden");
+    document.body.style.overflow = "";
+  };
+
+  window.closeLightboxBg = function(e) {
+    if (e.target === document.getElementById("photo-lightbox")) closeLightbox();
+  };
+
+  window.prevLightboxPhoto = function(e) {
+    e.stopPropagation();
+    if (_lightboxPhotos.length === 0) return;
+    _lightboxIndex = (_lightboxIndex - 1 + _lightboxPhotos.length) % _lightboxPhotos.length;
+    const photo = _lightboxPhotos[_lightboxIndex];
+    document.getElementById("lightbox-img").src = photo.url;
+    document.getElementById("lightbox-label").textContent = photo.label;
+  };
+
+  window.nextLightboxPhoto = function(e) {
+    e.stopPropagation();
+    if (_lightboxPhotos.length === 0) return;
+    _lightboxIndex = (_lightboxIndex + 1) % _lightboxPhotos.length;
+    const photo = _lightboxPhotos[_lightboxIndex];
+    document.getElementById("lightbox-img").src = photo.url;
+    document.getElementById("lightbox-label").textContent = photo.label;
+  };
+
+  // ESC key to close lightbox
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") { const lb = document.getElementById("photo-lightbox"); if (!lb.classList.contains("hidden")) prevLightboxPhoto(e); }
+    if (e.key === "ArrowRight") { const lb = document.getElementById("photo-lightbox"); if (!lb.classList.contains("hidden")) nextLightboxPhoto(e); }
+  });
 
   function getCVOverrides() {
     return {

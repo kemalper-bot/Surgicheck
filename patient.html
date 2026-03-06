@@ -90,6 +90,20 @@
         </div>
       </div>
 
+      <!-- KVKK Notice + Photo Upload Section -->
+      <div id="photo-upload-section" class="hidden mt-6">
+        <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 mb-5 text-sm text-slate-600 leading-relaxed">
+          <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          <span>Bu fotoğraflar yalnızca cerrahınız tarafından değerlendirme amacıyla görüntülenecektir. Üçüncü taraflarla paylaşılmaz. (KVKK m.6)</span>
+        </div>
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <h3 class="text-base font-bold text-slate-800">Operasyon Fotoğrafları</h3>
+        </div>
+        <div id="photo-slots-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div id="photo-upload-error" class="hidden mt-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm p-3 font-medium"></div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label class="text-sm font-medium text-slate-700 mb-1 block">Ad Soyad *</label>
@@ -543,7 +557,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, setDoc, serverTimestamp, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
@@ -556,6 +571,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     // ─── POSTOP TAKİP: URL param check ──────────────────────────────────────
     const urlParams = new URLSearchParams(window.location.search);
@@ -725,6 +741,7 @@
         tummyBlock.classList.add("hidden");
         document.querySelector('input[name="csection"][value="no"]').checked = true;
       }
+      if (proc) loadPhotoProtocol(proc);
     });
 
     function calcBMI() {
@@ -812,6 +829,126 @@
       const val = document.querySelector('input[name="smoking"]:checked')?.value;
       const d = document.getElementById("smoke-detail");
       d.classList.toggle("hidden", val === "never" || val === "quit_6m_plus");
+    };
+
+    // ─── PHOTO PROTOCOL LOGIC ────────────────────────────────────────────────
+    const PROC_TO_PROTOCOL_ID = {
+      "Rinoplasti": "rhinoplasty",
+      "Blefaroplasti": "blepharoplasty",
+      "Breast Lift": "breast_lift",
+      "Meme Büyütme": "breast_augmentation",
+      "Meme Küçültme": "breast_reduction",
+      "Liposuction": "liposuction",
+      "Tummy Tuck": "tummy_tuck",
+      "BBL": "bbl",
+      "Facelift": "facelift",
+      "Diğer": "default",
+    };
+
+    let _photoLabels = {};
+    let _photoInstructions = {};
+
+    async function loadPhotoProtocol(procValue) {
+      try {
+        const protocolId = PROC_TO_PROTOCOL_ID[procValue] || "default";
+        const [protocolSnap, labelsSnap, instrSnap] = await Promise.all([
+          getDoc(doc(db, "photoProtocols", protocolId)),
+          getDoc(doc(db, "photoConfig", "labels")),
+          getDoc(doc(db, "photoConfig", "instructions")),
+        ]);
+
+        let protocol = { required: ["front", "lateral"], recommended: [], optional: ["reference"] };
+        if (protocolSnap.exists()) protocol = protocolSnap.data();
+        else {
+          const defSnap = await getDoc(doc(db, "photoProtocols", "default"));
+          if (defSnap.exists()) protocol = defSnap.data();
+        }
+
+        _photoLabels = labelsSnap.exists() ? labelsSnap.data() : {};
+        _photoInstructions = instrSnap.exists() ? instrSnap.data() : {};
+
+        renderPhotoSlots(protocol.required || [], protocol.recommended || [], protocol.optional || []);
+        document.getElementById("photo-upload-section").classList.remove("hidden");
+      } catch (err) {
+        console.warn("Photo protocol load failed, hiding section:", err);
+        document.getElementById("photo-upload-section").classList.add("hidden");
+      }
+    }
+
+    function renderPhotoSlots(required, recommended, optional) {
+      const grid = document.getElementById("photo-slots-grid");
+      grid.innerHTML = "";
+      const groups = [
+        { types: required, tier: "required", badge: "Zorunlu", badgeCls: "bg-rose-100 text-rose-700 border-rose-200" },
+        { types: recommended, tier: "recommended", badge: "Önerilen", badgeCls: "bg-amber-100 text-amber-700 border-amber-200" },
+        { types: optional, tier: "optional", badge: "İsteğe Bağlı", badgeCls: "bg-slate-100 text-slate-500 border-slate-200" },
+      ];
+      for (const { types, tier, badge, badgeCls } of groups) {
+        for (const photoType of types) {
+          const label = _photoLabels[photoType] || photoType;
+          const instruction = _photoInstructions[photoType] || "";
+          const inputId = `photo_input_${photoType}`;
+          const slot = document.createElement("div");
+          slot.className = "photo-slot relative rounded-xl border-2 border-dashed border-slate-200 overflow-hidden bg-white transition-colors hover:border-slate-400";
+          slot.dataset.photoType = photoType;
+          slot.dataset.required = tier === "required" ? "true" : "false";
+          slot.innerHTML = `
+            <div class="slot-empty flex flex-col items-center justify-center p-5 min-h-[160px] cursor-pointer" onclick="document.getElementById('${inputId}').click()">
+              <span class="text-3xl mb-2">📷</span>
+              <span class="text-sm font-semibold text-slate-700 mb-1">${label}</span>
+              ${instruction ? `<span class="text-xs text-slate-400 text-center leading-relaxed mb-2">${instruction}</span>` : ""}
+              <span class="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeCls}">${badge}</span>
+              <input id="${inputId}" type="file" accept=".jpg,.jpeg,.png,.heic,image/jpeg,image/png,image/heic" class="hidden" data-photo-type="${photoType}" data-tier="${tier}" onchange="handlePhotoSelect(this, '${photoType}', '${label}')" />
+            </div>
+            <div class="slot-filled hidden relative min-h-[160px]">
+              <img class="w-full h-40 object-cover" src="" alt="${label}" />
+              <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs font-semibold px-3 py-1.5 flex items-center justify-between">
+                <span>${label}</span>
+                <span class="inline-block text-xs font-bold px-2 py-0.5 rounded-full border ${badgeCls} bg-opacity-80">${badge}</span>
+              </div>
+              <button type="button" onclick="removePhoto('${photoType}')" class="absolute top-2 right-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow text-slate-600 hover:text-rose-600 text-sm font-bold">✕</button>
+            </div>
+          `;
+          grid.appendChild(slot);
+        }
+      }
+    }
+
+    window.handlePhotoSelect = function(input, photoType, label) {
+      const errEl = document.getElementById("photo-upload-error");
+      errEl.classList.add("hidden");
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const allowedTypes = ["image/jpeg", "image/png", "image/heic", "image/heif"];
+      if (!allowedTypes.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png|heic)$/i)) {
+        errEl.textContent = "Lütfen JPEG, PNG veya HEIC formatında fotoğraf yükleyin.";
+        errEl.classList.remove("hidden");
+        input.value = "";
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        errEl.textContent = "Fotoğraf boyutu 10MB'ı geçemez.";
+        errEl.classList.remove("hidden");
+        input.value = "";
+        return;
+      }
+      const slot = document.querySelector(`.photo-slot[data-photo-type="${photoType}"]`);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        slot.querySelector(".slot-empty").classList.add("hidden");
+        const filled = slot.querySelector(".slot-filled");
+        filled.querySelector("img").src = e.target.result;
+        filled.classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.removePhoto = function(photoType) {
+      const slot = document.querySelector(`.photo-slot[data-photo-type="${photoType}"]`);
+      const input = slot.querySelector(`input[type="file"]`);
+      input.value = "";
+      slot.querySelector(".slot-filled").classList.add("hidden");
+      slot.querySelector(".slot-empty").classList.remove("hidden");
     };
 
     window.submitForm = async function() {
@@ -912,14 +1049,49 @@
           updatedAt: serverTimestamp()
         };
 
+        // Validate required photos
+        const photoSection = document.getElementById("photo-upload-section");
+        if (photoSection && !photoSection.classList.contains("hidden")) {
+          const requiredSlots = photoSection.querySelectorAll('.photo-slot[data-required="true"]');
+          for (const slot of requiredSlots) {
+            const input = slot.querySelector('input[type="file"]');
+            if (!input || !input.files || !input.files[0]) {
+              showAlert("err", "Lütfen zorunlu fotoğrafları yükleyin.");
+              btn.disabled = false;
+              btn.innerHTML = `Formu Gönder ✓`;
+              return;
+            }
+          }
+        }
+
+        // Create doc ref first so we can use the ID for storage paths
+        const caseRef = doc(collection(db, "cases"));
+
+        // Upload photos to Firebase Storage
+        const photoUrls = {};
+        if (photoSection && !photoSection.classList.contains("hidden")) {
+          const allInputs = photoSection.querySelectorAll('input[type="file"]');
+          for (const input of allInputs) {
+            if (input.files && input.files[0]) {
+              const photoType = input.dataset.photoType;
+              const fileRef = storageRef(storage, `patients/${caseRef.id}/photos/${photoType}.jpg`);
+              const snap = await uploadBytes(fileRef, input.files[0]);
+              photoUrls[photoType] = await getDownloadURL(snap.ref);
+            }
+          }
+        }
+        if (Object.keys(photoUrls).length > 0) {
+          payload.photos = photoUrls;
+        }
+
         const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 15000)
-  );
-  const ref = await Promise.race([addDoc(collection(db, "cases"), payload), timeoutPromise]);
+          setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 15000)
+        );
+        await Promise.race([setDoc(caseRef, payload), timeoutPromise]);
 
         document.getElementById("sec-4").classList.add("hidden");
         document.getElementById("sec-success").classList.remove("hidden");
-        document.getElementById("caseIdDisplay").textContent = ref.id;
+        document.getElementById("caseIdDisplay").textContent = caseRef.id;
         window.scrollTo({ top: 0, behavior: "smooth" });
 
       } catch (err) {
