@@ -271,6 +271,70 @@
     }
     .pricing-card.featured .pricing-features li { color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.1); }
     .pricing-features li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+    .pricing-features li.not-included { color: var(--muted); font-style: italic; }
+    .pricing-features li.not-included::before { content: '−'; color: var(--muted); font-weight: 400; }
+    /* Module comparison matrix */
+    .module-matrix { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .module-matrix th { background: var(--navy); color: var(--white); padding: .85rem 1rem; text-align: left; font-weight: 700; }
+    .module-matrix th:first-child { border-radius: var(--radius) 0 0 0; }
+    .module-matrix th:last-child { border-radius: 0 var(--radius) 0 0; }
+    .module-matrix td { padding: .8rem 1rem; border-bottom: 1px solid var(--border); }
+    .module-matrix tr:last-child td { border-bottom: none; }
+    .module-matrix tr:nth-child(even) td { background: #f8fafc; }
+    .module-matrix tr:hover td { background: #f0fdf4; }
+    .module-matrix .m-check { color: var(--accent); font-weight: 700; text-align: center; }
+    .module-matrix .m-none { color: var(--muted); text-align: center; }
+    .module-matrix .m-limit { color: var(--warn); font-weight: 600; text-align: center; }
+    .module-matrix td:not(:first-child) { text-align: center; }
+    /* Case Study Tabs */
+    .case-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .case-tab-btn { padding: .5rem 1.25rem; border-radius: 20px; border: 2px solid var(--border); background: var(--white); font-size: .85rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .case-tab-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .case-tab-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .case-tab-panel { display: none; animation: caseFadeIn .15s ease; }
+    .case-tab-panel.active { display: block; }
+    @keyframes caseFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* Consent Card */
+    .consent-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.75rem; box-shadow: var(--shadow); }
+    .consent-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .consent-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .consent-subtitle { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+    .consent-patient { font-size: .88rem; font-weight: 600; color: var(--text); margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+    .consent-section-label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); margin-bottom: .75rem; }
+    .consent-item { border-left: 3px solid var(--danger); background: #fff5f5; border-radius: 0 8px 8px 0; padding: .75rem 1rem; margin-bottom: .75rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+    .consent-item-left { flex: 1; }
+    .consent-item-label { font-size: .8rem; font-weight: 700; color: var(--danger); margin-bottom: .25rem; }
+    .consent-item-text { font-size: .83rem; color: var(--text); line-height: 1.6; }
+    .consent-item-ok { font-size: .8rem; color: #16a34a; font-weight: 600; white-space: nowrap; }
+    .consent-footer { display: flex; justify-content: space-between; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); gap: 1rem; }
+    .consent-footer-label { font-size: .75rem; font-weight: 600; color: var(--muted); }
+    .consent-footer-value { font-size: .85rem; font-weight: 700; color: var(--text); margin-top: .15rem; }
+    .badge-signed { background: #dcfce7; color: #166534; }
+    .badge-day { background: #e0f2fe; color: #0369a1; }
+    /* Postop Card */
+    .postop-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.75rem; box-shadow: var(--shadow); }
+    .postop-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .postop-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .postop-subtitle { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+    .postop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+    .postop-metric { background: #f8fafc; border-radius: 8px; padding: .85rem 1rem; border: 1px solid var(--border); }
+    .postop-metric-name { font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; }
+    .postop-metric-value { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .postop-metric-status { font-size: .78rem; color: #16a34a; font-weight: 600; margin-top: .2rem; }
+    .postop-ok-banner { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: .85rem 1rem; margin-bottom: 1rem; font-size: .88rem; font-weight: 700; color: #166534; }
+    .postop-next { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+    .postop-next-text { font-size: .88rem; font-weight: 600; color: var(--text); flex: 1; }
+    .postop-next-sub { font-size: .78rem; color: var(--muted); }
+    .postop-footer { font-size: .75rem; color: var(--muted); text-align: center; }
+    /* Why Matters */
+    .why-matters { margin-top: 2rem; }
+    .why-matters-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .why-item { background: var(--white); border-radius: var(--radius); padding: 1.25rem; border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .why-item-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+    .why-item-heading { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
+    .why-item-text { font-size: .83rem; color: var(--muted); line-height: 1.7; }
+    @media (max-width: 900px) { .why-grid { grid-template-columns: 1fr; } }
     .pricing-btn {
       display: block; text-align: center; margin-top: 1.5rem;
       padding: .75rem; border-radius: 8px; font-weight: 700; font-size: .9rem;
@@ -642,13 +706,21 @@
         <div class="section-tag">Live Example</div>
         <h2 class="section-title" style="font-size:1.5rem;">Sample Case Analysis</h2>
       </div>
-      <div class="grid-2">
+      <!-- Case Study Tab Buttons -->
+      <div class="case-tabs">
+        <button class="case-tab-btn active" onclick="switchCaseTab('case-preop', this)">Preop Risk</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('case-consent', this)">Consent</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('case-postop', this)">Postop Follow-up</button>
+      </div>
+
+      <!-- Tab 1: Preop Risk -->
+      <div class="case-tab-panel active" id="case-preop">
         <div class="case-card">
           <div class="case-header">
             <div>
               <div class="case-id">SAMPLE CASE ANALYSIS • ID: #A-1042</div>
               <div class="case-title">Clearance Assessment — Rhinoplasty</div>
-              <div style="font-size:.8rem; color:rgba(255,255,255,.5); margin-top:.2rem;">38 yrs • Female • 2026-02-27</div>
+              <div style="font-size:.8rem; color:rgba(255,255,255,.5); margin-top:.2rem;">38 yrs • Female • 14.03.2026</div>
             </div>
             <span class="badge badge-conditional"><span class="badge-dot dot-conditional"></span>Conditional</span>
           </div>
@@ -656,7 +728,7 @@
             <div style="font-size:.75rem; font-weight:700; letter-spacing:.08em; color:rgba(255,255,255,.5); margin-bottom:.5rem;">DETECTED RISK SIGNALS</div>
             <div class="risk-signal risk-high">🔴 BMI 34.2 — Elevated complication risk (RC-17)</div>
             <div class="risk-signal risk-med">🟡 Active smoking &lt;4 weeks (RC-22)</div>
-            <div class="risk-signal risk-ok">✓ Explainable rule refs: RC-17, RC-22</div>
+            <div class="risk-signal risk-ok">✓ Explainable rule references: RC-17, RC-22</div>
           </div>
           <div>
             <div style="font-size:.75rem; font-weight:700; letter-spacing:.08em; color:rgba(255,255,255,.5); margin-bottom:.5rem;">RECOMMENDED CLINICAL ACTIONS</div>
@@ -664,19 +736,111 @@
             <div class="action-item"><div class="action-num">2</div> Anesthesia consultation and additional lab panel</div>
           </div>
           <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; font-size:.75rem; color:rgba(255,255,255,.4);">
-            <span>CLINICIAN SIGN-OFF</span>
+            <span>AWAITING CLINICIAN SIGN-OFF</span>
             <span>RULE SET: RS-2026-Q1 r7</span>
           </div>
         </div>
-        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <h3 class="card-title" style="font-size:1.05rem; margin-bottom:1rem;">Why This Matters</h3>
-            <p style="font-size:.88rem; color:var(--muted); line-height:1.8; margin-bottom:1rem;">This sample case demonstrates SurgiCheck's core value: a patient with two identifiable risk factors (elevated BMI and recent smoking) receives a <em>Conditional</em> clearance with specific, actionable steps — not a vague "consult your doctor."</p>
-            <p style="font-size:.88rem; color:var(--muted); line-height:1.8;">Every risk signal is tied to a named rule (RC-17, RC-22), making the decision fully explainable, auditable, and legally defensible.</p>
+      </div>
+
+      <!-- Tab 2: Consent -->
+      <div class="case-tab-panel" id="case-consent">
+        <div class="consent-card">
+          <div class="consent-header">
+            <div>
+              <div class="consent-title">INFORMED CONSENT FORM</div>
+              <div class="consent-subtitle">Auto-generated — Procedure and Risk Profile Specific</div>
+            </div>
+            <span class="badge badge-signed">SIGNED</span>
           </div>
-          <div style="background:#f0fdf4; border-radius:10px; padding:1rem; border:1px solid #bbf7d0;">
-            <div style="font-size:.8rem; font-weight:700; color:#166534; margin-bottom:.5rem;">GOVERNANCE OUTCOME</div>
-            <div style="font-size:.85rem; color:#15803d;">When complications occur, this documentation shows the clinic followed a standardized, rule-based protocol — protecting both patient and provider.</div>
+          <div class="consent-patient">Rhinoplasty &nbsp;•&nbsp; 38 yrs, Female &nbsp;•&nbsp; #A-1042</div>
+          <div class="consent-section-label">PERSONALISED RISK ITEMS ADDED TO FORM</div>
+          <div class="consent-item">
+            <div class="consent-item-left">
+              <div class="consent-item-label">⚠ High Risk Warning</div>
+              <div class="consent-item-text">Active smoking impairs tissue perfusion and increases the risk of wound complications.</div>
+            </div>
+            <div class="consent-item-ok">✓ Patient acknowledged</div>
+          </div>
+          <div class="consent-item">
+            <div class="consent-item-left">
+              <div class="consent-item-label">⚠ High Risk Warning</div>
+              <div class="consent-item-text">BMI 34.2 — elevated risk of impaired wound healing and anaesthetic complications.</div>
+            </div>
+            <div class="consent-item-ok">✓ Patient acknowledged</div>
+          </div>
+          <div class="consent-footer">
+            <div>
+              <div class="consent-footer-label">Signature Date</div>
+              <div class="consent-footer-value">14.03.2026 • 09:42</div>
+            </div>
+            <div>
+              <div class="consent-footer-label">Archive Status</div>
+              <div class="consent-footer-value">✓ PDF saved with timestamp</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Postop Follow-up -->
+      <div class="case-tab-panel" id="case-postop">
+        <div class="postop-card">
+          <div class="postop-header">
+            <div>
+              <div class="postop-title">POSTOPERATIVE FOLLOW-UP</div>
+              <div class="postop-subtitle">#A-1042 — Rhinoplasty</div>
+            </div>
+            <span class="badge badge-day">DAY 7</span>
+          </div>
+          <div class="postop-grid">
+            <div class="postop-metric">
+              <div class="postop-metric-name">Pain Score</div>
+              <div class="postop-metric-value">3/10</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Fever</div>
+              <div class="postop-metric-value">No</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Bleeding</div>
+              <div class="postop-metric-value">No</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Swelling</div>
+              <div class="postop-metric-value">2/5</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+          </div>
+          <div class="postop-ok-banner">✓ No complication signals detected</div>
+          <div class="postop-next">
+            <span style="font-size:1.1rem;">🔔</span>
+            <span class="postop-next-text">Next automated follow-up: Day 14</span>
+            <span class="postop-next-sub">Sent automatically</span>
+          </div>
+          <div class="postop-footer">All patient responses recorded to the audit trail • Viewable in the clinician dashboard</div>
+        </div>
+      </div>
+
+      <!-- Why Matters -->
+      <div class="why-matters">
+        <h3 class="why-matters-title">Why It Matters</h3>
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="why-item-icon">⚡</div>
+            <div class="why-item-heading">Preop</div>
+            <div class="why-item-text">Every risk signal is tied to a named rule — the decision is explainable, auditable, and legally defensible.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">📄</div>
+            <div class="why-item-heading">Consent</div>
+            <div class="why-item-text">The patient's individual risk profile is automatically embedded in the consent form — procedure-specific documentation that holds up in court.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">🔔</div>
+            <div class="why-item-heading">Postop</div>
+            <div class="why-item-text">Complication signals are caught early. The automated follow-up protocol improves patient safety without adding to clinician workload.</div>
           </div>
         </div>
       </div>
@@ -696,13 +860,12 @@
     </div>
 
     <div class="tabs fade-in">
-      <button class="tab-btn active" onclick="switchTab('overview-tab', this)">Platform Overview</button>
-      <button class="tab-btn" onclick="switchTab('decisions-tab', this)">Decision Distribution</button>
-      <button class="tab-btn" onclick="switchTab('efficiency-tab', this)">Efficiency Gains</button>
-      <button class="tab-btn" onclick="switchTab('risk-tab', this)">Risk Signals</button>
+      <button class="tab-btn active" onclick="switchTab('overview-tab', this)">Overview</button>
+      <button class="tab-btn" onclick="switchTab('decision-risk-tab', this)">Decision &amp; Risk</button>
+      <button class="tab-btn" onclick="switchTab('postop-consent-tab', this)">Postop &amp; Consent</button>
     </div>
 
-    <!-- Overview Tab -->
+    <!-- Tab 1: Overview -->
     <div class="tab-panel active" id="overview-tab">
       <div class="grid-2 fade-in">
         <div class="chart-wrap">
@@ -716,10 +879,57 @@
           <canvas id="specialtyChart"></canvas>
         </div>
       </div>
+      <div class="card fade-in" style="margin-top:1.5rem;">
+        <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performance Metrics</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem 2rem;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">System Uptime</span>
+              <span style="color:var(--accent); font-weight:700;">99.8%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="99.8%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Triage Standardisation Rate</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Average Triage Time Reduction</span>
+              <span style="color:var(--accent); font-weight:700;">60%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="60%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Consent Form Generation Time</span>
+              <span style="color:var(--accent); font-weight:700;">&lt;30 sec</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Postop Follow-up Response Rate</span>
+              <span style="color:var(--accent); font-weight:700;">78%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="78%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Audit Documentation Coverage</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Decisions Tab -->
-    <div class="tab-panel" id="decisions-tab">
+    <!-- Tab 2: Decision & Risk -->
+    <div class="tab-panel" id="decision-risk-tab">
       <div class="grid-2 fade-in">
         <div class="chart-wrap">
           <div class="chart-title">Clearance Decision Distribution</div>
@@ -732,27 +942,7 @@
           <canvas id="procedureChart"></canvas>
         </div>
       </div>
-    </div>
-
-    <!-- Efficiency Tab -->
-    <div class="tab-panel" id="efficiency-tab">
-      <div class="grid-2 fade-in">
-        <div class="chart-wrap">
-          <div class="chart-title">Triage Time Reduction</div>
-          <div class="chart-sub">Before vs. after SurgiCheck implementation (minutes per case)</div>
-          <canvas id="triageTimeChart"></canvas>
-        </div>
-        <div class="chart-wrap">
-          <div class="chart-title">Operational KPI Improvements</div>
-          <div class="chart-sub">Reported efficiency gains from clinician testimonials</div>
-          <canvas id="kpiChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Risk Signals Tab -->
-    <div class="tab-panel" id="risk-tab">
-      <div class="grid-2 fade-in">
+      <div class="grid-2 fade-in" style="margin-top:1.5rem;">
         <div class="chart-wrap">
           <div class="chart-title">Most Frequent Risk Signals</div>
           <div class="chart-sub">Top risk factors triggering Conditional or Denied outcomes</div>
@@ -766,37 +956,44 @@
       </div>
     </div>
 
-    <!-- Progress metrics -->
-    <div class="card fade-in" style="margin-top:1.5rem;">
-      <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performance Metrics</h3>
-      <div class="grid-2">
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">System Uptime</span>
-            <span style="color:var(--accent); font-weight:700;">99.8%</span>
-          </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="99.8%"></div></div>
+    <!-- Tab 3: Postop & Consent -->
+    <div class="tab-panel" id="postop-consent-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Postop Follow-up Response Rate</div>
+          <div class="chart-sub">Form response rates by day after discharge</div>
+          <canvas id="postopResponseChart"></canvas>
         </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Triage Standardisation Rate</span>
-            <span style="color:var(--accent); font-weight:700;">100%</span>
-          </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+        <div class="chart-wrap">
+          <div class="chart-title">Detected Complication Signals</div>
+          <div class="chart-sub">Distribution by type</div>
+          <canvas id="complicationChart"></canvas>
         </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Average Triage Time Reduction</span>
-            <span style="color:var(--accent); font-weight:700;">60%</span>
+      </div>
+      <div class="card fade-in" style="margin-top:1.5rem;">
+        <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performance Metrics — Postop &amp; Consent</h3>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem 2rem;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Avg. Consent Form Generation Time</span>
+              <span style="color:var(--accent); font-weight:700;">&lt;30 sec</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="60%"></div></div>
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Audit Documentation Coverage</span>
-            <span style="color:var(--accent); font-weight:700;">100%</span>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Digital Signature Completion Rate</span>
+              <span style="color:var(--accent); font-weight:700;">96%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="96%"></div></div>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Archive Success Rate</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -829,7 +1026,7 @@
         </div>
       </div>
       <div class="chart-wrap">
-        <div class="chart-title">SurgiCheck vs. Traditional Approach</div>
+        <div class="chart-title">SurgiCheck vs. Traditional Clinical Management</div>
         <table class="comp-table">
           <thead>
             <tr>
@@ -844,8 +1041,13 @@
             <tr><td>Decision explainability</td><td class="cross">✗ Implicit</td><td class="check">✓ Rule-referenced</td></tr>
             <tr><td>Triage speed</td><td class="cross">✗ 15+ min</td><td class="check">✓ &lt;3 min</td></tr>
             <tr><td>Multi-user consistency</td><td class="cross">✗ Inconsistent</td><td class="check">✓ Uniform</td></tr>
-            <tr><td>GDPR compliance</td><td class="partial">~ Varies</td><td class="check">✓ Built-in</td></tr>
-            <tr><td>EHR integration</td><td class="partial">~ Varies</td><td class="check">✓ Enterprise</td></tr>
+            <tr><td>GDPR compliance</td><td class="partial">~ Varies</td><td class="check">✓ Privacy-by-design</td></tr>
+            <tr><td>EHR integration</td><td class="partial">~ Varies</td><td class="partial">~ Enterprise plan only</td></tr>
+            <tr><td>Procedure-specific photo protocol</td><td class="cross">✗ WhatsApp / email</td><td class="check">✓ In-platform</td></tr>
+            <tr><td>Informed consent documentation</td><td class="cross">✗ Generic form</td><td class="check">✓ Risk profile-specific</td></tr>
+            <tr><td>Digital signature &amp; archive</td><td class="cross">✗ Paper / manual</td><td class="check">✓ Timestamped</td></tr>
+            <tr><td>Postop complication monitoring</td><td class="cross">✗ Patient calls in</td><td class="check">✓ Automated protocol</td></tr>
+            <tr><td>Early complication alert</td><td class="cross">✗ None</td><td class="check">✓ Instant alert</td></tr>
           </tbody>
         </table>
       </div>
@@ -876,6 +1078,8 @@
           <li>Clearance PDF</li>
           <li>Basic Rule Set</li>
           <li>Email & Video Support</li>
+          <li>Informed Consent Form (50 forms/month)</li>
+          <li class="not-included">Postop follow-up — available in higher plans</li>
         </ul>
         <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Start Pilot →</a>
       </div>
@@ -893,6 +1097,10 @@
           <li>Clearance Documentation Archive</li>
           <li>Unlimited Patients</li>
           <li>Basic Analytics</li>
+          <li>Informed Consent Form (unlimited)</li>
+          <li>Procedure-specific photo protocol</li>
+          <li>Automated postop follow-up (Day 1 / 3 / 7 / 14 / 30)</li>
+          <li>Early complication alert system</li>
         </ul>
         <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Book Implementation Call →</a>
       </div>
@@ -908,9 +1116,31 @@
           <li>Dedicated SLA Support</li>
           <li>All Clinical features</li>
           <li>Custom Rule Sets</li>
+          <li>All Clinical modules included</li>
+          <li>Custom postop follow-up protocol</li>
+          <li>Photo archive integration</li>
         </ul>
         <a class="pricing-btn" href="https://www.surgicheck.net" target="_blank">Get Quote →</a>
       </div>
+    </div>
+
+    <!-- Module Comparison Matrix -->
+    <div class="card fade-in" style="margin-top:2rem; overflow-x:auto;">
+      <h3 class="card-title" style="margin-bottom:1.25rem;">Module Comparison by Plan</h3>
+      <table class="module-matrix">
+        <thead>
+          <tr><th>Module</th><th>Pilot</th><th>Clinical</th><th>Enterprise</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Preop Risk Assessment</td><td class="m-check">✓</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Consent Documentation</td><td class="m-limit">50/mo</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Photo Protocol</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Postop Follow-up</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Complication Alert</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Custom Protocol</td><td class="m-none">−</td><td class="m-none">−</td><td class="m-check">✓</td></tr>
+          <tr><td>EHR Integration</td><td class="m-none">−</td><td class="m-none">−</td><td class="m-check">✓</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Pricing comparison chart -->
@@ -942,7 +1172,7 @@
           Where is patient data stored?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">All data is stored on EU-based servers with end-to-end encryption and full GDPR compliance. Clinical data is never shared with third parties under any circumstances.</div>
+        <div class="faq-answer">Data in transit is protected via TLS and access is managed through role-based authorisation. The data hosting and processing approach is designed in alignment with GDPR principles; data location and infrastructure details are available on request.</div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">
@@ -957,6 +1187,41 @@
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">Yes. A dedicated implementation specialist guides you from onboarding through rule set configuration. Email and video call support are included throughout the pilot phase.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is the informed consent form legally valid?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Consent forms generated by SurgiCheck are structured in accordance with patient rights regulations and GDPR Art. 9. Forms are specific to the procedure and the patient's individual risk profile, supported by digital signature and timestamped archiving. Because every item is grounded in a documented risk signal — rather than a generic template — the legal defensibility is meaningfully stronger.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Are patient photos stored securely?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Photos are accessible only to the treating surgeon, stored encrypted on EU-based servers, and are never shared with third parties under any circumstances. (GDPR Art. 9)</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How does the postop follow-up system work?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">When a patient is discharged, the system automatically sends a short follow-up form on Day 1, 3, 7, 14, and 30. When the patient submits the form, responses are assessed automatically; abnormal signals such as pain, fever, or bleeding are sent as instant alerts to the clinician dashboard.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Does the patient need to download an app for postop follow-up?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">No. The patient simply taps the link in the message they receive — no app download or account creation required. The form opens in a mobile browser and takes approximately 2 minutes to complete.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Which aesthetic procedures are supported?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Specialised risk rules, consent templates, and photo protocols are available for 10+ procedures including rhinoplasty, liposuction, blepharoplasty, breast augmentation, breast reduction, breast lift, abdominoplasty, tummy tuck, BBL, and facelift.</div>
       </div>
     </div>
   </div>
@@ -973,20 +1238,20 @@
     </div>
     <div class="security-strip fade-in">
       <div class="sec-item">
-        <div class="sec-icon">🔐</div>
-        <div class="sec-label">End-to-End Encryption</div>
-      </div>
-      <div class="sec-item">
-        <div class="sec-icon">🇪🇺</div>
-        <div class="sec-label">GDPR-Compliant Processing</div>
+        <div class="sec-icon">🔒</div>
+        <div class="sec-label">TLS-secured data transfer</div>
       </div>
       <div class="sec-item">
         <div class="sec-icon">👤</div>
-        <div class="sec-label">Role-Based Access Control</div>
+        <div class="sec-label">Role-based access</div>
       </div>
       <div class="sec-item">
-        <div class="sec-icon">🏛️</div>
-        <div class="sec-label">EU Data Centers</div>
+        <div class="sec-icon">📋</div>
+        <div class="sec-label">Audit log</div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">🛡️</div>
+        <div class="sec-label">Data minimisation</div>
       </div>
     </div>
   </div>
@@ -1020,7 +1285,7 @@
 <!-- ── Footer ───────────────────────────────────────────────────── -->
 <footer>
   <p>SurgiCheck © 2026 • Clinical Decision Support System • <a href="https://www.surgicheck.net" target="_blank">www.surgicheck.net</a></p>
-  <p style="margin-top:.5rem; font-size:.75rem; opacity:.7;">SurgiCheck is a Class I Clinical Decision Support Software (CDSS) — clinician-interpreted, non-automated. Referenced against MHRA Digital Technologies Assessment Criteria (DTAC) and DSSIG guidance.</p>
+  <p style="margin-top:.5rem; font-size:.75rem; opacity:.7;">SurgiCheck is a decision support tool designed to assist clinician judgement; it does not make autonomous clinical decisions. Final clinical decisions remain with the healthcare professional.</p>
 </footer>
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
@@ -1074,6 +1339,13 @@
   function switchTab(id, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function switchCaseTab(id, btn) {
+    document.querySelectorAll('.case-tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.case-tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
   }
@@ -1185,66 +1457,24 @@
     }
   });
 
-  /* ── Triage Time Chart ── */
-  new Chart(document.getElementById('triageTimeChart'), {
+  /* ── Postop Response Chart ── */
+  new Chart(document.getElementById('postopResponseChart'), {
     type: 'bar',
     data: {
-      labels: ['Manual Review', 'With SurgiCheck'],
-      datasets: [{
-        label: 'Minutes per Case',
-        data: [18, 3],
-        backgroundColor: [accentRed, accentGreen],
-        borderRadius: 8,
-        borderSkipped: false,
-      }]
+      labels: ['Day 1', 'Day 3', 'Day 7', 'Day 14', 'Day 30'],
+      datasets: [{ label: 'Response Rate (%)', data: [92, 88, 81, 74, 61], backgroundColor: accentBlue, borderRadius: 6, borderSkipped: false }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, max: 25, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + ' min' } },
-        x: { grid: { display: false } }
-      }
-    }
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } } }
   });
 
-  /* ── KPI Chart ── */
-  new Chart(document.getElementById('kpiChart'), {
-    type: 'radar',
+  /* ── Complication Chart ── */
+  new Chart(document.getElementById('complicationChart'), {
+    type: 'doughnut',
     data: {
-      labels: ['Triage Speed', 'Documentation', 'Consistency', 'Audit Readiness', 'Team Alignment', 'Compliance'],
-      datasets: [
-        {
-          label: 'Before SurgiCheck',
-          data: [25, 35, 30, 20, 35, 30],
-          borderColor: '#94a3b8',
-          backgroundColor: 'rgba(148,163,184,.15)',
-          borderWidth: 2,
-          pointRadius: 4,
-        },
-        {
-          label: 'After SurgiCheck',
-          data: [90, 95, 100, 98, 92, 95],
-          borderColor: accentGreen,
-          backgroundColor: 'rgba(0,200,150,.15)',
-          borderWidth: 2,
-          pointRadius: 4,
-          pointBackgroundColor: accentGreen,
-        }
-      ]
+      labels: ['Pain (high score)', 'Fever', 'Bleeding', 'Swelling'],
+      datasets: [{ data: [38, 22, 18, 22], backgroundColor: [accentRed, accentAmber, accentPurple, accentBlue], borderWidth: 2, borderColor: '#fff' }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
-      scales: {
-        r: {
-          beginAtZero: true, max: 100,
-          grid: { color: '#e2e8f0' },
-          ticks: { display: false },
-          pointLabels: { font: { size: 11 } }
-        }
-      }
-    }
+    options: { responsive: true, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 14 } }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } } }, cutout: '60%' }
   });
 
   /* ── Risk Signals Chart ── */
