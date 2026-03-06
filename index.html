@@ -838,8 +838,8 @@
             <tr><td>Karar açıklanabilirliği</td><td class="cross">✗ Örtük</td><td class="check">✓ Kural referanslı</td></tr>
             <tr><td>Triyaj hızı</td><td class="cross">✗ 15+ dk</td><td class="check">✓ &lt;3 dk</td></tr>
             <tr><td>Çok kullanıcılı tutarlılık</td><td class="cross">✗ Tutarsız</td><td class="check">✓ Tekdüze</td></tr>
-            <tr><td>GDPR uyumluluğu</td><td class="partial">~ Değişken</td><td class="check">✓ Yerleşik</td></tr>
-            <tr><td>EHR entegrasyonu</td><td class="partial">~ Değişken</td><td class="check">✓ Kurumsal</td></tr>
+            <tr><td>GDPR uyumluluğu</td><td class="partial">~ Değişken</td><td class="check">✓ Gizlilik odaklı tasarım</td></tr>
+            <tr><td>EHR entegrasyonu</td><td class="partial">~ Değişken</td><td class="partial">~ Kurumsal plan kapsamında</td></tr>
             <tr><td>Prosedüre özgü fotoğraf protokolü</td><td class="cross">✗ WhatsApp / e-posta</td><td class="check">✓ Platform içi</td></tr>
             <tr><td>Aydınlatılmış rıza dokümantasyonu</td><td class="cross">✗ Jenerik form</td><td class="check">✓ Risk profiline özgü</td></tr>
             <tr><td>Dijital imza ve arşiv</td><td class="cross">✗ Kağıt / manuel</td><td class="check">✓ Zaman damgalı</td></tr>
@@ -967,7 +967,7 @@
           Hasta verileri nerede saklanır?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer">Tüm veriler, uçtan uca şifreleme ve tam GDPR uyumluluğuyla AB sunucularında saklanır. Klinik veriler hiçbir koşulda üçüncü taraflarla paylaşılmaz.</div>
+        <div class="faq-answer">Veri iletimi TLS üzerinden korunur ve erişimler rol tabanlı yetkilendirme ile yönetilir. Veri barındırma ve işleme yaklaşımı GDPR ilkeleriyle uyumlu olacak şekilde tasarlanır; talep halinde veri lokasyonu ve altyapı detaylarını paylaşırız.</div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">
@@ -1032,10 +1032,10 @@
       <h2 class="section-title">Kurumsal düzeyde veri koruma.</h2>
     </div>
     <div class="security-strip fade-in">
-      <div class="sec-item"><div class="sec-icon">🔐</div><div class="sec-label">Uçtan Uca Şifreleme</div></div>
-      <div class="sec-item"><div class="sec-icon">🇪🇺</div><div class="sec-label">GDPR Uyumlu İşleme</div></div>
-      <div class="sec-item"><div class="sec-icon">👤</div><div class="sec-label">Rol Tabanlı Erişim Kontrolü</div></div>
-      <div class="sec-item"><div class="sec-icon">🏛️</div><div class="sec-label">AB Veri Merkezleri</div></div>
+      <div class="sec-item"><div class="sec-icon">🔒</div><div class="sec-label">TLS ile güvenli aktarım</div></div>
+      <div class="sec-item"><div class="sec-icon">👤</div><div class="sec-label">Rol tabanlı erişim</div></div>
+      <div class="sec-item"><div class="sec-icon">📋</div><div class="sec-label">Audit log</div></div>
+      <div class="sec-item"><div class="sec-icon">🛡️</div><div class="sec-label">Veri minimizasyonu</div></div>
     </div>
   </div>
 </section>
@@ -1067,7 +1067,7 @@
 
 <footer>
   <p>SurgiCheck © 2026 • Klinik Karar Destek Sistemi • <a href="https://www.surgicheck.net" target="_blank">www.surgicheck.net</a></p>
-  <p style="margin-top:.5rem; font-size:.75rem; opacity:.7;">SurgiCheck, Sınıf I Klinik Karar Destek Yazılımı (KDSY) olarak sınıflandırılmıştır — klinisyen yorumuna dayalıdır, otomatik karar vermez. T.C. Sağlık Bakanlığı SUT çerçevesi esas alınmıştır.</p>
+  <p style="margin-top:.5rem; font-size:.75rem; opacity:.7;">SurgiCheck, klinisyen kararını desteklemek amacıyla tasarlanmış bir karar destek aracıdır; otomatik karar vermez. Nihai klinik karar sağlık profesyoneline aittir.</p>
 </footer>
 
 <script>
