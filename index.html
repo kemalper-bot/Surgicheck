@@ -149,6 +149,21 @@
     .pricing-features li { font-size: .85rem; color: var(--text); padding: .4rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .5rem; }
     .pricing-card.featured .pricing-features li { color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.1); }
     .pricing-features li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+    .pricing-features li.not-included { color: var(--muted); font-style: italic; }
+    .pricing-features li.not-included::before { content: '−'; color: var(--muted); font-weight: 400; }
+    /* Module comparison matrix */
+    .module-matrix { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .module-matrix th { background: var(--navy); color: var(--white); padding: .85rem 1rem; text-align: left; font-weight: 700; }
+    .module-matrix th:first-child { border-radius: var(--radius) 0 0 0; }
+    .module-matrix th:last-child { border-radius: 0 var(--radius) 0 0; }
+    .module-matrix td { padding: .8rem 1rem; border-bottom: 1px solid var(--border); }
+    .module-matrix tr:last-child td { border-bottom: none; }
+    .module-matrix tr:nth-child(even) td { background: #f8fafc; }
+    .module-matrix tr:hover td { background: #f0fdf4; }
+    .module-matrix .m-check { color: var(--accent); font-weight: 700; text-align: center; }
+    .module-matrix .m-none { color: var(--muted); text-align: center; }
+    .module-matrix .m-limit { color: var(--warn); font-weight: 600; text-align: center; }
+    .module-matrix td:not(:first-child) { text-align: center; }
     .pricing-btn { display: block; text-align: center; margin-top: 1.5rem; padding: .75rem; border-radius: 8px; font-weight: 700; font-size: .9rem; text-decoration: none; transition: all .2s; background: var(--light); color: var(--navy); border: 2px solid var(--border); }
     .pricing-card.featured .pricing-btn { background: var(--accent); color: var(--navy); border-color: var(--accent); }
     .pricing-btn:hover { opacity: .85; transform: translateY(-1px); }
@@ -859,6 +874,8 @@
           <li>Onay PDF'i</li>
           <li>Temel Kural Seti</li>
           <li>E-posta ve Video Desteği</li>
+          <li>Aydınlatılmış Rıza Formu (aylık 50 form)</li>
+          <li class="not-included">Postop takip — üst planlarda</li>
         </ul>
         <a class="pricing-btn" href="#iletisim">Demo Talep Et →</a>
       </div>
@@ -875,6 +892,10 @@
           <li>Onay Dokümantasyon Arşivi</li>
           <li>Sınırsız Hasta</li>
           <li>Temel Analitik</li>
+          <li>Aydınlatılmış Rıza Formu (sınırsız)</li>
+          <li>Prosedüre özgü fotoğraf protokolü</li>
+          <li>Postop otomatik takip (Gün 1 / 3 / 7 / 14 / 30)</li>
+          <li>Komplikasyon erken uyarı sistemi</li>
         </ul>
         <a class="pricing-btn" href="clinician.html">Uygulama Görüşmesi Ayarla →</a>
       </div>
@@ -889,10 +910,33 @@
           <li>Özel SLA Desteği</li>
           <li>Tüm Klinik Özellikler</li>
           <li>Özel Kural Setleri</li>
+          <li>Tüm Klinik Modüller dahil</li>
+          <li>Özel postop takip protokolü</li>
+          <li>Fotoğraf arşiv entegrasyonu</li>
         </ul>
         <a class="pricing-btn" href="clinician.html">Teklif Al →</a>
       </div>
     </div>
+
+    <!-- Module Comparison Matrix -->
+    <div class="card fade-in" style="margin-top:2rem; overflow-x:auto;">
+      <h3 class="card-title" style="margin-bottom:1.25rem;">Plan Modül Karşılaştırması</h3>
+      <table class="module-matrix">
+        <thead>
+          <tr><th>Modül</th><th>Pilot</th><th>Klinik</th><th>Kurumsal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Preop Risk Değerlendirmesi</td><td class="m-check">✓</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Consent Dokümantasyonu</td><td class="m-limit">50/ay</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Fotoğraf Protokolü</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Postop Takip</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Komplikasyon Alarmı</td><td class="m-none">−</td><td class="m-check">✓</td><td class="m-check">✓</td></tr>
+          <tr><td>Özel Protokol</td><td class="m-none">−</td><td class="m-none">−</td><td class="m-check">✓</td></tr>
+          <tr><td>EHR Entegrasyonu</td><td class="m-none">−</td><td class="m-none">−</td><td class="m-check">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="chart-wrap fade-in" style="margin-top:2rem;">
       <div class="chart-title">Plan Özellik Karşılaştırması</div>
       <canvas id="planCompareChart" style="max-height:220px;"></canvas>
