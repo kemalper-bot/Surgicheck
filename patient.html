@@ -653,7 +653,31 @@
             </select>
           </div>`;
         }
-        if (q.type === "text" || q.type === "photo") {
+        if (q.type === "photo") {
+          const inputId = `fq_photo_${q.id}`;
+          return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
+            <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
+            <div class="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-3 mb-3 text-xs text-slate-500 leading-relaxed">
+              <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <span>Yalnızca cerrahınız tarafından görüntülenecektir. (KVKK m.6)</span>
+            </div>
+            <div class="relative rounded-xl border-2 border-dashed border-slate-200 overflow-hidden bg-white hover:border-teal-400 transition-colors">
+              <div id="fq_photo_empty_${q.id}" class="flex flex-col items-center justify-center p-5 min-h-[140px] cursor-pointer" onclick="document.getElementById('${inputId}').click()">
+                <span class="text-3xl mb-2">📷</span>
+                <span class="text-sm font-medium text-slate-600 mb-1">Fotoğraf Yükle</span>
+                <span class="text-xs text-slate-400">JPG, PNG veya HEIC · Maks. 10MB</span>
+                <input id="${inputId}" type="file" accept=".jpg,.jpeg,.png,.heic,image/jpeg,image/png,image/heic" class="hidden"
+                  onchange="handleFollowupPhotoSelect(this, '${q.id}')" />
+              </div>
+              <div id="fq_photo_filled_${q.id}" class="hidden relative min-h-[140px]">
+                <img id="fq_photo_img_${q.id}" class="w-full h-40 object-cover" src="" alt="" />
+                <button type="button" onclick="removeFollowupPhoto('${q.id}')"
+                  class="absolute top-2 right-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow text-slate-600 hover:text-rose-600 text-sm font-bold">✕</button>
+              </div>
+            </div>
+          </div>`;
+        }
+        if (q.type === "text") {
           return `<div class="rounded-xl border border-slate-200 p-5 bg-slate-50/30">
             <label class="block font-semibold text-slate-700 mb-3 text-sm">${i+1}. ${q.text}</label>
             <textarea id="fq_${q.id}" rows="3" placeholder="Yanıtınızı yazın..."
@@ -663,6 +687,36 @@
         return "";
       }).join("");
     }
+
+    window.handleFollowupPhotoSelect = function(input, qId) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const allowed = ["image/jpeg", "image/png", "image/heic", "image/heif"];
+      if (!allowed.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png|heic)$/i)) {
+        showFollowupAlert("err", "Lütfen JPEG, PNG veya HEIC formatında fotoğraf yükleyin.");
+        input.value = "";
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showFollowupAlert("err", "Fotoğraf boyutu 10MB'ı geçemez.");
+        input.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById(`fq_photo_empty_${qId}`).classList.add("hidden");
+        document.getElementById(`fq_photo_img_${qId}`).src = e.target.result;
+        document.getElementById(`fq_photo_filled_${qId}`).classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.removeFollowupPhoto = function(qId) {
+      const input = document.getElementById(`fq_photo_${qId}`);
+      if (input) input.value = "";
+      document.getElementById(`fq_photo_filled_${qId}`).classList.add("hidden");
+      document.getElementById(`fq_photo_empty_${qId}`).classList.remove("hidden");
+    };
 
     window.submitFollowup = async function() {
       const meta = window._followupMeta;
@@ -689,19 +743,33 @@
           val = document.getElementById("fq_" + q.id)?.value ?? "";
           if (!val) { showFollowupAlert("err", "Lütfen tüm soruları yanıtlayın."); return; }
           if ((q.alertIfSelected ?? []).includes(val)) alerts.push({ id: q.id, value: val });
-        } else if (q.type === "text" || q.type === "photo") {
+        } else if (q.type === "text") {
           val = document.getElementById("fq_" + q.id)?.value?.trim() ?? "";
           if (val) freeTextParts.push(val);
           continue;
+        } else if (q.type === "photo") {
+          continue; // photo files collected separately below
         }
         answers[q.id] = val;
       }
 
       const btn = document.getElementById("followupSubmitBtn");
       btn.disabled = true;
-      btn.textContent = "Gönderiliyor...";
+      btn.textContent = "Yükleniyor...";
 
       try {
+        // Upload any photo question files to Storage
+        const photoUrls = {};
+        for (const q of questions) {
+          if (q.type !== "photo") continue;
+          const input = document.getElementById(`fq_photo_${q.id}`);
+          if (input && input.files && input.files[0]) {
+            const fileRef = storageRef(storage, `patients/${caseId}/followup/day${day}/${q.id}.jpg`);
+            const snap = await uploadBytes(fileRef, input.files[0]);
+            photoUrls[q.id] = await getDownloadURL(snap.ref);
+          }
+        }
+
         await addDoc(collection(db, "followupResponses"), {
           caseId,
           dayBucket: bucketId,
@@ -710,6 +778,7 @@
           answers,
           alerts,
           freeText: freeTextParts.join(" | ") || null,
+          ...(Object.keys(photoUrls).length > 0 && { photos: photoUrls }),
           submittedAt: serverTimestamp()
         });
         document.getElementById("sec-followup").classList.add("hidden");
