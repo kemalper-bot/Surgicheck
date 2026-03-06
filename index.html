@@ -228,6 +228,59 @@
     .action-item { display: flex; align-items: flex-start; gap: .75rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: .85rem; color: rgba(255,255,255,.8); }
     .action-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--navy); font-weight: 800; font-size: .75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
+    /* ── Case Study Tabs ─────────────────────────────────────────── */
+    .case-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .case-tab-btn { padding: .5rem 1.25rem; border-radius: 20px; border: 2px solid var(--border); background: var(--white); font-size: .85rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .case-tab-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .case-tab-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .case-tab-panel { display: none; animation: caseFadeIn .15s ease; }
+    .case-tab-panel.active { display: block; }
+    @keyframes caseFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── Consent Card ────────────────────────────────────────────── */
+    .consent-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.75rem; box-shadow: var(--shadow); }
+    .consent-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .consent-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .consent-subtitle { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+    .consent-patient { font-size: .88rem; font-weight: 600; color: var(--text); margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+    .consent-section-label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); margin-bottom: .75rem; }
+    .consent-item { border-left: 3px solid var(--danger); background: #fff5f5; border-radius: 0 8px 8px 0; padding: .75rem 1rem; margin-bottom: .75rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+    .consent-item-left { flex: 1; }
+    .consent-item-label { font-size: .8rem; font-weight: 700; color: var(--danger); margin-bottom: .25rem; }
+    .consent-item-text { font-size: .83rem; color: var(--text); line-height: 1.6; }
+    .consent-item-ok { font-size: .8rem; color: #16a34a; font-weight: 600; white-space: nowrap; }
+    .consent-footer { display: flex; justify-content: space-between; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); gap: 1rem; }
+    .consent-footer-label { font-size: .75rem; font-weight: 600; color: var(--muted); }
+    .consent-footer-value { font-size: .85rem; font-weight: 700; color: var(--text); margin-top: .15rem; }
+    .badge-signed { background: #dcfce7; color: #166534; }
+    .badge-day { background: #e0f2fe; color: #0369a1; }
+
+    /* ── Postop Card ─────────────────────────────────────────────── */
+    .postop-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.75rem; box-shadow: var(--shadow); }
+    .postop-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .postop-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .postop-subtitle { font-size: .78rem; color: var(--muted); margin-top: .25rem; }
+    .postop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+    .postop-metric { background: #f8fafc; border-radius: 8px; padding: .85rem 1rem; border: 1px solid var(--border); }
+    .postop-metric-name { font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; }
+    .postop-metric-value { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .postop-metric-status { font-size: .78rem; color: #16a34a; font-weight: 600; margin-top: .2rem; }
+    .postop-ok-banner { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: .85rem 1rem; margin-bottom: 1rem; font-size: .88rem; font-weight: 700; color: #166534; }
+    .postop-next { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+    .postop-next-text { font-size: .88rem; font-weight: 600; color: var(--text); flex: 1; }
+    .postop-next-sub { font-size: .78rem; color: var(--muted); }
+    .postop-footer { font-size: .75rem; color: var(--muted); text-align: center; }
+
+    /* ── Why Matters ─────────────────────────────────────────────── */
+    .why-matters { margin-top: 2rem; }
+    .why-matters-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .why-item { background: var(--white); border-radius: var(--radius); padding: 1.25rem; border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .why-item-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+    .why-item-heading { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
+    .why-item-text { font-size: .83rem; color: var(--muted); line-height: 1.7; }
+    @media (max-width: 900px) { .why-grid { grid-template-columns: 1fr; } }
+
     /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .kpi-strip { grid-template-columns: repeat(2, 1fr); }
@@ -440,13 +493,21 @@
         <div class="section-tag">Canlı Örnek</div>
         <h2 class="section-title" style="font-size:1.5rem;">Örnek Vaka Analizi</h2>
       </div>
-      <div class="grid-2">
+      <!-- Case Study Tab Buttons -->
+      <div class="case-tabs">
+        <button class="case-tab-btn active" onclick="switchCaseTab('case-preop', this)">Preop Risk</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('case-consent', this)">Consent</button>
+        <button class="case-tab-btn" onclick="switchCaseTab('case-postop', this)">Postop Takip</button>
+      </div>
+
+      <!-- Tab 1: Preop Risk -->
+      <div class="case-tab-panel active" id="case-preop">
         <div class="case-card">
           <div class="case-header">
             <div>
               <div class="case-id">ÖRNEK VAKA ANALİZİ • NO: #A-1042</div>
               <div class="case-title">Onay Değerlendirmesi — Rinoplasti</div>
-              <div style="font-size:.8rem; color:rgba(255,255,255,.5); margin-top:.2rem;">38 yaş • Kadın • 2026-02-27</div>
+              <div style="font-size:.8rem; color:rgba(255,255,255,.5); margin-top:.2rem;">38 yaş • Kadın • 14.03.2026</div>
             </div>
             <span class="badge badge-conditional"><span class="badge-dot dot-conditional"></span>Koşullu</span>
           </div>
@@ -462,19 +523,111 @@
             <div class="action-item"><div class="action-num">2</div> Anestezi konsültasyonu ve ek laboratuvar paneli</div>
           </div>
           <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; font-size:.75rem; color:rgba(255,255,255,.4);">
-            <span>KLİNİSYEN ONAYI</span>
+            <span>KLİNİSYEN ONAYI BEKLENIYOR</span>
             <span>KURAL SETİ: RS-2026-Q1 r7</span>
           </div>
         </div>
-        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <h3 class="card-title" style="font-size:1.05rem; margin-bottom:1rem;">Bu Neden Önemlidir?</h3>
-            <p style="font-size:.88rem; color:var(--muted); line-height:1.8; margin-bottom:1rem;">Bu örnek vaka, SurgiCheck'in temel değerini göstermektedir: iki tanımlanabilir risk faktörü olan (yüksek BMI ve yakın tarihli sigara kullanımı) bir hasta, belirsiz "doktorunuza danışın" yerine spesifik, uygulanabilir adımlar içeren <em>Koşullu</em> onay alır.</p>
-            <p style="font-size:.88rem; color:var(--muted); line-height:1.8;">Her risk sinyali adlandırılmış bir kurala (RC-17, RC-22) bağlıdır; bu da kararı tam anlamıyla açıklanabilir, denetlenebilir ve hukuki olarak savunulabilir kılar.</p>
+      </div>
+
+      <!-- Tab 2: Consent -->
+      <div class="case-tab-panel" id="case-consent">
+        <div class="consent-card">
+          <div class="consent-header">
+            <div>
+              <div class="consent-title">AYDINLATILMIŞ RIZA FORMU</div>
+              <div class="consent-subtitle">Otomatik Üretildi — Prosedüre ve Risk Profiline Özgü</div>
+            </div>
+            <span class="badge badge-signed">İMZALANDI</span>
           </div>
-          <div style="background:#f0fdf4; border-radius:10px; padding:1rem; border:1px solid #bbf7d0;">
-            <div style="font-size:.8rem; font-weight:700; color:#166534; margin-bottom:.5rem;">YÖNETİŞİM SONUCU</div>
-            <div style="font-size:.85rem; color:#15803d;">Komplikasyon yaşandığında, bu dokümantasyon kliniğin standartlaştırılmış, kural tabanlı bir protokol izlediğini kanıtlar — hem hasta hem de sağlayıcıyı korur.</div>
+          <div class="consent-patient">Rinoplasti &nbsp;•&nbsp; 38 yaş, Kadın &nbsp;•&nbsp; #A-1042</div>
+          <div class="consent-section-label">FORMA EKLENen KİŞİSELLEŞTİRİLMİŞ RİSK MADDELERİ</div>
+          <div class="consent-item">
+            <div class="consent-item-left">
+              <div class="consent-item-label">⚠ Yüksek Risk Uyarısı</div>
+              <div class="consent-item-text">Aktif sigara kullanımı doku perfüzyonunu bozarak yara komplikasyonu riskini artırır.</div>
+            </div>
+            <div class="consent-item-ok">✓ Hasta onayladı</div>
+          </div>
+          <div class="consent-item">
+            <div class="consent-item-left">
+              <div class="consent-item-label">⚠ Yüksek Risk Uyarısı</div>
+              <div class="consent-item-text">BMI 34.2 — yara iyileşme güçlüğü ve anestezi komplikasyonu riski artmış.</div>
+            </div>
+            <div class="consent-item-ok">✓ Hasta onayladı</div>
+          </div>
+          <div class="consent-footer">
+            <div>
+              <div class="consent-footer-label">İmza Tarihi</div>
+              <div class="consent-footer-value">14.03.2026 • 09:42</div>
+            </div>
+            <div>
+              <div class="consent-footer-label">Arşiv Durumu</div>
+              <div class="consent-footer-value">✓ PDF zaman damgalı kaydedildi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Postop Takip -->
+      <div class="case-tab-panel" id="case-postop">
+        <div class="postop-card">
+          <div class="postop-header">
+            <div>
+              <div class="postop-title">POSTOPERATİF TAKİP</div>
+              <div class="postop-subtitle">#A-1042 — Rinoplasti</div>
+            </div>
+            <span class="badge badge-day">GÜN 7</span>
+          </div>
+          <div class="postop-grid">
+            <div class="postop-metric">
+              <div class="postop-metric-name">Ağrı Skoru</div>
+              <div class="postop-metric-value">3/10</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Ateş</div>
+              <div class="postop-metric-value">Hayır</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Kanama</div>
+              <div class="postop-metric-value">Hayır</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+            <div class="postop-metric">
+              <div class="postop-metric-name">Şişlik</div>
+              <div class="postop-metric-value">2/5</div>
+              <div class="postop-metric-status">✓ Normal</div>
+            </div>
+          </div>
+          <div class="postop-ok-banner">✓ Komplikasyon sinyali tespit edilmedi</div>
+          <div class="postop-next">
+            <span style="font-size:1.1rem;">🔔</span>
+            <span class="postop-next-text">Sonraki otomatik takip: Gün 14</span>
+            <span class="postop-next-sub">Otomatik gönderilecek</span>
+          </div>
+          <div class="postop-footer">Tüm hasta yanıtları audit trail'e kaydedildi • Klinisyen dashboard'unda görüntülenebilir</div>
+        </div>
+      </div>
+
+      <!-- Why Matters -->
+      <div class="why-matters">
+        <h3 class="why-matters-title">Neden Önemlidir?</h3>
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="why-item-icon">⚡</div>
+            <div class="why-item-heading">Preop</div>
+            <div class="why-item-text">Her risk sinyali adlandırılmış bir kurala bağlıdır — karar açıklanabilir, denetlenebilir ve hukuki olarak savunulabilir.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">📄</div>
+            <div class="why-item-heading">Consent</div>
+            <div class="why-item-text">Hastanın bireysel risk profili rıza formuna otomatik işlenir. Mahkemede tutunabilen, prosedüre özgü dokümantasyon.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">🔔</div>
+            <div class="why-item-heading">Postop</div>
+            <div class="why-item-text">Komplikasyon sinyalleri erken yakalanır. Otomatik takip protokolü klinisyen iş yükünü artırmadan hasta güvenliğini artırır.</div>
           </div>
         </div>
       </div>
@@ -842,6 +995,13 @@
   function switchTab(id, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function switchCaseTab(id, btn) {
+    document.querySelectorAll('.case-tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.case-tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
   }
