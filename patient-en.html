@@ -741,25 +741,34 @@
       reference: "You may add a reference photo showing your desired outcome.",
     };
 
-    let _photoProtocol = null;
+    const _FALLBACK_PROTOCOLS = {
+      "Rinoplasti": { required: ["front","right_lateral","left_lateral"], recommended: ["basal"], optional: ["reference"] },
+      "Blefaroplasti": { required: ["front","close_up"], recommended: ["upward_gaze"], optional: ["reference"] },
+      "Breast Lift": { required: ["front","right_lateral","left_lateral"], recommended: ["posterior"], optional: ["reference"] },
+      "Meme Büyütme": { required: ["front","right_lateral","left_lateral"], recommended: [], optional: ["reference"] },
+      "Meme Küçültme": { required: ["front","right_lateral","left_lateral"], recommended: ["posterior"], optional: ["reference"] },
+      "Liposuction": { required: ["front","lateral","posterior"], recommended: [], optional: ["reference"] },
+      "Tummy Tuck": { required: ["front","lateral","posterior"], recommended: [], optional: ["reference"] },
+      "BBL": { required: ["front","posterior","lateral"], recommended: [], optional: ["reference"] },
+      "Facelift": { required: ["front","right_lateral","left_lateral"], recommended: ["half_profile"], optional: ["reference"] },
+    };
 
     async function loadPhotoProtocol(procValue) {
+      // Always show immediately with fallback data
+      const fallback = _FALLBACK_PROTOCOLS[procValue] || { required: ["front", "lateral"], recommended: [], optional: ["reference"] };
+      renderPhotoSlots(fallback.required, fallback.recommended, fallback.optional);
+      document.getElementById("photo-upload-section").classList.remove("hidden");
+
+      // Then try to enrich from Firestore
       try {
         const protocolId = PROC_TO_PROTOCOL_ID[procValue] || "default";
-        let protocolSnap = await getDoc(doc(db, "photoProtocols", protocolId));
-        let protocol = { required: ["front", "lateral"], recommended: [], optional: ["reference"] };
+        const protocolSnap = await getDoc(doc(db, "photoProtocols", protocolId));
         if (protocolSnap.exists()) {
-          protocol = protocolSnap.data();
-        } else {
-          const defSnap = await getDoc(doc(db, "photoProtocols", "default"));
-          if (defSnap.exists()) protocol = defSnap.data();
+          const protocol = protocolSnap.data();
+          renderPhotoSlots(protocol.required || [], protocol.recommended || [], protocol.optional || []);
         }
-        _photoProtocol = protocol;
-        renderPhotoSlots(protocol.required || [], protocol.recommended || [], protocol.optional || []);
-        document.getElementById("photo-upload-section").classList.remove("hidden");
       } catch (err) {
-        console.warn("Photo protocol load failed:", err);
-        document.getElementById("photo-upload-section").classList.add("hidden");
+        console.warn("Photo protocol Firestore fetch failed, using fallback:", err);
       }
     }
 
