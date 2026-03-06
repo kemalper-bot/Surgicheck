@@ -646,12 +646,12 @@
       <p class="section-sub">SurgiCheck'in cerrahi risk yönetimini ölçekte nasıl dönüştürdüğünü gösteren örnek metrikler.</p>
     </div>
     <div class="tabs fade-in">
-      <button class="tab-btn active" onclick="switchTab('overview-tab', this)">Platforma Genel Bakış</button>
-      <button class="tab-btn" onclick="switchTab('decisions-tab', this)">Karar Dağılımı</button>
-      <button class="tab-btn" onclick="switchTab('efficiency-tab', this)">Verimlilik Kazanımları</button>
-      <button class="tab-btn" onclick="switchTab('risk-tab', this)">Risk Sinyalleri</button>
+      <button class="tab-btn active" onclick="switchTab('overview-tab', this)">Genel Bakış</button>
+      <button class="tab-btn" onclick="switchTab('decision-risk-tab', this)">Karar &amp; Risk</button>
+      <button class="tab-btn" onclick="switchTab('postop-consent-tab', this)">Postop &amp; Consent</button>
     </div>
 
+    <!-- Tab 1: Genel Bakış -->
     <div class="tab-panel active" id="overview-tab">
       <div class="grid-2 fade-in">
         <div class="chart-wrap">
@@ -665,9 +665,57 @@
           <canvas id="specialtyChart"></canvas>
         </div>
       </div>
+      <div class="card fade-in" style="margin-top:1.5rem;">
+        <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performans Metrikleri</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem 2rem;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Sistem Çalışma Süresi</span>
+              <span style="color:var(--accent); font-weight:700;">99.8%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="99.8%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Triyaj Standardizasyon Oranı</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Ort. Triyaj Süresi Azalması</span>
+              <span style="color:var(--accent); font-weight:700;">60%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="60%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Consent Form Üretim Süresi</span>
+              <span style="color:var(--accent); font-weight:700;">&lt;30 sn</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Postop Takip Yanıt Oranı</span>
+              <span style="color:var(--accent); font-weight:700;">78%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="78%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Denetim Dokümantasyon Kapsamı</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="tab-panel" id="decisions-tab">
+    <!-- Tab 2: Karar & Risk -->
+    <div class="tab-panel" id="decision-risk-tab">
       <div class="grid-2 fade-in">
         <div class="chart-wrap">
           <div class="chart-title">Onay Kararı Dağılımı</div>
@@ -680,25 +728,7 @@
           <canvas id="procedureChart"></canvas>
         </div>
       </div>
-    </div>
-
-    <div class="tab-panel" id="efficiency-tab">
-      <div class="grid-2 fade-in">
-        <div class="chart-wrap">
-          <div class="chart-title">Triyaj Süresi Azalması</div>
-          <div class="chart-sub">SurgiCheck uygulaması öncesi ve sonrası (vaka başına dakika)</div>
-          <canvas id="triageTimeChart"></canvas>
-        </div>
-        <div class="chart-wrap">
-          <div class="chart-title">Operasyonel KPI İyileştirmeleri</div>
-          <div class="chart-sub">Klinisyen geri bildirimlerinden elde edilen verimlilik kazanımları</div>
-          <canvas id="kpiChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-panel" id="risk-tab">
-      <div class="grid-2 fade-in">
+      <div class="grid-2 fade-in" style="margin-top:1.5rem;">
         <div class="chart-wrap">
           <div class="chart-title">En Sık Tetiklenen Risk Sinyalleri</div>
           <div class="chart-sub">Koşullu veya Reddedildi sonuçlarını tetikleyen başlıca risk faktörleri</div>
@@ -712,36 +742,44 @@
       </div>
     </div>
 
-    <div class="card fade-in" style="margin-top:1.5rem;">
-      <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performans Metrikleri</h3>
-      <div class="grid-2">
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Sistem Çalışma Süresi</span>
-            <span style="color:var(--accent); font-weight:700;">99.8%</span>
-          </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="99.8%"></div></div>
+    <!-- Tab 3: Postop & Consent -->
+    <div class="tab-panel" id="postop-consent-tab">
+      <div class="grid-2 fade-in">
+        <div class="chart-wrap">
+          <div class="chart-title">Postop Takip Yanıt Oranı</div>
+          <div class="chart-sub">Taburculuk sonrası gün bazında form yanıt oranları</div>
+          <canvas id="postopResponseChart"></canvas>
         </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Triyaj Standardizasyon Oranı</span>
-            <span style="color:var(--accent); font-weight:700;">100%</span>
-          </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+        <div class="chart-wrap">
+          <div class="chart-title">Tespit Edilen Komplikasyon Sinyalleri</div>
+          <div class="chart-sub">Türe göre dağılım</div>
+          <canvas id="complicationChart"></canvas>
         </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Ort. Triyaj Süresi Azalması</span>
-            <span style="color:var(--accent); font-weight:700;">60%</span>
+      </div>
+      <div class="card fade-in" style="margin-top:1.5rem;">
+        <h3 class="card-title" style="margin-bottom:1.25rem;">Platform Performans Metrikleri — Postop &amp; Consent</h3>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem 2rem;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Ort. Consent Form Üretim Süresi</span>
+              <span style="color:var(--accent); font-weight:700;">&lt;30 sn</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="60%"></div></div>
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
-            <span style="font-weight:600;">Denetim Dokümantasyon Kapsamı</span>
-            <span style="color:var(--accent); font-weight:700;">100%</span>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Dijital İmza Tamamlama Oranı</span>
+              <span style="color:var(--accent); font-weight:700;">96%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="96%"></div></div>
           </div>
-          <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:.3rem;">
+              <span style="font-weight:600;">Arşiv Başarı Oranı</span>
+              <span style="color:var(--accent); font-weight:700;">100%</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:0%" data-width="100%"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1054,25 +1092,22 @@
     options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } } } }
   });
 
-  new Chart(document.getElementById('triageTimeChart'), {
+  new Chart(document.getElementById('postopResponseChart'), {
     type: 'bar',
     data: {
-      labels: ['Manuel İnceleme', 'SurgiCheck ile'],
-      datasets: [{ label: 'Vaka Başına Dakika', data: [18, 3], backgroundColor: [accentRed, accentGreen], borderRadius: 8, borderSkipped: false }]
+      labels: ['Gün 1', 'Gün 3', 'Gün 7', 'Gün 14', 'Gün 30'],
+      datasets: [{ label: 'Yanıt Oranı (%)', data: [92, 88, 81, 74, 61], backgroundColor: accentBlue, borderRadius: 6, borderSkipped: false }]
     },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 25, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + ' dk' } }, x: { grid: { display: false } } } }
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } } }
   });
 
-  new Chart(document.getElementById('kpiChart'), {
-    type: 'radar',
+  new Chart(document.getElementById('complicationChart'), {
+    type: 'doughnut',
     data: {
-      labels: ['Triyaj Hızı', 'Dokümantasyon', 'Tutarlılık', 'Denetim Hazırlığı', 'Ekip Uyumu', 'Uyumluluk'],
-      datasets: [
-        { label: 'SurgiCheck Öncesi', data: [25, 35, 30, 20, 35, 30], borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,.15)', borderWidth: 2, pointRadius: 4 },
-        { label: 'SurgiCheck Sonrası', data: [90, 95, 100, 98, 92, 95], borderColor: accentGreen, backgroundColor: 'rgba(0,200,150,.15)', borderWidth: 2, pointRadius: 4, pointBackgroundColor: accentGreen }
-      ]
+      labels: ['Ağrı (yüksek skor)', 'Ateş', 'Kanama', 'Şişlik'],
+      datasets: [{ data: [38, 22, 18, 22], backgroundColor: [accentRed, accentAmber, accentPurple, accentBlue], borderWidth: 2, borderColor: '#fff' }]
     },
-    options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } }, scales: { r: { beginAtZero: true, max: 100, grid: { color: '#e2e8f0' }, ticks: { display: false }, pointLabels: { font: { size: 11 } } } } }
+    options: { responsive: true, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 14 } }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } } }, cutout: '60%' }
   });
 
   new Chart(document.getElementById('riskSignalsChart'), {
