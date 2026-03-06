@@ -83,6 +83,12 @@ const questionSets = {
         alertIfFalse: true,
       },
       {
+        id: "photo_upload",
+        type: "photo",
+        text: "Mümkünse ameliyat bölgesinin fotoğrafını ekleyin (isteğe bağlı)",
+        alertIfFilled: false,
+      },
+      {
         id: "free_text",
         type: "text",
         text: "Eklemek istediğiniz şikayetiniz var mı?",
@@ -167,6 +173,12 @@ const questionSets = {
         type: "boolean",
         text: "Kliniğimizi başkalarına önerir misiniz?",
         alertIfFalse: false,  // log for NPS
+      },
+      {
+        id: "photo_upload",
+        type: "photo",
+        text: "Sonuç fotoğrafı eklemek ister misiniz? (isteğe bağlı)",
+        alertIfFilled: false,
       },
       {
         id: "free_text",
