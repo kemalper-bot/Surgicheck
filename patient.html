@@ -1203,21 +1203,23 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
 
       } catch (err) {
-        console.error(err);
-        showAlert("err", "Kayıt sırasında hata oluştu. İnternet bağlantınızı kontrol edip tekrar deneyin.");
+        console.error("[SurgiCheck] Submit error:", err.code, err.message, err);
+        const errDetail = err.code ? `(${err.code})` : err.message ? `(${err.message})` : "";
+        showAlert("err", `Kayıt sırasında hata oluştu ${errDetail}. Lütfen sayfayı yenileyin veya tekrar deneyin.`, 0);
         btn.disabled = false;
         btn.innerHTML = `Formu Gönder ✓`;
       }
     };
 
-    function showAlert(type, msg) {
+    function showAlert(type, msg, duration) {
       const el = document.getElementById("alert");
       el.classList.remove("hidden");
       el.className = "mb-4 rounded-xl p-4 text-sm font-medium shadow-sm flex items-center gap-2 " + (type === "ok"
         ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
         : "bg-rose-50 text-rose-900 border border-rose-200");
       el.innerHTML = (type === "ok" ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>') + msg;
-      setTimeout(() => el.classList.add("hidden"), 4000);
+      const ms = duration === 0 ? null : (duration || 4000);
+      if (ms) setTimeout(() => el.classList.add("hidden"), ms);
     }
     window.showAlert = showAlert;
   </script>
