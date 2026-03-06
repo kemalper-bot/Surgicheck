@@ -1177,14 +1177,17 @@
 
         // Upload photos to Firebase Storage
         const photoUrls = {};
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 30000)
+        );
         if (photoSection && !photoSection.classList.contains("hidden")) {
           const allInputs = photoSection.querySelectorAll('input[type="file"]');
           for (const input of allInputs) {
             if (input.files && input.files[0]) {
               const photoType = input.dataset.photoType;
               const fileRef = storageRef(storage, `patients/${caseRef.id}/photos/${photoType}.jpg`);
-              const snap = await uploadBytes(fileRef, input.files[0]);
-              photoUrls[photoType] = await getDownloadURL(snap.ref);
+              const snap = await Promise.race([uploadBytes(fileRef, input.files[0]), timeoutPromise]);
+              photoUrls[photoType] = await Promise.race([getDownloadURL(snap.ref), timeoutPromise]);
             }
           }
         }
@@ -1192,9 +1195,6 @@
           payload.photos = photoUrls;
         }
 
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 15000)
-        );
         await Promise.race([setDoc(caseRef, payload), timeoutPromise]);
 
         document.getElementById("sec-4").classList.add("hidden");
