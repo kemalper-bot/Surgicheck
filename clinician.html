@@ -1055,11 +1055,11 @@
     const section = document.getElementById("photo-gallery-section");
     const grid = document.getElementById("photo-gallery-grid");
     const photos = caseData?.photos;
+    section.classList.remove("hidden");
     if (!photos || Object.keys(photos).length === 0) {
-      section.classList.add("hidden");
+      grid.innerHTML = `<div class="col-span-3 text-sm text-slate-400 italic py-4">Henüz fotoğraf yüklenmedi. Hasta intake formunu tamamladığında buraya yansıyacak.</div>`;
       return;
     }
-    section.classList.remove("hidden");
     grid.innerHTML = "";
     _lightboxPhotos = Object.entries(photos).map(([type, url]) => ({
       type,

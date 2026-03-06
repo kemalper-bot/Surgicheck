@@ -589,6 +589,42 @@
       initFollowup(followupCaseId, followupDay);
     }
 
+    // ─── FOLLOWUP FALLBACK QUESTIONS ────────────────────────────────────────
+    const _FOLLOWUP_FALLBACKS = {
+      day_1_3: {
+        label: "İlk 72 Saat Takibi",
+        questions: [
+          { id: "pain",     type: "scale",   text: "Ağrı düzeyinizi puanlayın (0–10)", alertIfAbove: 7 },
+          { id: "fever",    type: "boolean", text: "Ateşiniz var mı?", alertIfTrue: true },
+          { id: "bleeding", type: "boolean", text: "Kanama veya anormal akıntı var mı?", alertIfTrue: true },
+          { id: "swelling", type: "scale",   text: "Şişlik şiddetini puanlayın (0–5)", alertIfAbove: 4 },
+          { id: "photo_upload", type: "photo", text: "Mümkünse ameliyat bölgesinin fotoğrafını ekleyin (isteğe bağlı)" },
+          { id: "free_text", type: "text",  text: "Eklemek istediğiniz şikayetiniz var mı?" },
+        ],
+      },
+      day_7_14: {
+        label: "Yara İyileşme Takibi",
+        questions: [
+          { id: "pain",     type: "scale",   text: "Güncel ağrı düzeyinizi puanlayın (0–10)", alertIfAbove: 5 },
+          { id: "wound_appearance", type: "select", text: "Yara görünümü nasıl?",
+            options: ["Normal iyileşiyor", "Hafif kızarıklık var", "Akıntı var", "Açılma var"],
+            alertIfSelected: ["Akıntı var", "Açılma var"] },
+          { id: "fever",    type: "boolean", text: "Son 48 saatte ateş yaşadınız mı?", alertIfTrue: true },
+          { id: "photo_upload", type: "photo", text: "Mümkünse yara bölgesinin fotoğrafını ekleyin (isteğe bağlı)" },
+          { id: "free_text", type: "text",  text: "Eklemek istediğiniz şikayetiniz var mı?" },
+        ],
+      },
+      day_30_plus: {
+        label: "Sonuç ve Memnuniyet Değerlendirmesi",
+        questions: [
+          { id: "overall_satisfaction", type: "scale", text: "Genel memnuniyetinizi puanlayın (0–10)", alertIfBelow: 4 },
+          { id: "result_meets_expectation", type: "boolean", text: "Sonuç beklentilerinizi karşıladı mı?" },
+          { id: "photo_upload", type: "photo", text: "Sonuç fotoğrafı eklemek ister misiniz? (isteğe bağlı)" },
+          { id: "free_text", type: "text",  text: "Paylaşmak istediğiniz başka bir şey var mı?" },
+        ],
+      },
+    };
+
     async function initFollowup(caseId, day) {
       const section = document.getElementById("sec-followup");
       section.classList.remove("hidden");
@@ -597,19 +633,19 @@
       const labelEl = document.getElementById("followup-sublabel");
       if (day) labelEl.textContent = "Gün " + day + " takip formu — lütfen soruları yanıtlayın.";
 
+      const fallbackQ = _FOLLOWUP_FALLBACKS[bucketId] || _FOLLOWUP_FALLBACKS.day_7_14;
       try {
         const qSnap = await getDoc(doc(db, "followupQuestions", bucketId));
-        if (!qSnap.exists()) {
-          document.getElementById("followup-questions").innerHTML =
-            `<div class="text-sm text-slate-500">Soru seti bulunamadı.</div>`;
-          return;
-        }
-        const qData = qSnap.data();
+        const qData = qSnap.exists() ? qSnap.data() : fallbackQ;
+        // Ensure photo question is always present
+        const hasPhoto = qData.questions.some(q => q.type === "photo");
+        if (!hasPhoto) qData.questions.push({ id: "photo_upload", type: "photo", text: "Mümkünse ameliyat bölgesinin fotoğrafını ekleyin (isteğe bağlı)" });
         window._followupMeta = { caseId, bucketId, label: qData.label, questions: qData.questions, day };
         renderFollowupQuestions(qData.questions);
       } catch (err) {
-        document.getElementById("followup-questions").innerHTML =
-          `<div class="text-sm text-rose-500">Sorular yüklenemedi: ${err.message}</div>`;
+        // Firestore unavailable — use hardcoded fallback
+        window._followupMeta = { caseId, bucketId, label: fallbackQ.label, questions: fallbackQ.questions, day };
+        renderFollowupQuestions(fallbackQ.questions);
       }
     }
 
