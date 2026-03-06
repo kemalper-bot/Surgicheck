@@ -90,20 +90,6 @@
         </div>
       </div>
 
-      <!-- KVKK Notice + Photo Upload Section -->
-      <div id="photo-upload-section" class="hidden mt-6">
-        <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 mb-5 text-sm text-slate-600 leading-relaxed">
-          <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-          <span>Bu fotoğraflar yalnızca cerrahınız tarafından değerlendirme amacıyla görüntülenecektir. Üçüncü taraflarla paylaşılmaz. (KVKK m.6)</span>
-        </div>
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-          <h3 class="text-base font-bold text-slate-800">Operasyon Fotoğrafları</h3>
-        </div>
-        <div id="photo-slots-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        <div id="photo-upload-error" class="hidden mt-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm p-3 font-medium"></div>
-      </div>
-
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label class="text-sm font-medium text-slate-700 mb-1 block">Ad Soyad *</label>
@@ -463,8 +449,8 @@
     </div>
 
     <div id="sec-4" class="hidden bg-white rounded-xl shadow p-8 mb-4">
-      <h2 class="font-bold text-xl mb-1 text-slate-800">Beklentileriniz ve Onay</h2>
-      <p class="text-sm text-slate-500 mb-6">Operasyondan beklentileriniz ve yasal beyanınız.</p>
+      <h2 class="font-bold text-xl mb-1 text-slate-800">Beklentiler, Fotoğraflar ve Onay</h2>
+      <p class="text-sm text-slate-500 mb-6">Operasyondan beklentileriniz, değerlendirme fotoğraflarınız ve yasal beyanınız.</p>
 
       <div class="mt-4">
         <label class="text-sm font-medium text-slate-700 mb-2 block">Sağlık geçmişinizle ilgili bize söylemek istediğiniz başka bir şey var mı?</label>
@@ -474,6 +460,20 @@
       <div class="mt-6">
         <label class="text-sm font-medium text-slate-700 mb-2 block">Beklentilerinizi kısaca yazın *</label>
         <textarea id="expectations" rows="5" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black" placeholder="Bu ameliyattan tam olarak ne bekliyorsunuz? Sizi en çok endişelendiren şey nedir?"></textarea>
+      </div>
+
+      <!-- KVKK Bildirimi + Fotoğraf Yükleme -->
+      <div id="photo-upload-section" class="hidden mt-8">
+        <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 mb-5 text-sm text-slate-600 leading-relaxed">
+          <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          <span>Bu fotoğraflar yalnızca cerrahınız tarafından değerlendirme amacıyla görüntülenecektir. Üçüncü taraflarla paylaşılmaz. (KVKK m.6)</span>
+        </div>
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <h3 class="text-base font-bold text-slate-800">Operasyon Fotoğrafları</h3>
+        </div>
+        <div id="photo-slots-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div id="photo-upload-error" class="hidden mt-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm p-3 font-medium"></div>
       </div>
 
       <div class="mt-8 p-5 bg-slate-100 rounded-xl border border-slate-200">
@@ -768,6 +768,15 @@
       document.getElementById("sec-" + from).classList.add("hidden");
       document.getElementById("sec-" + (from + 1)).classList.remove("hidden");
       updateDots(from + 1);
+      // Eğer step 4'e geçiliyorsa ve fotoğraf bölümü henüz yüklenmemişse tetikle
+      if (from + 1 === 4) {
+        const proc = document.getElementById("procedure").value;
+        if (proc && document.getElementById("photo-slots-grid").children.length === 0) {
+          loadPhotoProtocol(proc);
+        } else if (proc) {
+          document.getElementById("photo-upload-section").classList.remove("hidden");
+        }
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
