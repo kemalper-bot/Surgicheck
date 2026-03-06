@@ -1493,6 +1493,18 @@
       </div>`;
     }).join("");
 
+    const photoEntries = Object.entries(data.photos ?? {});
+    const photoGrid = photoEntries.length > 0
+      ? `<div class="mt-3 grid grid-cols-2 gap-2">
+          ${photoEntries.map(([id, url]) =>
+            `<a href="${url}" target="_blank" class="block rounded-lg overflow-hidden border border-slate-200 hover:border-teal-400 transition-colors">
+              <img src="${url}" alt="${esc(id)}" class="w-full h-24 object-cover" />
+              <div class="text-xs text-center text-slate-500 py-1 bg-white">${esc(id.replace(/_/g," "))}</div>
+            </a>`
+          ).join("")}
+        </div>`
+      : "";
+
     return `<div class="rounded-xl border-2 ${hasAlerts ? "border-rose-300 bg-rose-50/60" : "border-slate-200 bg-slate-50"} p-4">
       <div class="flex items-center gap-3 mb-3">
         <span class="font-bold text-slate-800 text-sm">${esc(data.label ?? data.dayBucket ?? "Follow-up")}</span>
@@ -1501,6 +1513,7 @@
       </div>
       <div>${answerRows}</div>
       ${data.freeText ? `<div class="mt-3 text-xs text-slate-500 italic bg-white border border-slate-100 rounded-lg p-2.5">"${esc(data.freeText)}"</div>` : ""}
+      ${photoGrid}
     </div>`;
   }
 
