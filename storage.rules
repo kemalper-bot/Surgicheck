@@ -2,9 +2,17 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // Hasta fotoğrafları — kimlik doğrulama olmadan yükleme (hasta formu)
-    // Okuma sadece giriş yapmış klinisyenlere
+    // Hasta preop fotoğrafları — kimlik doğrulama olmadan yükleme (hasta formu)
+    // Okuma: download URL token'ı zaten erişim sağlar; SDK read'i sadece klinisyene
     match /patients/{caseId}/photos/{photoName} {
+      allow create: if request.resource.size < 15 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow read: if request.auth != null;
+      allow update, delete: if false;
+    }
+
+    // Hasta postop takip fotoğrafları — kimlik doğrulama olmadan yükleme
+    match /patients/{caseId}/followup/{allPaths=**} {
       allow create: if request.resource.size < 15 * 1024 * 1024
                     && request.resource.contentType.matches('image/.*');
       allow read: if request.auth != null;
