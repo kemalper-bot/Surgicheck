@@ -1229,10 +1229,7 @@
                 uploadBytes(fileRef, input.files[0], { contentType: input.files[0].type || 'image/jpeg' }),
                 mkTimeout(90000, "Fotoğraf yüklenemedi (zaman aşımı). İnternet bağlantınızı kontrol edin.")
               ]);
-              photoUrls[photoType] = await Promise.race([
-                getDownloadURL(snap.ref),
-                mkTimeout(30000, "Fotoğraf URL alınamadı. Tekrar deneyin.")
-              ]);
+              photoUrls[photoType] = snap.ref.fullPath;
             }
           }
         }

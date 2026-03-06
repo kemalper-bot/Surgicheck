@@ -365,6 +365,7 @@
     getFirestore, collection, getDocs, doc, getDoc,
     updateDoc, serverTimestamp, query, where, orderBy
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC_H4cERrUWZhFlOkxo5BvMxkQfp6GQfy4",
@@ -378,6 +379,7 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   // XSS protection: safely escape user-provided values before DOM insertion
   function esc(val) {
@@ -1149,7 +1151,7 @@
   let _lightboxPhotos = [];
   let _lightboxIndex = 0;
 
-  function renderPhotoGallery(caseData) {
+  async function renderPhotoGallery(caseData) {
     const section = document.getElementById("photo-gallery-section");
     const grid = document.getElementById("photo-gallery-grid");
     const photos = caseData?.photos;
@@ -1159,11 +1161,16 @@
     }
     section.classList.remove("hidden");
     grid.innerHTML = "";
-    _lightboxPhotos = Object.entries(photos).map(([type, url]) => ({
-      type,
-      url,
-      label: PHOTO_LABELS_EN[type] || type,
-    }));
+    const entries = await Promise.all(
+      Object.entries(photos).map(async ([type, pathOrUrl]) => {
+        let url = pathOrUrl;
+        if (!pathOrUrl.startsWith("http")) {
+          try { url = await getDownloadURL(storageRef(storage, pathOrUrl)); } catch (_) {}
+        }
+        return { type, url, label: PHOTO_LABELS_EN[type] || type };
+      })
+    );
+    _lightboxPhotos = entries;
     _lightboxPhotos.forEach((photo, idx) => {
       const card = document.createElement("div");
       card.className = "relative rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 group cursor-pointer";
