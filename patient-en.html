@@ -1237,14 +1237,23 @@
 
         // Upload photos to Firebase Storage
         const photoUrls = {};
+        const mkTimeout = (ms, msg) => new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(msg)), ms)
+        );
         if (photoSection && !photoSection.classList.contains("hidden")) {
           const allInputs = photoSection.querySelectorAll('input[type="file"]');
           for (const input of allInputs) {
             if (input.files && input.files[0]) {
               const photoType = input.dataset.photoType;
               const fileRef = storageRef(storage, `patients/${caseRef.id}/photos/${photoType}.jpg`);
-              const snap = await uploadBytes(fileRef, input.files[0]);
-              photoUrls[photoType] = await getDownloadURL(snap.ref);
+              const snap = await Promise.race([
+                uploadBytes(fileRef, input.files[0]),
+                mkTimeout(90000, "Photo upload timed out. Please check your internet connection.")
+              ]);
+              photoUrls[photoType] = await Promise.race([
+                getDownloadURL(snap.ref),
+                mkTimeout(30000, "Could not retrieve photo URL. Please try again.")
+              ]);
             }
           }
         }
@@ -1252,10 +1261,10 @@
           payload.photos = photoUrls;
         }
 
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Connection timed out. Please check your internet and try again.")), 15000)
-        );
-        await Promise.race([setDoc(caseRef, payload), timeoutPromise]);
+        await Promise.race([
+          setDoc(caseRef, payload),
+          mkTimeout(30000, "Could not save to server. Please check your internet connection and try again.")
+        ]);
 
         document.getElementById("sec-4").classList.add("hidden");
         document.getElementById("sec-success").classList.remove("hidden");

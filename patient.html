@@ -1216,8 +1216,8 @@
 
         // Upload photos to Firebase Storage
         const photoUrls = {};
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")), 30000)
+        const mkTimeout = (ms, msg) => new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(msg)), ms)
         );
         if (photoSection && !photoSection.classList.contains("hidden")) {
           const allInputs = photoSection.querySelectorAll('input[type="file"]');
@@ -1225,8 +1225,14 @@
             if (input.files && input.files[0]) {
               const photoType = input.dataset.photoType;
               const fileRef = storageRef(storage, `patients/${caseRef.id}/photos/${photoType}.jpg`);
-              const snap = await Promise.race([uploadBytes(fileRef, input.files[0]), timeoutPromise]);
-              photoUrls[photoType] = await Promise.race([getDownloadURL(snap.ref), timeoutPromise]);
+              const snap = await Promise.race([
+                uploadBytes(fileRef, input.files[0]),
+                mkTimeout(90000, "Fotoğraf yüklenemedi (zaman aşımı). İnternet bağlantınızı kontrol edin.")
+              ]);
+              photoUrls[photoType] = await Promise.race([
+                getDownloadURL(snap.ref),
+                mkTimeout(30000, "Fotoğraf URL alınamadı. Tekrar deneyin.")
+              ]);
             }
           }
         }
@@ -1234,7 +1240,10 @@
           payload.photos = photoUrls;
         }
 
-        await Promise.race([setDoc(caseRef, payload), timeoutPromise]);
+        await Promise.race([
+          setDoc(caseRef, payload),
+          mkTimeout(30000, "Kayıt sunucuya gönderilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin.")
+        ]);
 
         document.getElementById("sec-4").classList.add("hidden");
         document.getElementById("sec-success").classList.remove("hidden");
