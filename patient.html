@@ -760,13 +760,16 @@
       try {
         // Upload any photo question files to Storage
         const photoUrls = {};
+        const followupTimeout = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Bağlantı zaman aşımına uğradı. Tekrar deneyin.")), 30000)
+        );
         for (const q of questions) {
           if (q.type !== "photo") continue;
           const input = document.getElementById(`fq_photo_${q.id}`);
           if (input && input.files && input.files[0]) {
             const fileRef = storageRef(storage, `patients/${caseId}/followup/day${day}/${q.id}.jpg`);
-            const snap = await uploadBytes(fileRef, input.files[0]);
-            photoUrls[q.id] = await getDownloadURL(snap.ref);
+            const snap = await Promise.race([uploadBytes(fileRef, input.files[0]), followupTimeout]);
+            photoUrls[q.id] = await Promise.race([getDownloadURL(snap.ref), followupTimeout]);
           }
         }
 
